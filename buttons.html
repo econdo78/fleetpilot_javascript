@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<!--
+Template Name: NobleUI - HTML Bootstrap 5 Admin Dashboard Template
+Author: NobleUI
+Website: https://nobleui.com
+Contact: nobleui.team@gmail.com
+Purchase: https://1.envato.market/nobleui_html
+License: You must have a valid license to legally use this template for your project.
+-->
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="Responsive HTML Admin Dashboard Template based on Bootstrap 5">
+	<meta name="author" content="NobleUI">
+	<meta name="keywords" content="nobleui, bootstrap, bootstrap 5, bootstrap5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+
+	<title>NobleUI - HTML Bootstrap 5 Admin Dashboard Template</title>
+
+  <!-- color-modes:js -->
+  <script src="../../../assets/js/color-modes.js"></script>
+  <!-- endinject -->
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <!-- End fonts -->
+
+	<!-- core:css -->
+	<link rel="stylesheet" href="../../../assets/vendors/core/core.css">
+	<!-- endinject -->
+
+	<!-- Plugin css for this page -->
+	<link rel="stylesheet" href="../../../assets/vendors/prism-themes/prism-coldark-dark.css">
+	<!-- End plugin css for this page -->
+
+	<!-- inject:css -->
+	<!-- endinject -->
+
+  <!-- Layout styles -->  
+	<link rel="stylesheet" href="../../../assets/css/demo1/style.css">
+  <!-- End layout styles -->
+
+  <link rel="shortcut icon" href="../../../assets/images/favicon.png" />
+</head>
+<body>
+	<div class="main-wrapper">
+
+		<!-- partial:partials/_sidebar.html -->
+		<nav class="sidebar">
+      <div class="sidebar-header">
+        <a href="#" class="sidebar-brand">Fleet<span>Pilot</span></a>
+        <div class="sidebar-toggler">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div class="sidebar-body">
+        <ul class="nav" id="sidebarNav">
+          <li class="nav-item nav-category" data-i18n="sidebar.category.main">Principal</li>
+          <li class="nav-item">
+            <a href="dashboard.html" class="nav-link">
+              <i class="link-icon" data-lucide="box"></i>
+              <span class="link-title" data-i18n="sidebar.link.dashboard">Inicio</span>
+            </a>
+          </li>
+          <li class="nav-item nav-category" data-i18n="sidebar.category.customers">Conductores</li>
+          <li class="nav-item">
+            <a href="ListaConductores.html" class="nav-link">
+              <i class="link-icon" data-lucide="users"></i>
+              <span class="link-title" data-i18n="sidebar.category.customersList">Todos los conductores</span>
+            </a>
+          </li>
+          <li class="nav-item nav-category">Inversores</li>
+          <li class="nav-item">
+            <a href="ListaInversores.html" class="nav-link">
+              <i class="link-icon" data-lucide="briefcase"></i>
+              <span class="link-title">Todos los inversores</span>
+            </a>
+          </li>
+          <li class="nav-item nav-category">Vehículos</li>
+          <li class="nav-item">
+            <a href="ListaVehiculos.html" class="nav-link">
+              <i class="link-icon" data-lucide="car"></i>
+              <span class="link-title">Todos los vehículos</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+		<!-- partial -->
+	
+		<div class="page-wrapper">
+				
+			<!-- partial:partials/_navbar.html -->
+			<nav class="navbar">
+				<div class="navbar-content">
+
+          <div class="logo-mini-wrapper">
+            <img src="assets/images/logo-mini-light.png" class="logo-mini logo-mini-light" alt="logo">
+            <img src="assets/images/logo-mini-dark.png" class="logo-mini logo-mini-dark" alt="logo">
+          </div>
+
+					<form class="search-form" role="search">
+						<div class="input-group">
+              <div class="input-group-text">
+                <i data-lucide="search"></i>
+              </div>
+							<input type="text" class="form-control" id="navbarForm" placeholder="Search here..." data-i18n-placeholder="navbar.search.placeholder">
+						</div>
+            <div class="search-panel" role="dialog" aria-modal="false" aria-hidden="true">
+              <ul class="nav nav-tabs search-panel-tabs" id="navbarSearchTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="navbar-search-tab-drivers" data-bs-toggle="tab" data-bs-target="#navbar-search-pane-drivers" type="button" role="tab" aria-controls="navbar-search-pane-drivers" aria-selected="true">
+                    Conductores
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="navbar-search-tab-investors" data-bs-toggle="tab" data-bs-target="#navbar-search-pane-investors" type="button" role="tab" aria-controls="navbar-search-pane-investors" aria-selected="false">
+                    Inversores
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="navbar-search-tab-vehicles" data-bs-toggle="tab" data-bs-target="#navbar-search-pane-vehicles" type="button" role="tab" aria-controls="navbar-search-pane-vehicles" aria-selected="false">
+                    Vehículos
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="navbar-search-tab-global" data-bs-toggle="tab" data-bs-target="#navbar-search-pane-global" type="button" role="tab" aria-controls="navbar-search-pane-global" aria-selected="false">
+                    En todo FleetPilot
+                  </button>
+                </li>
+              </ul>
+              <div class="tab-content search-panel-content">
+                <div class="tab-pane fade show active" id="navbar-search-pane-drivers" role="tabpanel" aria-labelledby="navbar-search-tab-drivers">
+                  <div class="search-panel-intro">
+                    <p class="search-panel-placeholder mb-3">
+                      Empieza a escribir para buscar conductores o ordena por columna.
+                    </p>
+                  </div>
+                  <div class="search-panel-table-wrapper">
+                    <table class="table table-hover table-striped align-middle mb-0 search-panel-table" data-search-panel-table="drivers">
+                      <thead class="bg-body-tertiary">
+                        <tr>
+                          <th scope="col">NOMBRECOMPLETO</th>
+                          <th scope="col">NDOCUMENTOIDENTIDAD</th>
+                          <th scope="col">ESTADO</th>
+                          <th scope="col">NOMBREINVERSOR</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr data-search-panel-loading class="d-none">
+                          <td colspan="4" class="text-secondary text-center py-4">Cargando conductores...</td>
+                        </tr>
+                        <tr data-search-panel-error class="d-none">
+                          <td colspan="4" class="text-danger text-center py-4">No se pudieron cargar los conductores.</td>
+                        </tr>
+                        <tr data-search-panel-empty>
+                          <td colspan="4" class="text-secondary text-center py-4">Sin resultados disponibles.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="navbar-search-pane-investors" role="tabpanel" aria-labelledby="navbar-search-tab-investors">
+                  <p class="search-panel-placeholder">
+                    Empieza a escribir para buscar inversores.
+                  </p>
+                </div>
+                <div class="tab-pane fade" id="navbar-search-pane-vehicles" role="tabpanel" aria-labelledby="navbar-search-tab-vehicles">
+                  <p class="search-panel-placeholder">
+                    Empieza a escribir para buscar vehículos.
+                  </p>
+                </div>
+                <div class="tab-pane fade" id="navbar-search-pane-global" role="tabpanel" aria-labelledby="navbar-search-tab-global">
+                  <p class="search-panel-placeholder">
+                    Escribe para buscar en todo FleetPilot.
+                  </p>
+                </div>
+              </div>
+            </div>
+						</form>
+
+					<ul class="navbar-nav">
+            <li class="theme-switcher-wrapper nav-item">
+              <input type="checkbox" value="" id="theme-switcher">
+              <label for="theme-switcher">
+                <div class="box">
+                  <div class="ball"></div>
+                  <div class="icons">
+                    <i data-lucide="sun"></i>
+                    <i data-lucide="moon"></i>
+                  </div>
+                </div>
+              </label>
+            </li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i data-lucide="bell"></i>
+                <!--
+								<div class="indicator">
+									<div class="circle"></div>
+								</div>
+                 -->
+							</a>
+							<div class="dropdown-menu p-0" aria-labelledby="notificationDropdown">
+								<div class="px-3 py-2 d-flex align-items-center justify-content-between border-bottom">
+							<p data-i18n="navbar.dropdown.notifications">Sin notificaciones</p>
+              
+						</div>
+								<div class="px-3 py-2 d-flex align-items-center justify-content-center border-top">
+									<a href="javascript:;" class="text-secondary" data-i18n="navbar.dropdown.clear">Clear all</a>
+								</div>
+							</div>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<img class="w-30px h-30px ms-1 rounded-circle" data-auth-avatar data-avatar-size="128" src="https://ui-avatars.com/api/?name=User&background=6571ff&color=fff&size=128" alt="profile">
+							</a>
+							<div class="dropdown-menu p-0" aria-labelledby="profileDropdown">
+								<div class="d-flex flex-column align-items-center border-bottom px-5 py-3">
+									<div class="mb-3">
+										<img class="w-80px h-80px rounded-circle" data-auth-avatar data-avatar-size="256" src="https://ui-avatars.com/api/?name=User&background=6571ff&color=fff&size=256" alt="">
+									</div>
+									<div class="text-center">
+										<p class="fs-16px fw-bolder" data-auth-user data-default-value="Amiah Burton">Amiah Burton</p>
+									</div>
+								</div>
+                <ul class="list-unstyled p-1">
+                  <li>
+                    <a href="javascript:;" class="dropdown-item py-2 text-body ms-0" data-auth-action="logout">
+                      <i class="me-2 icon-md" data-lucide="log-out"></i>
+                      <span data-i18n="navbar.user.logout">Log Out</span>
+                    </a>
+                  </li>
+                </ul>
+							</div>
+						</li>
+					</ul>
+
+          <a href="#" class="sidebar-toggler">
+            <i data-lucide="menu"></i>
+          </a>
+
+				</div>
+			</nav>
+
+			<!-- partial -->
+
+			<div class="page-content container-xxl">
+				<div class="row">
+					<div class="col-xl-10 main-content ps-xl-4 pe-xl-5">
+						<h1 class="page-title">Buttons</h1>
+						<p class="lead">Use Bootstrap’s custom button styles for actions in forms, dialogs, and more with support for multiple sizes, states, and more. Read the <a href="https://getbootstrap.com/docs/5.3/components/buttons/" target="_blank">Official Bootstrap Documentation</a> for a full list of instructions and other options.</p>
+
+						<hr>
+
+            <h4 id="default">Basic Examples</h4>
+            <p class="mb-3">Bootstrap includes several predefined button styles, each serving its own semantic purpose, with a few extras thrown in for more control.</p>
+						<div class="example">
+							<button type="button" class="btn btn-primary mb-1 mb-md-0">Primary</button>
+              <button type="button" class="btn btn-secondary mb-1 mb-md-0">Secondary</button>
+              <button type="button" class="btn btn-success mb-1 mb-md-0">Success</button>
+              <button type="button" class="btn btn-danger mb-1 mb-md-0">Danger</button>
+              <button type="button" class="btn btn-warning mb-1 mb-md-0">Warning</button>
+              <button type="button" class="btn btn-info mb-1 mb-md-0">Info</button>
+              <button type="button" class="btn btn-light mb-1 mb-md-0">Light</button>
+              <button type="button" class="btn btn-dark mb-1 mb-md-0">Dark</button>
+              <button type="button" class="btn btn-link mb-1 mb-md-0">Link</button>
+						</div>
+						<figure class="highlight" id="defaultButton">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><button type="button" class="btn btn-primary">Primary</button>
+<button type="button" class="btn btn-secondary">Secondary</button>
+<button type="button" class="btn btn-success">Success</button>
+<button type="button" class="btn btn-danger">Danger</button>
+<button type="button" class="btn btn-warning">Warning</button>
+<button type="button" class="btn btn-info">Info</button>
+<button type="button" class="btn btn-light">Light</button>
+<button type="button" class="btn btn-dark">Dark</button>
+
+<button type="button" class="btn btn-link">Link</button></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#defaultButton">copy</button>
+            </figure>
+            
+            <hr>
+
+            <h4 id="inverse">Inverse Buttons</h4>
+            <p class="mb-3">Inverse buttons.</p>
+						<div class="example">
+							<button type="button" class="btn btn-inverse-primary mb-1 mb-md-0">Primary</button>
+              <button type="button" class="btn btn-inverse-secondary mb-1 mb-md-0">Secondary</button>
+              <button type="button" class="btn btn-inverse-success mb-1 mb-md-0">Success</button>
+              <button type="button" class="btn btn-inverse-danger mb-1 mb-md-0">Danger</button>
+              <button type="button" class="btn btn-inverse-warning mb-1 mb-md-0">Warning</button>
+              <button type="button" class="btn btn-inverse-info mb-1 mb-md-0">Info</button>
+              <button type="button" class="btn btn-inverse-light mb-1 mb-md-0">Light</button>
+              <button type="button" class="btn btn-inverse-dark mb-1 mb-md-0">Dark</button>
+						</div>
+						<figure class="highlight" id="inverseButton">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><button type="button" class="btn btn-inverse-primary">Primary</button>
+<button type="button" class="btn btn-inverse-secondary">Secondary</button>
+<button type="button" class="btn btn-inverse-success">Success</button>
+<button type="button" class="btn btn-inverse-danger">Danger</button>
+<button type="button" class="btn btn-inverse-warning">Warning</button>
+<button type="button" class="btn btn-inverse-info">Info</button>
+<button type="button" class="btn btn-inverse-light">Light</button>
+<button type="button" class="btn btn-inverse-dark">Dark</button></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#inverseButton">copy</button>
+            </figure>
+            
+            <hr>
+
+            <h4 id="tags">Button tags</h4>
+            <p class="mb-3">The <code>.btn</code> classes are designed to be used with the <code>&lt;button&gt;</code> element. However, you can also use these classes on <code>&lt;a&gt;</code> or <code>&lt;input&gt;</code> elements (though some browsers may apply a slightly different rendering).</p>
+						<div class="example">
+							<a class="btn btn-primary mb-1 mb-md-0" href="javascript:;" role="button">Link</a>
+              <button class="btn btn-primary mb-1 mb-md-0" type="submit">Button</button>
+              <input class="btn btn-primary mb-1 mb-md-0" type="button" value="Input">
+              <input class="btn btn-primary mb-1 mb-md-0" type="submit" value="Submit">
+              <input class="btn btn-primary mb-1 mb-md-0" type="reset" value="Reset">
+						</div>
+						<figure class="highlight" id="tagsButton">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><a class="btn btn-primary" href="#" role="button">Link</a>
+<button class="btn btn-primary" type="submit">Button</button>
+<input class="btn btn-primary" type="button" value="Input">
+<input class="btn btn-primary" type="submit" value="Submit">
+<input class="btn btn-primary" type="reset" value="Reset"></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#tagsButton">copy</button>
+            </figure>
+            
+            <hr>
+            
+            <h4 id="outline">Outline buttons</h4>
+            <p class="mb-3">In need of a button, but not the hefty background colors they bring? Replace the default modifier classes with the <code>.btn-outline-*</code> ones to remove all background images and colors on any button.</p>
+						<div class="example">
+							<button type="button" class="btn btn-outline-primary mb-1 mb-md-0">Primary</button>
+              <button type="button" class="btn btn-outline-secondary mb-1 mb-md-0">Secondary</button>
+              <button type="button" class="btn btn-outline-success mb-1 mb-md-0">Success</button>
+              <button type="button" class="btn btn-outline-danger mb-1 mb-md-0">Danger</button>
+              <button type="button" class="btn btn-outline-warning mb-1 mb-md-0">Warning</button>
+              <button type="button" class="btn btn-outline-info mb-1 mb-md-0">Info</button>
+              <button type="button" class="btn btn-outline-light mb-1 mb-md-0">Light</button>
+              <button type="button" class="btn btn-outline-dark mb-1 mb-md-0">Dark</button>
+						</div>
+						<figure class="highlight" id="outlineButton">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><button type="button" class="btn btn-outline-primary">Primary</button></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#outlineButton">copy</button>
+            </figure>
+            
+            <hr>
+
+            <h4 id="sizes">Sizes</h4>
+            <p class="mb-3">Fancy larger or smaller buttons? Add <code>.btn-lg</code> , <code>.btn-sm</code> or <code>.btn-xs</code> for additional sizes.</p>
+						<div class="example">
+              <button type="button" class="btn btn-primary btn-lg me-1 mb-1 mb-md-0">Large button</button>
+              <button type="button" class="btn btn-primary me-1 mb-1 mb-md-0">Default button</button>
+							<button type="button" class="btn btn-primary btn-sm me-1 mb-1 mb-md-0">Small button</button>        
+							<button type="button" class="btn btn-primary btn-xs mb-1 mb-md-0">Extra small</button>        
+						</div>
+						<figure class="highlight" id="buttonSizes">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><button type="button" class="btn btn-primary btn-lg">Large button</button>
+<button type="button" class="btn btn-primary btn-sm">Small button</button>
+<button type="button" class="btn btn-primary">Default button</button>
+<button type="button" class="btn btn-primary btn-xs">Extra small</button></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#buttonSizes">copy</button>
+            </figure>
+            <p class="mb-3">Create block level buttons—those that span the full width of a parent.</p>
+            <div class="example">
+              <div class="d-grid gap-2">
+                <button type="button" class="btn btn-primary">Block level button</button>
+                <button type="button" class="btn btn-secondary">Block level button</button>
+              </div>
+						</div>
+						<figure class="highlight" id="defaultBreadcrumbs">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><div class="d-grid gap-2">
+  <button type="button" class="btn btn-primary">Block level button</button>
+  <button type="button" class="btn btn-secondary">Block level button</button>
+</div></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#defaultBreadcrumbs">copy</button>
+            </figure>
+            
+            <hr>
+
+            <h4 id="active">Active state</h4>
+            <p class="mb-3">Buttons will appear pressed (with a darker background, darker border, and inset shadow) when active. <strong>There’s no need to add a class to <code>&lt;button&gt;</code>s as they use a pseudo-class</strong>. However, you can still force the same active appearance with <code>.active</code> (and include the <code>aria-pressed="true"</code> attribute) should you need to replicate the state programmatically.</p>
+						<div class="example">
+              <a href="javascript:;" class="btn btn-primary active" role="button" aria-pressed="true">Primary link</a>
+              <a href="javascript:;" class="btn btn-secondary active" role="button" aria-pressed="true">Link</a>       
+						</div>
+						<figure class="highlight" id="activeButton">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><a href="#" class="btn btn-primary active" role="button" aria-pressed="true">Primary link</a>
+<a href="#" class="btn btn-secondary active" role="button" aria-pressed="true">Link</a></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#activeButton">copy</button>
+            </figure>
+            
+            <hr>
+
+            <h4 id="disabled">Disabled state</h4>
+            <p class="mb-3">Make buttons look inactive by adding the <code>disabled</code> boolean attribute to any <code>&lt;button&gt;</code> element.</p>
+						<div class="example">
+              <button type="button" class="btn btn-primary" disabled>Primary button</button>
+              <button type="button" class="btn btn-secondary" disabled>Button</button>     
+						</div>
+						<figure class="highlight" id="disabledButton">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><button type="button" class="btn btn-primary" disabled>Primary button</button>
+<button type="button" class="btn btn-secondary" disabled>Button</button></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#disabledButton">copy</button>
+            </figure>
+            <p class="mb-3">Disabled buttons using the <code>&lt;a&gt;</code> element behave a bit different. <code>&lt;a&gt;</code>s don’t support the <code>disabled</code> attribute, so you must add the <code>.disabled</code> class to make it visually appear disabled.</p>
+            <div class="example">
+              <a href="#" class="btn btn-primary disabled" tabindex="-1" role="button" aria-disabled="true">Primary link</a>
+              <a href="#" class="btn btn-secondary disabled" tabindex="-1" role="button" aria-disabled="true">Link</a>   
+						</div>
+						<figure class="highlight" id="defaultButton2">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><a href="#" class="btn btn-primary disabled" tabindex="-1" role="button" aria-disabled="true">Primary link</a>
+<a href="#" class="btn btn-secondary disabled" tabindex="-1" role="button" aria-disabled="true">Link</a></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#defaultButton2">copy</button>
+						</figure>
+						
+						<hr>
+
+						<h4 id="with-icon">Icon buttons</h4>
+            <p class="mb-3">Add class <code>.btn-icon</code> for buttons with only icons.</p>
+						<div class="example">
+              <button type="button" class="btn btn-primary btn-icon">
+								<i data-lucide="check-square"></i>
+							</button>
+							<button type="button" class="btn btn-danger btn-icon">
+								<i data-lucide="box"></i>
+							</button>
+						</div>
+						<figure class="highlight" id="withIcon">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><button type="button" class="btn btn-primary btn-icon">
+	<i data-lucide="check-square"></i>
+</button>
+<button type="button" class="btn btn-danger btn-icon">
+	<i data-lucide="box"></i>
+</button></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#withIcon">copy</button>
+						</figure>
+						
+						<hr>
+
+						<h4 id="with-icon-text">Button with text and icon</h4>
+            <p class="mb-3">Wrap icon and text inside <code>.btn-icon-text</code> and use <code>.btn-icon-prepend</code> or <code>.btn-icon-append</code> for icon tags.</p>
+						<div class="example">
+              <button type="button" class="btn btn-primary btn-icon-text mb-1 mb-md-0">
+								<i class="btn-icon-prepend" data-lucide="check-square"></i>
+								Button with Icon
+							</button>
+							<button type="button" class="btn btn-primary btn-icon-text mb-1 mb-md-0">
+								Button with Icon
+								<i class="btn-icon-append" data-lucide="box"></i>
+							</button>
+						</div>
+						<figure class="highlight" id="withIconText">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><button type="button" class="btn btn-primary btn-icon-text">
+	<i class="btn-icon-prepend" data-lucide="check-square"></i>
+	Button with Icon
+</button>
+<button type="button" class="btn btn-primary btn-icon-text">
+	Button with Icon
+	<i class="btn-icon-append" data-lucide="box"></i>
+</button></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#withIconText">copy</button>
+            </figure>
+
+            <hr>
+
+            <h4 id="social-icon">Social icon buttons</h4>
+						<div class="example">
+              <button type="button" class="btn btn-icon btn-facebook mb-1 mb-md-0">
+								<i data-lucide="facebook"></i>
+							</button>
+              <button type="button" class="btn btn-icon btn-instagram mb-1 mb-md-0">
+								<i data-lucide="instagram"></i>
+							</button>
+              <button type="button" class="btn btn-icon btn-twitter mb-1 mb-md-0">
+								<i data-lucide="twitter"></i>
+							</button>
+              <button type="button" class="btn btn-icon btn-youtube mb-1 mb-md-0">
+								<i data-lucide="youtube"></i>
+							</button>
+              <button type="button" class="btn btn-icon btn-github mb-1 mb-md-0">
+								<i data-lucide="github"></i>
+							</button>
+              <button type="button" class="btn btn-icon btn-linkedin mb-1 mb-md-0">
+								<i data-lucide="linkedin"></i>
+							</button>
+              <button type="button" class="btn btn-icon btn-outline-twitter mb-1 mb-md-0">
+								<i data-lucide="twitter"></i>
+							</button>
+						</div>
+						<figure class="highlight" id="socialIcon">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><button type="button" class="btn btn-icon btn-facebook">
+  <i data-lucide="facebook"></i>
+</button>
+<button type="button" class="btn btn-icon btn-instagram">
+  <i data-lucide="instagram"></i>
+</button>
+<button type="button" class="btn btn-icon btn-twitter">
+  <i data-lucide="twitter"></i>
+</button>
+<button type="button" class="btn btn-icon btn-youtube">
+  <i data-lucide="youtube"></i>
+</button>
+<button type="button" class="btn btn-icon btn-github">
+  <i data-lucide="github"></i>
+</button>
+<button type="button" class="btn btn-icon btn-linkedin">
+  <i data-lucide="linkedin"></i>
+</button>
+<button type="button" class="btn btn-icon btn-outline-twitter">
+  <i data-lucide="twitter"></i>
+</button></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#socialIcon">copy</button>
+						</figure>
+
+            <hr>
+
+            <h4 id="social-icon-text">Social buttons with icon and text</h4>
+						<div class="example">
+              <button type="button" class="btn btn-icon-text btn-facebook mb-1">
+								<i class="btn-icon-prepend" data-lucide="facebook"></i>
+                Facebook
+							</button>
+              <button type="button" class="btn btn-icon-text btn-instagram mb-1">
+								<i class="btn-icon-prepend" data-lucide="instagram"></i>
+                Instagram
+							</button>
+              <button type="button" class="btn btn-icon-text btn-twitter mb-1">
+								<i class="btn-icon-prepend" data-lucide="twitter"></i>
+                Twitter
+							</button>
+              <button type="button" class="btn btn-icon-text btn-youtube mb-1">
+								<i class="btn-icon-prepend" data-lucide="youtube"></i>
+                Youtube
+							</button>
+              <button type="button" class="btn btn-icon-text btn-github mb-1">
+								<i class="btn-icon-prepend" data-lucide="github"></i>
+                Github
+							</button>
+              <button type="button" class="btn btn-icon-text btn-linkedin mb-1">
+								<i class="btn-icon-prepend" data-lucide="linkedin"></i>
+                LinkedIn
+							</button>
+              <button type="button" class="btn btn-icon-text btn-outline-twitter mb-1">
+								<i class="btn-icon-prepend" data-lucide="twitter"></i>
+                Twitter
+							</button>
+						</div>
+						<figure class="highlight" id="socialIconText">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><button type="button" class="btn btn-icon-text btn-facebook">
+  <i class="btn-icon-prepend" data-lucide="facebook"></i>
+  Facebook
+</button>
+<button type="button" class="btn btn-icon-text btn-instagram">
+  <i class="btn-icon-prepend" data-lucide="instagram"></i>
+  Instagram
+</button>
+<button type="button" class="btn btn-icon-text btn-twitter">
+  <i class="btn-icon-prepend" data-lucide="twitter"></i>
+  Twitter
+</button>
+<button type="button" class="btn btn-icon-text btn-youtube">
+  <i class="btn-icon-prepend" data-lucide="youtube"></i>
+  Youtube
+</button>
+<button type="button" class="btn btn-icon-text btn-github">
+  <i class="btn-icon-prepend" data-lucide="github"></i>
+  Github
+</button>
+<button type="button" class="btn btn-icon-text btn-linkedin">
+  <i class="btn-icon-prepend" data-lucide="linkedin"></i>
+  LinkedIn
+</button>
+<button type="button" class="btn btn-icon-text btn-outline-twitter">
+  <i class="btn-icon-prepend" data-lucide="twitter"></i>
+  Twitter
+</button></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#socialIconText">copy</button>
+						</figure>
+            
+					</div>
+					<div class="col-xl-2 content-nav-wrapper">
+						<ul class="nav content-nav d-flex flex-column">
+							<li class="nav-item">
+								<a href="#default" class="nav-link">Basic example</a>
+              </li>
+              <li class="nav-item">
+								<a href="#inverse" class="nav-link">Inverse Buttons</a>
+              </li>
+              <li class="nav-item">
+								<a href="#tags" class="nav-link">Button tags</a>
+              </li>
+              <li class="nav-item">
+								<a href="#outline" class="nav-link">Outline buttons</a>
+              </li>
+              <li class="nav-item">
+								<a href="#sizes" class="nav-link">Button sizes</a>
+              </li>
+              <li class="nav-item">
+								<a href="#active" class="nav-link">Active state</a>
+              </li>
+              <li class="nav-item">
+								<a href="#disabled" class="nav-link">Disabled state</a>
+							</li>
+							<li class="nav-item">
+								<a href="#with-icon" class="nav-link">Icon buttons</a>
+							</li>
+							<li class="nav-item">
+								<a href="#with-icon-text" class="nav-link">With icon and text</a>
+              </li>
+              <li class="nav-item">
+								<a href="#social-icon" class="nav-link">Social icon</a>
+							</li>
+							<li class="nav-item">
+								<a href="#social-icon-text" class="nav-link">Social icon and text</a>
+              </li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<!-- partial:partials/_footer.html -->
+			<footer class="footer d-flex flex-row align-items-center justify-content-between px-4 py-3 border-top small">
+				<p class="text-secondary mb-1 mb-md-0"><span data-i18n="footer.copyright">Copyright © 2025</span> <a href="https://fmprosoft.com" target="_blank">FleetPilot</a>.</p>
+				<p class="text-secondary"><span data-i18n="footer.handcrafted">Handcrafted with</span> <i class="mb-1 text-primary ms-1 icon-sm" data-lucide="heart"></i></p>
+			</footer>
+			<!-- partial -->
+	
+		</div>
+	</div>
+
+	<!-- core:js -->
+	<script src="../../../assets/vendors/core/core.js"></script>
+	<!-- endinject -->
+
+	<!-- Plugin js for this page -->
+	<script src="../../../assets/vendors/prismjs/prism.js"></script>
+	<script src="../../../assets/vendors/clipboard/clipboard.min.js"></script>
+	<!-- End plugin js for this page -->
+
+	<!-- inject:js -->
+	<script src="../../../assets/js/app.js"></script>
+	<!-- endinject -->
+
+	<!-- Custom js for this page -->
+	<!-- End custom js for this page -->
+
+</body>
+</html>

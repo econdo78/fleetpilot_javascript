@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx gulp:*)",
+      "Bash(curl:*)",
+      "Bash(find:*)",
+      "Bash(python3:*)",
+      "Bash(node -e:*)",
+      "Bash(npm install:*)",
+      "Bash(node scripts/convert-procesos-excel.js:*)",
+      "Bash(node:*)",
+      "Bash(open:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

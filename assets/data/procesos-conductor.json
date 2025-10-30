@@ -1,0 +1,293 @@
+[
+  {
+    "id": "9966E38A-FD26-4183-A8FF-2D2247B94110",
+    "nombre": "Conductor",
+    "tipo": "Entidad",
+    "orden": 294,
+    "isActivo": 1,
+    "children": [
+      {
+        "id": "B00D2588-F873-4AD0-8E2D-9C4E04FF1C42",
+        "nombre": "DATOS DEL CONDUCTOR",
+        "tipo": "Grupo",
+        "orden": 298,
+        "isActivo": 1,
+        "idPadre": "9966E38A-FD26-4183-A8FF-2D2247B94110",
+        "children": [
+          {
+            "id": "AB805F46-524F-4751-8A83-917952CF334C",
+            "nombre": "DATOS BÁSICOS DEL CONDUCTOR",
+            "tipo": "Proceso",
+            "orden": 296,
+            "isActivo": 1,
+            "idPadre": "B00D2588-F873-4AD0-8E2D-9C4E04FF1C42"
+          },
+          {
+            "id": "A767D188-4871-4C20-A236-A654C81CC58E",
+            "nombre": "FOTO CONDUCTOR",
+            "tipo": "Proceso",
+            "orden": 297,
+            "isActivo": 1,
+            "idPadre": "B00D2588-F873-4AD0-8E2D-9C4E04FF1C42"
+          }
+        ]
+      },
+      {
+        "id": "5B5E617A-E190-4966-9680-16253D836DF0",
+        "nombre": "DOCUMENTACION CONDUCTOR",
+        "tipo": "Grupo",
+        "orden": 305,
+        "isActivo": 1,
+        "idPadre": "9966E38A-FD26-4183-A8FF-2D2247B94110",
+        "children": [
+          {
+            "id": "8CE26E24-3CFE-4B0B-9712-190B3C3C262D",
+            "nombre": "DOCUMENTO DE IDENTIDAD",
+            "tipo": "Proceso",
+            "orden": 299,
+            "isActivo": 1,
+            "idPadre": "5B5E617A-E190-4966-9680-16253D836DF0"
+          },
+          {
+            "id": "7923765B-58AF-4D2B-8CEF-1085711C108C",
+            "nombre": "CUENTA BANCARIA",
+            "tipo": "Proceso",
+            "orden": 300,
+            "isActivo": 1,
+            "idPadre": "5B5E617A-E190-4966-9680-16253D836DF0"
+          },
+          {
+            "id": "6B0A1CD5-787A-4E35-A38D-E4E13982C169",
+            "nombre": "CARNET DE CONDUCIR",
+            "tipo": "Proceso",
+            "orden": 301,
+            "isActivo": 1,
+            "idPadre": "5B5E617A-E190-4966-9680-16253D836DF0"
+          },
+          {
+            "id": "9420CE44-1443-4D3D-8F02-6174627CF06F",
+            "nombre": "PUNTOS DGT",
+            "tipo": "Proceso",
+            "orden": 302,
+            "isActivo": 1,
+            "idPadre": "5B5E617A-E190-4966-9680-16253D836DF0"
+          },
+          {
+            "id": "65D2A326-68AF-46B1-9E54-882B16D9E6E4",
+            "nombre": "DELITOS SEXUALES",
+            "tipo": "Proceso",
+            "orden": 303,
+            "isActivo": 1,
+            "idPadre": "5B5E617A-E190-4966-9680-16253D836DF0"
+          },
+          {
+            "id": "4C843C15-3BAA-48C0-873E-41FE85D6075B",
+            "nombre": "VIDA LABORAL",
+            "tipo": "Proceso",
+            "orden": 304,
+            "isActivo": 1,
+            "idPadre": "5B5E617A-E190-4966-9680-16253D836DF0"
+          },
+          {
+            "id": "C176290E-F1C7-4AFD-AE4C-C5F5F33DA5C6",
+            "nombre": "CARTILLA VTC",
+            "tipo": "Proceso",
+            "orden": 341,
+            "isActivo": 1,
+            "idPadre": "5B5E617A-E190-4966-9680-16253D836DF0"
+          }
+        ]
+      },
+      {
+        "id": "AEA001F1-2551-4216-93B0-76C9609936A4",
+        "nombre": "CONTRATOS LABORALES Y RESCISIONES",
+        "tipo": "Grupo",
+        "orden": 311,
+        "isActivo": 1,
+        "idPadre": "9966E38A-FD26-4183-A8FF-2D2247B94110",
+        "children": [
+          {
+            "id": "AD714C50-75EB-41CE-828A-15396D678DB1",
+            "nombre": "ALTA",
+            "tipo": "Subgrupo",
+            "orden": 306,
+            "isActivo": 1,
+            "idPadre": "AEA001F1-2551-4216-93B0-76C9609936A4",
+            "children": [
+              {
+                "id": "A448524F-C7A9-4DE9-BE36-960B3CC2E962",
+                "nombre": "CONTRATO LABORAL",
+                "tipo": "Proceso",
+                "orden": 307,
+                "isActivo": 1,
+                "idPadre": "AD714C50-75EB-41CE-828A-15396D678DB1"
+              }
+            ]
+          },
+          {
+            "id": "DA07C580-45CB-4452-A0A7-D82A004B8655",
+            "nombre": "BAJA",
+            "tipo": "Subgrupo",
+            "orden": 308,
+            "isActivo": 1,
+            "idPadre": "AEA001F1-2551-4216-93B0-76C9609936A4",
+            "children": [
+              {
+                "id": "A0F38B1A-2AC0-488C-9F9A-6B39CE538A9D",
+                "nombre": "NO SUPERA PERIODO DE PRUEBA",
+                "tipo": "Proceso",
+                "orden": 309,
+                "isActivo": 1,
+                "idPadre": "DA07C580-45CB-4452-A0A7-D82A004B8655"
+              },
+              {
+                "id": "184DAC9C-5402-475D-B2D1-1AF168C15E18",
+                "nombre": "BAJA VOLUNTARIA",
+                "tipo": "Proceso",
+                "orden": 310,
+                "isActivo": 1,
+                "idPadre": "DA07C580-45CB-4452-A0A7-D82A004B8655"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C0478886-661E-4AA5-8E00-DDE95A6B1D02",
+        "nombre": "ASIGNACIONES",
+        "tipo": "Grupo",
+        "orden": 317,
+        "isActivo": 1,
+        "idPadre": "9966E38A-FD26-4183-A8FF-2D2247B94110",
+        "children": [
+          {
+            "id": "E270FE77-1966-47B4-A8B3-6F6EEDB7134A",
+            "nombre": "ASIGNACIÓN A INVERSOR",
+            "tipo": "Proceso",
+            "orden": 312,
+            "isActivo": 1,
+            "idPadre": "C0478886-661E-4AA5-8E00-DDE95A6B1D02"
+          },
+          {
+            "id": "1164DA65-A662-4EC9-AB60-BB17B7BE744B",
+            "nombre": "ASIGNACIÓN TARJETA COMBUSTIBLE",
+            "tipo": "Proceso",
+            "orden": 313,
+            "isActivo": 1,
+            "idPadre": "C0478886-661E-4AA5-8E00-DDE95A6B1D02"
+          },
+          {
+            "id": "524E556E-1650-474D-96DF-8C638F759E62",
+            "nombre": "ASIGNACIÓN TARJETA CASH IN",
+            "tipo": "Proceso",
+            "orden": 314,
+            "isActivo": 1,
+            "idPadre": "C0478886-661E-4AA5-8E00-DDE95A6B1D02"
+          },
+          {
+            "id": "8F131CA9-601B-4FD3-A09D-F3BBF244BD4A",
+            "nombre": "ASIGNACIÓN VEHÍCULO",
+            "tipo": "Proceso",
+            "orden": 315,
+            "isActivo": 1,
+            "idPadre": "C0478886-661E-4AA5-8E00-DDE95A6B1D02"
+          }
+        ]
+      },
+      {
+        "id": "B642EC99-F74A-4E3F-95FE-C289604B3C93",
+        "nombre": "DESASIGNACIONES",
+        "tipo": "Grupo",
+        "orden": 322,
+        "isActivo": 1,
+        "idPadre": "9966E38A-FD26-4183-A8FF-2D2247B94110",
+        "children": [
+          {
+            "id": "CCF1DF4D-E8BA-4EDB-B3F6-4F3F5BB4641F",
+            "nombre": "DESASIGNACIÓN TARJETA COMBUSTIBLE",
+            "tipo": "Proceso",
+            "orden": 318,
+            "isActivo": 1,
+            "idPadre": "B642EC99-F74A-4E3F-95FE-C289604B3C93"
+          },
+          {
+            "id": "51655F45-5EF2-4977-9304-B3B2ADAA7CF6",
+            "nombre": "DESASIGNACIÓN TARJETA CASH IN",
+            "tipo": "Proceso",
+            "orden": 319,
+            "isActivo": 1,
+            "idPadre": "B642EC99-F74A-4E3F-95FE-C289604B3C93"
+          },
+          {
+            "id": "63DE969F-0A8E-4263-A6CA-6D6F9A195005",
+            "nombre": "DESASIGNACIÓN VEHÍCULO",
+            "tipo": "Proceso",
+            "orden": 320,
+            "isActivo": 1,
+            "idPadre": "B642EC99-F74A-4E3F-95FE-C289604B3C93"
+          },
+          {
+            "id": "0EB0ABBE-BBD1-4F29-92E4-FA18E324E367",
+            "nombre": "DESASIGNACIÓN INVERSOR",
+            "tipo": "Proceso",
+            "orden": 321,
+            "isActivo": 1,
+            "idPadre": "B642EC99-F74A-4E3F-95FE-C289604B3C93"
+          },
+          {
+            "id": "3748AB8C-CDD1-4BAC-A357-F0186D3EF848",
+            "nombre": "TURNO",
+            "tipo": "Proceso",
+            "orden": 334,
+            "isActivo": 1,
+            "idPadre": "B642EC99-F74A-4E3F-95FE-C289604B3C93"
+          }
+        ]
+      },
+      {
+        "id": "809081D3-9B12-47EA-88AC-3551BD7AF8CE",
+        "nombre": "RDS",
+        "tipo": "Grupo",
+        "orden": 328,
+        "isActivo": 1,
+        "idPadre": "9966E38A-FD26-4183-A8FF-2D2247B94110",
+        "children": [
+          {
+            "id": "AA725070-EA4F-4727-B98D-9845804255B2",
+            "nombre": "RD GOLPE",
+            "tipo": "Proceso",
+            "orden": 323,
+            "isActivo": 1,
+            "idPadre": "809081D3-9B12-47EA-88AC-3551BD7AF8CE"
+          }
+        ]
+      },
+      {
+        "id": "2B6AE232-BE77-4035-9D32-8F6BF4AEE6E0",
+        "nombre": "BlackList",
+        "tipo": "Grupo",
+        "orden": 342,
+        "isActivo": 1,
+        "idPadre": "9966E38A-FD26-4183-A8FF-2D2247B94110",
+        "children": [
+          {
+            "id": "ED0F8F7B-837B-4376-9EC3-8D55630AF033",
+            "nombre": "Añadir a Blacklist",
+            "tipo": "Proceso",
+            "orden": 343,
+            "isActivo": 1,
+            "idPadre": "2B6AE232-BE77-4035-9D32-8F6BF4AEE6E0"
+          },
+          {
+            "id": "31A0EBC7-8F79-4DF4-9460-2EED9F3FA418",
+            "nombre": "Sacar de Blacklist",
+            "tipo": "Proceso",
+            "orden": 344,
+            "isActivo": 1,
+            "idPadre": "2B6AE232-BE77-4035-9D32-8F6BF4AEE6E0"
+          }
+        ]
+      }
+    ]
+  }
+]

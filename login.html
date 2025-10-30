@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<!--
+Template Name: NobleUI - HTML Bootstrap 5 Admin Dashboard Template
+Author: NobleUI
+Website: https://nobleui.com
+Contact: nobleui.team@gmail.com
+Purchase: https://1.envato.market/nobleui_html
+License: You must have a valid license to legally use this template for your project.
+-->
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="Responsive HTML Admin Dashboard Template based on Bootstrap 5">
+	<meta name="author" content="NobleUI">
+	<meta name="keywords" content="nobleui, bootstrap, bootstrap 5, bootstrap5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+
+	<title>Ignite - Login</title>
+
+  <!-- color-modes:js -->
+  <script src="./assets/js/color-modes.js"></script>
+  <!-- endinject -->
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <!-- End fonts -->
+
+	<!-- core:css -->
+	<link rel="stylesheet" href="./assets/vendors/core/core.css">
+	<!-- endinject -->
+
+	<!-- Plugin css for this page -->
+	<!-- End plugin css for this page -->
+
+	<!-- inject:css -->
+	<!-- endinject -->
+
+  <!-- Layout styles -->  
+	<link rel="stylesheet" href="./assets/css/style.css">
+  <!-- End layout styles -->
+
+  <link rel="shortcut icon" href="./assets/images/favicon.png" />
+</head>
+<body>
+	<div class="main-wrapper">
+		<div class="page-wrapper full-page">
+			<div class="page-content container-xxl d-flex align-items-center justify-content-center">
+
+				<div class="row w-100 mx-0 auth-page">
+					<div class="col-md-10 col-lg-8 col-xl-6 mx-auto position-relative">
+						<div class="card">
+							<div class="row">
+                <div class="col-md-4 pe-md-0">
+                  <div class="auth-side-wrapper">
+
+                  </div>
+                </div>
+                <div class="col-md-8 ps-md-0">
+                  <div class="auth-form-wrapper px-4 py-5">
+                    <a href="#" class="nobleui-logo d-block mb-2">Fleet<span>Pilot</span></a>
+                    <h5 class="text-secondary fw-normal mb-4" data-i18n="login.welcome">Bienvenido, inicia sesión con tu cuenta.</h5>
+                    <form class="forms-sample">
+                      <div class="mb-3">
+                        <label for="userName" class="form-label" data-i18n="login.user.label">Usuario</label>
+                        <input type="text" class="form-control" id="userName" placeholder="Usuario" data-i18n-placeholder="login.user.placeholder">
+                      </div>
+                      <div class="mb-3">
+                        <label for="userPassword" class="form-label" data-i18n="login.password.label">Contraseña</label>
+                        <input type="password" class="form-control" id="userPassword" autocomplete="current-password" placeholder="Contraseña" data-i18n-placeholder="login.password.placeholder">
+                      </div>
+                      <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="authCheck">
+                        <label class="form-check-label" for="authCheck" data-i18n="login.remember">
+                          Recuérdame
+                        </label>
+                      </div>
+                      <button type="submit" class="btn btn-primary mb-2 mb-md-0 text-white" data-i18n="login.submit">Acceder</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+						</div>
+            <div class="toast-container position-absolute top-100 start-50 translate-middle-x mt-3 z-3">
+              <div
+                id="loginToast"
+                class="toast align-items-center text-bg-danger border-0 shadow fade"
+                role="alert"
+                aria-live="assertive"
+                aria-atomic="true"
+                data-bs-autohide="true"
+                data-bs-delay="3000"
+              >
+                <div class="d-flex">
+                  <div id="loginToastMessage" class="toast-body" data-i18n="login.toast.default">Credenciales inválidas.</div>
+                  <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+              </div>
+            </div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- core:js -->
+	<script src="./assets/vendors/core/core.js"></script>
+	<!-- endinject -->
+
+	<!-- Plugin js for this page -->
+	<!-- End plugin js for this page -->
+
+	<!-- inject:js -->
+	<script src="./assets/js/authStorage.js"></script>
+	<script src="./assets/js/apiClient.js"></script>
+	<script src="./assets/js/init-auth.js"></script>
+	<script src="./assets/js/i18n.js"></script>
+	<script src="./assets/js/app.js"></script>
+	<!-- endinject -->
+
+	<!-- Custom js for this page -->
+	<script src="./assets/js/login.js"></script>
+	<!-- End custom js for this page -->
+</body>
+</html>

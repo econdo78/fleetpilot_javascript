@@ -1,0 +1,191 @@
+{
+	"info": {
+		"_postman_id": "0fbf1257-d916-4246-b7c9-73f5dc608489",
+		"name": "Fleetpilot API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10217525"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json().response.token;",
+							"pm.collectionVariables.set(\"token\", jsonData);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server}}/fmi/data/{{version}}/databases/{{database}}/sessions",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"fmi",
+						"data",
+						"{{version}}",
+						"databases",
+						"{{database}}",
+						"sessions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listar conductores",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query\": [ { \"isActivo\": 1 } ]\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server}}/fmi/data/{{version}}/databases/{{database}}/layouts/{{layoutListadoConductores}}/_find",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"fmi",
+						"data",
+						"{{version}}",
+						"databases",
+						"{{database}}",
+						"layouts",
+						"{{layoutListadoConductores}}",
+						"_find"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{server}}/fmi/data/{{version}}/databases/{{database}}/sessions/{{token}}",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"fmi",
+						"data",
+						"{{version}}",
+						"databases",
+						"{{database}}",
+						"sessions",
+						"{{token}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "server",
+			"value": "https://fleetpad.app/"
+		},
+		{
+			"key": "version",
+			"value": "vLatest"
+		},
+		{
+			"key": "database",
+			"value": "fleetpad_des"
+		},
+		{
+			"key": "user",
+			"value": "aquintillan"
+		},
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "layoutListadoConductores",
+			"value": "@conductor"
+		}
+	]
+}

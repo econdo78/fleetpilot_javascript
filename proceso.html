@@ -1,0 +1,4639 @@
+<!DOCTYPE html>
+<!--
+Template Name: NobleUI - HTML Bootstrap 5 Admin Dashboard Template
+Author: NobleUI
+Website: https://nobleui.com
+Contact: nobleui.team@gmail.com
+Purchase: https://1.envato.market/nobleui_html
+License: You must have a valid license to legally use this template for your project.
+-->
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="Responsive HTML Admin Dashboard Template based on Bootstrap 5">
+	<meta name="author" content="NobleUI">
+	<meta name="keywords" content="nobleui, bootstrap, bootstrap 5, bootstrap5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+
+	<title>NobleUI - HTML Bootstrap 5 Admin Dashboard Template</title>
+
+  <!-- color-modes:js -->
+  <script src="./assets/js/color-modes.js"></script>
+  <!-- endinject -->
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <!-- End fonts -->
+
+	<!-- core:css -->
+	<link rel="stylesheet" href="./assets/vendors/core/core.css">
+	<!-- endinject -->
+
+ <!-- Plugin css for this page -->
+  <link rel="stylesheet" href="./assets/vendors/flatpickr/flatpickr.min.css">
+  <link rel="stylesheet" href="./assets/vendors/datatables.net-bs5/dataTables.bootstrap5.css">
+  <link rel="stylesheet" href="./assets/vendors/select2/select2.min.css">
+ <!-- End plugin css for this page -->
+
+	<!-- inject:css -->
+	<!-- endinject -->
+
+ <!-- Layout styles -->  
+ <link rel="stylesheet" href="./assets/css/style.css">
+  <!-- End layout styles -->
+
+  <style>
+    #clientesTable tbody tr {
+      cursor: pointer;
+    }
+
+    .resizable-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      height: calc(100vh - 280px);
+      min-height: 360px;
+    }
+
+    .resizable-panel {
+      flex: 1 1 0;
+      min-height: 140px;
+      overflow: auto;
+      background-color: transparent;
+    }
+
+    .resizable-panel[data-resizable-bottom] {
+      min-height: 0;
+      background-color: transparent;
+    }
+
+    .resizable-panel[data-resizable-bottom].is-collapsed {
+      flex: 0 0 0 !important;
+      height: 0 !important;
+      min-height: 0 !important;
+      width: 0 !important;
+      overflow: hidden;
+    }
+
+    .resizable-panel[data-resizable-bottom].is-collapsed .card {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .resizable-panel .card-body {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      position: relative;
+      background-color: var(--bs-card-bg);
+    }
+
+    .resizable-panel .table-responsive {
+      flex: 1 1 auto;
+      overflow: auto;
+    }
+
+    .column-picker-list {
+      display: flex;
+      flex-direction: column;
+      max-height: 320px;
+      overflow: hidden;
+      gap: 0.5rem;
+      padding-right: 0.25rem;
+    }
+
+    .column-picker-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.35rem 0;
+      padding-left: 0;
+    }
+
+    .column-picker-item .form-check-input {
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .column-picker-item .form-check-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .column-picker-item .badge {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    [data-clientes-columns-empty] {
+      color: var(--bs-secondary-color);
+    }
+
+    [data-table-responsive="clientes"] th.table-column,
+    [data-table-responsive="clientes"] td.table-column {
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    [data-table-responsive="clientes"] th.table-column {
+      position: relative;
+      cursor: grab;
+      user-select: none;
+    }
+
+    [data-table-responsive="clientes"] th.table-column:active {
+      cursor: grabbing;
+    }
+
+    [data-table-responsive="clientes"] th.table-column.table-column--dragging {
+      opacity: 0.55;
+    }
+
+    [data-table-responsive="clientes"] th.table-column.table-column--drop-target::after {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border: 2px dashed var(--bs-primary);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    @media (max-width: 1399.98px) {
+      [data-table-responsive="clientes"] th.table-column--secondary,
+      [data-table-responsive="clientes"] td.table-column--secondary {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 991.98px) {
+      [data-table-responsive="clientes"] th.table-column--collapse-md,
+      [data-table-responsive="clientes"] td.table-column--collapse-md {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 767.98px) {
+      [data-table-responsive="clientes"] th.table-column--collapse-sm,
+      [data-table-responsive="clientes"] td.table-column--collapse-sm {
+        display: none !important;
+      }
+    }
+
+    .resizable-panel[data-resizable-bottom] .card {
+      background-color: var(--bs-card-bg);
+      overflow: hidden;
+    }
+
+    [data-clientes-detail-tabs-wrapper] {
+      background-color: var(--bs-card-bg);
+      border-radius: inherit;
+      padding-bottom: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    [data-clientes-detail-container] {
+      position: relative;
+      padding: 0 0.75rem 0.75rem;
+      background-color: var(--bs-card-bg);
+      border-radius: inherit;
+      background-clip: padding-box;
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      gap: 0.75rem;
+    }
+
+    [data-clientes-detail-container] .tab-pane {
+      background-color: inherit;
+      padding-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    [data-clientes-detail-layout] {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      min-height: 0;
+      flex: 1 1 auto;
+    }
+
+    [data-clientes-detail-content] {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      min-width: 0;
+      overflow: hidden;
+      padding-right: 0.25rem;
+      scroll-behavior: smooth;
+    }
+
+    [data-clientes-detail-form] {
+      padding-right: 0;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    .detail-category-tools {
+      display: none;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .detail-field-search {
+      margin-bottom: 1rem;
+    }
+
+    .detail-field-search-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .detail-category-nav {
+      display: none;
+      overflow-y: auto;
+      max-height: 100%;
+    }
+
+    .detail-category-nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      flex: 1 1 auto;
+    }
+
+    .detail-category-nav-button {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--bs-border-radius);
+      color: var(--bs-secondary-color);
+      font-size: 0.875rem;
+      text-align: left;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .detail-category-nav-button:hover,
+    .detail-category-nav-button:focus-visible {
+      background-color: rgba(var(--bs-primary-rgb, 99, 102, 241), 0.12);
+      color: var(--bs-body-color);
+      outline: none;
+    }
+
+    .detail-category-nav-button.active {
+      background-color: rgba(var(--bs-primary-rgb, 99, 102, 241), 0.18);
+      color: var(--bs-primary);
+      font-weight: 600;
+    }
+
+    .detail-category-nav-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      color: inherit;
+    }
+
+    .detail-category-nav-icon .lucide {
+      width: 18px;
+      height: 18px;
+    }
+
+    .detail-category-nav-label {
+      flex: 1 1 auto;
+      line-height: 1.2;
+    }
+
+    .detail-category-nav-heading {
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.25rem;
+    }
+
+    .detail-field-highlight {
+      animation: detail-field-flash 2.4s ease-out;
+      border-radius: 0.375rem;
+    }
+
+    .form-control.is-field-invalid,
+    .form-select.is-field-invalid {
+      border-color: rgba(var(--bs-warning-rgb, 251, 188, 6), 1) !important;
+      box-shadow: 0 0 0 0 rgba(var(--bs-warning-rgb, 251, 188, 6), 0.4) !important;
+    }
+
+    .modal-shake {
+      animation: modal-shake 0.45s ease;
+    }
+
+    @keyframes modal-shake {
+      0%, 100% {
+        transform: translate3d(0, 0, 0);
+      }
+      20%, 60% {
+        transform: translate3d(-8px, 0, 0);
+      }
+      40%, 80% {
+        transform: translate3d(8px, 0, 0);
+      }
+    }
+
+    @keyframes detail-field-flash {
+      0% {
+        box-shadow: 0 0 0 0 rgba(var(--bs-warning-rgb, 251, 188, 6), 0.8);
+        background-color: rgba(var(--bs-warning-rgb, 251, 188, 6), 0.3);
+      }
+      20% {
+        box-shadow: 0 0 0 9px rgba(var(--bs-warning-rgb, 251, 188, 6), 0.38);
+        background-color: rgba(var(--bs-warning-rgb, 251, 188, 6), 0.24);
+      }
+      45% {
+        box-shadow: 0 0 0 14px rgba(var(--bs-warning-rgb, 251, 188, 6), 0.2);
+        background-color: rgba(var(--bs-warning-rgb, 251, 188, 6), 0.16);
+      }
+      75% {
+        box-shadow: 0 0 0 18px rgba(var(--bs-warning-rgb, 251, 188, 6), 0.1);
+        background-color: rgba(var(--bs-warning-rgb, 251, 188, 6), 0.08);
+      }
+      100% {
+        box-shadow: none;
+        background-color: transparent;
+      }
+    }
+
+    .table-search-highlight {
+      color: rgba(var(--bs-warning-rgb, 251, 188, 6), 1);
+      font-weight: 700;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+
+    .proceso-split-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      height: 100%;
+      min-height: 320px;
+    }
+
+    [data-proceso-form-card] .card-body {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    [data-proceso-form-card] .proceso-split-wrapper {
+      flex: 1 1 auto;
+    }
+
+    .proceso-split-panel {
+      flex: 1 1 0;
+      min-height: 140px;
+      border-radius: var(--bs-border-radius);
+      background-color: transparent;
+      overflow: auto;
+    }
+
+.proceso-split-panel--top {
+  border: 0;
+  background-color: rgba(var(--bs-body-bg-rgb, 255, 255, 255), 0.65);
+}
+
+.proceso-split-panel--bottom {
+  overflow: auto;
+}
+
+.proceso-split-handle {
+      position: relative;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      margin: -0.25rem 0;
+      height: 10px;
+      cursor: row-resize;
+      flex: 0 0 auto;
+    }
+
+    .proceso-split-handle::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(99,102,241,0.35), rgba(14,165,233,0.35));
+      transition: background-color 0.2s ease;
+    }
+
+    .proceso-split-handle:focus-visible {
+      outline: none;
+    }
+
+    .proceso-split-handle:focus-visible::before,
+    .proceso-split-handle:hover::before {
+      background: linear-gradient(90deg, rgba(99,102,241,0.65), rgba(14,165,233,0.65));
+    }
+
+    @media (max-width: 1399.98px) {
+      .detail-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 991.98px) {
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .detail-grid[data-layout-columns='2'] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .detail-grid[data-layout-columns='1'] {
+      grid-template-columns: 1fr;
+    }
+
+    :root:not([data-bs-theme='dark']) .detail-card.card,
+    [data-bs-theme='light'] .detail-card.card {
+      border: 1px solid rgba(17, 24, 39, 0.08);
+      border-radius: var(--bs-border-radius-lg, 0.5rem);
+      background-color: #f7f8fa;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    :root:not([data-bs-theme='dark']) .detail-card .card-header,
+    :root:not([data-bs-theme='dark']) .detail-card .card-body,
+    [data-bs-theme='light'] .detail-card .card-header,
+    [data-bs-theme='light'] .detail-card .card-body {
+      background-color: transparent;
+    }
+
+    [data-bs-theme='dark'] .detail-card.card {
+      border: 1px solid var(--bs-border-color);
+      background-color: var(--bs-card-bg);
+      box-shadow: var(--bs-box-shadow);
+    }
+
+    .detail-card .card-header {
+      border-bottom: 0;
+      padding: 1rem 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .detail-card .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .detail-card .card-body {
+      padding: 1rem;
+    }
+
+    .detail-card .card-header + .card-body {
+      padding-top: 0.75rem;
+    }
+
+    .detail-card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(var(--bs-primary-rgb, 99, 102, 241), 0.12);
+      color: var(--bs-primary);
+      flex-shrink: 0;
+    }
+
+    .detail-card-icon .lucide {
+      width: 20px;
+      height: 20px;
+    }
+
+    .detail-group-grid {
+      display: grid;
+      gap: 1.25rem;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 768px) {
+      .detail-group-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .detail-grid-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    :root:not([data-bs-theme='dark']) .detail-grid-item .form-control,
+    [data-bs-theme='light'] .detail-grid-item .form-control {
+      background-color: #ffffff;
+      color: inherit;
+      border-color: rgba(15, 23, 42, 0.12);
+    }
+
+    :root:not([data-bs-theme='dark']) .detail-grid-item .form-control:focus,
+    [data-bs-theme='light'] .detail-grid-item .form-control:focus {
+      background-color: #f7f9fc;
+      border-color: rgba(99, 102, 241, 0.35);
+      box-shadow: 0 0 0 0.15rem rgba(99, 102, 241, 0.08);
+    }
+
+    [data-clientes-detail-empty] {
+      background-color: var(--bs-card-bg);
+      border-radius: inherit;
+    }
+
+    .form-check-input:disabled + .form-check-label {
+      opacity: 0.55;
+    }
+
+    body.user-select-none {
+      user-select: none;
+    }
+
+    .resizable-handle {
+      position: relative;
+      flex: 0 0 10px;
+      margin: -0.375rem 0;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: row-resize;
+    }
+
+    .resizable-handle::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(99,102,241,0.35), rgba(14,165,233,0.35));
+      transition: background-color 0.2s ease;
+    }
+
+    .resizable-handle:focus-visible::before,
+    .resizable-handle:hover::before {
+      background: linear-gradient(90deg, rgba(99,102,241,0.65), rgba(14,165,233,0.65));
+    }
+
+    .resizable-wrapper.view-split-vertical {
+      flex-direction: row;
+    }
+
+    .resizable-wrapper.view-split-vertical .resizable-panel {
+      min-height: 0;
+    }
+
+    .resizable-wrapper.view-split-vertical [data-resizable-top] {
+      min-width: 280px;
+    }
+
+    .resizable-wrapper.view-split-vertical [data-resizable-bottom] {
+      min-width: 0;
+    }
+
+    .resizable-wrapper.view-split-vertical .resizable-handle {
+      width: 12px;
+      height: auto;
+      min-height: 0;
+      margin: 0 -0.375rem;
+      cursor: col-resize;
+    }
+
+    .resizable-wrapper.view-split-vertical .resizable-handle::before {
+      background: linear-gradient(180deg, rgba(99,102,241,0.35), rgba(14,165,233,0.35));
+    }
+
+    .resizable-wrapper.view-split-vertical .resizable-handle:focus-visible::before,
+    .resizable-wrapper.view-split-vertical .resizable-handle:hover::before {
+      background: linear-gradient(180deg, rgba(99,102,241,0.65), rgba(14,165,233,0.65));
+    }
+
+    .resizable-wrapper.view-split-vertical [data-clientes-detail-container] {
+      overflow: hidden;
+    }
+
+    .resizable-wrapper.view-split-vertical [data-clientes-detail-layout] {
+      flex-direction: row;
+      align-items: stretch;
+      gap: 1.5rem;
+    }
+
+    .resizable-wrapper.view-split-vertical [data-clientes-detail-content] {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .resizable-wrapper.view-split-vertical .detail-category-tools {
+      display: flex;
+      flex-direction: column;
+      flex: 0 0 190px;
+      max-width: 220px;
+      margin-left: 0.5rem;
+      padding-left: 1rem;
+      padding-top: 0.25rem;
+      border-left: 1px solid var(--bs-border-color);
+      height: 100%;
+      gap: 0.75rem;
+    }
+
+    .resizable-wrapper.view-split-vertical .detail-category-nav {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      overflow-y: auto;
+      gap: 0.75rem;
+      height: 100%;
+    }
+
+    @media (max-width: 1199.98px) {
+      .resizable-wrapper.view-split-vertical .detail-category-nav {
+        display: none;
+      }
+    }
+
+    .treeview {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+      border-radius: var(--bs-border-radius-lg, 0.5rem);
+      border: 1px solid var(--bs-border-color);
+      background-color: var(--bs-card-bg, var(--bs-body-bg));
+    }
+
+    .treeview-body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      min-height: 120px;
+    }
+
+    .treeview-status {
+      font-size: 0.85rem;
+      color: var(--bs-secondary-color);
+    }
+
+    .treeview-search {
+      position: relative;
+    }
+
+    .treeview-search .form-control {
+      padding-left: 2.25rem;
+    }
+
+    .treeview-search-icon {
+      position: absolute;
+      top: 50%;
+      left: 0.75rem;
+      transform: translateY(-50%);
+      color: var(--bs-secondary-color);
+      pointer-events: none;
+    }
+
+    .treeview-header {
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .treeview-list {
+      list-style: none;
+      margin: 0;
+      padding-left: 0;
+    }
+
+    .treeview-list .treeview-list {
+      margin-left: 1rem;
+      padding-left: 0.5rem;
+      border-left: 1px solid var(--bs-border-color);
+    }
+
+    @media (max-width: 575.98px) {
+      .treeview-list .treeview-list {
+        margin-left: 0.75rem;
+        padding-left: 0.5rem;
+      }
+    }
+
+    .treeview-item {
+      margin: 0.125rem 0;
+      padding: 0.125rem 0;
+    }
+
+    .treeview-node {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      border-radius: var(--bs-border-radius, 0.375rem);
+      padding: 0.375rem 0.5rem;
+      color: var(--bs-body-color);
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .treeview-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: var(--bs-border-radius-circle, 999px);
+      background-color: rgba(var(--bs-primary-rgb, 101, 113, 255), 0.08);
+      color: var(--bs-primary);
+      flex-shrink: 0;
+    }
+
+    .treeview-icon .lucide {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .treeview-node:hover,
+    .treeview-node:focus-within {
+      background-color: rgba(var(--bs-primary-rgb, 101, 113, 255), 0.08);
+      color: var(--bs-primary);
+    }
+
+    .treeview-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      border: 1px solid transparent;
+      border-radius: var(--bs-border-radius-circle, 999px);
+      background-color: transparent;
+      color: var(--bs-secondary-color);
+      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .treeview-toggle::after {
+      content: '';
+      display: inline-block;
+      width: 0.45rem;
+      height: 0.45rem;
+      border: 0.125rem solid currentColor;
+      border-left: 0;
+      border-top: 0;
+      transform: rotate(-45deg);
+      transition: transform 0.2s ease;
+    }
+
+    .treeview-item[aria-expanded='true'] > .treeview-node .treeview-toggle::after {
+      transform: rotate(45deg);
+    }
+
+    .treeview-toggle:hover,
+    .treeview-toggle:focus-visible {
+      background-color: rgba(var(--bs-primary-rgb, 101, 113, 255), 0.12);
+      color: var(--bs-primary);
+      border-color: rgba(var(--bs-primary-rgb, 101, 113, 255), 0.25);
+    }
+
+    .treeview-toggle--placeholder {
+      pointer-events: none;
+      border: 1px solid transparent;
+    }
+
+    .treeview-toggle--placeholder::after {
+      display: none;
+    }
+
+    .treeview-node--leaf .treeview-label {
+      font-weight: 400;
+    }
+
+    .treeview-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-weight: 500;
+      line-height: 1.25;
+      background-color: transparent;
+      border: 0;
+      padding: 0;
+      color: inherit;
+      text-align: left;
+      cursor: default;
+    }
+
+    .treeview-label[data-tree-action="navigate"] {
+      cursor: pointer;
+    }
+
+    .treeview-item.is-collapsed > .treeview-node {
+      background-color: transparent;
+      color: var(--bs-body-color);
+    }
+
+    .treeview-item--match > .treeview-node {
+      background-color: rgba(var(--bs-success-rgb, 5, 163, 74), 0.1);
+      color: var(--bs-success);
+    }
+
+    .treeview-item.is-collapsed > .treeview-node .treeview-toggle::after {
+      transform: rotate(-45deg);
+    }
+
+    .treeview-item[hidden] {
+      display: none !important;
+    }
+
+    .treeview-list[hidden] {
+      display: none !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .treeview-node,
+      .treeview-toggle,
+      .treeview-toggle::after {
+        transition: none;
+      }
+    }
+
+    @media (min-width: 1400px) {
+      .container-xxxl {
+        max-width: 1600px;
+      }
+    }
+
+    @media (min-width: 1800px) {
+      .container-xxxl {
+        max-width: 1840px;
+      }
+    }
+
+    @media (max-width: 991.98px) {
+      .resizable-wrapper {
+        height: auto;
+      }
+
+      .resizable-panel {
+        min-height: 220px;
+      }
+
+      .resizable-handle {
+        display: none;
+      }
+    }
+
+    #procesoLogTable thead th {
+      cursor: pointer;
+    }
+    #procesoLogTable tbody tr,
+    #procesoLogTable tbody tr > * {
+      cursor: pointer !important;
+    }
+  </style>
+
+  <link rel="shortcut icon" href="./assets/images/favicon.png" />
+</head>
+<body>
+	<div class="main-wrapper">
+
+		<!-- partial:partials/_sidebar.html -->
+		<nav class="sidebar">
+      <div class="sidebar-header">
+        <a href="#" class="sidebar-brand">Fleet<span>Pilot</span></a>
+        <div class="sidebar-toggler">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div class="sidebar-body">
+        <ul class="nav" id="sidebarNav">
+          <li class="nav-item nav-category" data-i18n="sidebar.category.main">Principal</li>
+          <li class="nav-item">
+            <a href="dashboard.html" class="nav-link">
+              <i class="link-icon" data-lucide="box"></i>
+              <span class="link-title" data-i18n="sidebar.link.dashboard">Inicio</span>
+            </a>
+          </li>
+          <li class="nav-item nav-category" data-i18n="sidebar.category.customers">Conductores</li>
+          <li class="nav-item">
+            <a href="ListaConductores.html" class="nav-link">
+              <i class="link-icon" data-lucide="users"></i>
+              <span class="link-title" data-i18n="sidebar.category.customersList">Todos los conductores</span>
+            </a>
+          </li>
+          <li class="nav-item nav-category">Inversores</li>
+          <li class="nav-item">
+            <a href="ListaInversores.html" class="nav-link">
+              <i class="link-icon" data-lucide="briefcase"></i>
+              <span class="link-title">Todos los inversores</span>
+            </a>
+          </li>
+          <li class="nav-item nav-category">Vehículos</li>
+          <li class="nav-item">
+            <a href="ListaVehiculos.html" class="nav-link">
+              <i class="link-icon" data-lucide="car"></i>
+              <span class="link-title">Todos los vehículos</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+		<!-- partial -->
+    
+    <div class="page-wrapper">
+					
+			<!-- partial:partials/_navbar.html -->
+			<nav class="navbar">
+				<div class="navbar-content">
+
+          <div class="logo-mini-wrapper">
+            <img src="assets/images/logo-mini-light.png" class="logo-mini logo-mini-light" alt="logo">
+            <img src="assets/images/logo-mini-dark.png" class="logo-mini logo-mini-dark" alt="logo">
+          </div>
+
+					<form class="search-form" role="search">
+						<div class="input-group">
+              <div class="input-group-text">
+                <i data-lucide="search"></i>
+              </div>
+							<input type="text" class="form-control" id="navbarForm" placeholder="Search here..." data-i18n-placeholder="navbar.search.placeholder">
+						</div>
+            <div class="search-panel" role="dialog" aria-modal="false" aria-hidden="true">
+              <ul class="nav nav-tabs search-panel-tabs" id="navbarSearchTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="navbar-search-tab-drivers" data-bs-toggle="tab" data-bs-target="#navbar-search-pane-drivers" type="button" role="tab" aria-controls="navbar-search-pane-drivers" aria-selected="true">
+                    Conductores
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="navbar-search-tab-investors" data-bs-toggle="tab" data-bs-target="#navbar-search-pane-investors" type="button" role="tab" aria-controls="navbar-search-pane-investors" aria-selected="false">
+                    Inversores
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="navbar-search-tab-vehicles" data-bs-toggle="tab" data-bs-target="#navbar-search-pane-vehicles" type="button" role="tab" aria-controls="navbar-search-pane-vehicles" aria-selected="false">
+                    Vehículos
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="navbar-search-tab-global" data-bs-toggle="tab" data-bs-target="#navbar-search-pane-global" type="button" role="tab" aria-controls="navbar-search-pane-global" aria-selected="false">
+                    En todo FleetPilot
+                  </button>
+                </li>
+              </ul>
+              <div class="tab-content search-panel-content">
+                <div class="tab-pane fade show active" id="navbar-search-pane-drivers" role="tabpanel" aria-labelledby="navbar-search-tab-drivers">
+                  <div class="search-panel-intro">
+                    <p class="search-panel-placeholder mb-3">
+                      Empieza a escribir para buscar conductores o ordena por columna.
+                    </p>
+                  </div>
+                  <div class="search-panel-table-wrapper">
+                    <table class="table table-hover table-striped align-middle mb-0 search-panel-table" data-search-panel-table="drivers">
+                      <thead class="bg-body-tertiary">
+                        <tr>
+                          <th scope="col">NOMBRECOMPLETO</th>
+                          <th scope="col">NDOCUMENTOIDENTIDAD</th>
+                          <th scope="col">ESTADO</th>
+                          <th scope="col">NOMBREINVERSOR</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr data-search-panel-loading class="d-none">
+                          <td colspan="4" class="text-secondary text-center py-4">Cargando conductores...</td>
+                        </tr>
+                        <tr data-search-panel-error class="d-none">
+                          <td colspan="4" class="text-danger text-center py-4">No se pudieron cargar los conductores.</td>
+                        </tr>
+                        <tr data-search-panel-empty>
+                          <td colspan="4" class="text-secondary text-center py-4">Sin resultados disponibles.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="navbar-search-pane-investors" role="tabpanel" aria-labelledby="navbar-search-tab-investors">
+                  <p class="search-panel-placeholder">
+                    Empieza a escribir para buscar inversores.
+                  </p>
+                </div>
+                <div class="tab-pane fade" id="navbar-search-pane-vehicles" role="tabpanel" aria-labelledby="navbar-search-tab-vehicles">
+                  <p class="search-panel-placeholder">
+                    Empieza a escribir para buscar vehículos.
+                  </p>
+                </div>
+                <div class="tab-pane fade" id="navbar-search-pane-global" role="tabpanel" aria-labelledby="navbar-search-tab-global">
+                  <p class="search-panel-placeholder">
+                    Escribe para buscar en todo FleetPilot.
+                  </p>
+                </div>
+              </div>
+            </div>
+						</form>
+
+					<ul class="navbar-nav">
+            <li class="theme-switcher-wrapper nav-item">
+              <input type="checkbox" value="" id="theme-switcher">
+              <label for="theme-switcher">
+                <div class="box">
+                  <div class="ball"></div>
+                  <div class="icons">
+                    <i data-lucide="sun"></i>
+                    <i data-lucide="moon"></i>
+                  </div>
+                </div>
+              </label>
+            </li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i data-lucide="bell"></i>
+                <!--
+								<div class="indicator">
+									<div class="circle"></div>
+								</div>
+                 -->
+							</a>
+							<div class="dropdown-menu p-0" aria-labelledby="notificationDropdown">
+								<div class="px-3 py-2 d-flex align-items-center justify-content-between border-bottom">
+							<p data-i18n="navbar.dropdown.notifications">Sin notificaciones</p>
+              
+						</div>
+								<div class="px-3 py-2 d-flex align-items-center justify-content-center border-top">
+									<a href="javascript:;" class="text-secondary" data-i18n="navbar.dropdown.clear">Clear all</a>
+								</div>
+							</div>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<img class="w-30px h-30px ms-1 rounded-circle" data-auth-avatar data-avatar-size="128" src="https://ui-avatars.com/api/?name=User&background=6571ff&color=fff&size=128" alt="profile">
+							</a>
+							<div class="dropdown-menu p-0" aria-labelledby="profileDropdown">
+								<div class="d-flex flex-column align-items-center border-bottom px-5 py-3">
+									<div class="mb-3">
+										<img class="w-80px h-80px rounded-circle" data-auth-avatar data-avatar-size="256" src="https://ui-avatars.com/api/?name=User&background=6571ff&color=fff&size=256" alt="">
+									</div>
+									<div class="text-center">
+										<p class="fs-16px fw-bolder" data-auth-user data-default-value="Amiah Burton">Amiah Burton</p>
+									</div>
+								</div>
+                <ul class="list-unstyled p-1">
+                  <li>
+                    <a href="javascript:;" class="dropdown-item py-2 text-body ms-0" data-auth-action="logout">
+                      <i class="me-2 icon-md" data-lucide="log-out"></i>
+                      <span data-i18n="navbar.user.logout">Log Out</span>
+                    </a>
+                  </li>
+                </ul>
+							</div>
+						</li>
+					</ul>
+
+          <a href="#" class="sidebar-toggler">
+            <i data-lucide="menu"></i>
+          </a>
+
+				</div>
+			</nav>
+
+			<!-- partial -->
+	      <div class="page-content container-xxl container-xxxl py-4 py-lg-5">
+        <div class="row g-4">
+          <div class="col-12">
+            <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+
+              <div>
+                <h1 class="h4 mb-0" data-clientes-title>Conductores</h1>
+                <p class="text-secondary mb-0" data-clientes-subtitle>Gestiona y analiza la lista de conductores.</p>
+              </div>
+              <button type="button" class="btn btn-secondary" data-actions-always-visible data-clientes-actions-toggle data-bs-toggle="offcanvas" data-bs-target="#clientesActionsOffcanvas" aria-controls="clientesActionsOffcanvas">
+                Otros procesos
+              </button>
+              <div class="ms-auto d-flex align-items-center gap-2 flex-wrap">
+                <div class="alert alert-info mb-0 d-none py-2 px-3" role="status" data-clientes-status></div>
+              </div>
+            </div>
+
+            <div class="resizable-wrapper" data-resizable-wrapper>
+              <div class="resizable-panel" data-resizable-top>
+                <div class="card border-0 shadow-sm rounded-3 h-100" data-proceso-form-card>
+                  <div class="card-body p-3 p-md-4">
+                    <div class="proceso-split-wrapper" data-proceso-side-wrapper>
+                      <div class="d-flex align-items-center justify-content-end mb-2">
+                        <h2 class="h4 mb-0 fw-semibold me-auto d-none" data-proceso-title>Histórico de publicaciones</h2>
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
+                          data-proceso-toggle-top
+                          aria-expanded="true"
+                          title="Mostrar u ocultar el histórico"
+                        >
+                          <i data-lucide="chevrons-up"></i>
+                          <span data-proceso-toggle-label>Ocultar histórico</span>
+                        </button>
+                      </div>
+                      <div class="proceso-split-panel proceso-split-panel--top d-none" data-proceso-side-top>
+                        <div class="card border-0 shadow-sm h-100">
+                          <div class="card-body d-flex flex-column p-3 p-md-4">
+                            <div class="table-responsive flex-grow-1">
+                              <table id="procesoLogTable" class="table table-hover align-middle mb-0">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Publicación</th>
+                                    <th scope="col">Fecha y hora</th>
+                                    <th scope="col">Usuario</th>
+                                    <th scope="col">Acción</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td colspan="4" class="text-secondary small">Cargando historial…</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        class="proceso-split-handle d-none"
+                        data-proceso-side-handle
+                        aria-label="Redimensionar paneles"
+                        aria-orientation="horizontal"
+                        role="separator"
+                        tabindex="0"
+                      ></button>
+                      <div class="proceso-split-panel proceso-split-panel--bottom" data-proceso-side-bottom>
+                        <form class="row g-3" data-proceso-conductor-form>
+                          <div class="col-12 col-lg-6">
+                            <div class="mb-3 mb-lg-0">
+                              <label for="procesoNombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="procesoNombre"
+                                name="nombre"
+                                autocomplete="given-name"
+                                required
+                                aria-required="true"
+                              >
+                            </div>
+                          </div>
+                          <div class="col-12 col-lg-6">
+                            <div class="mb-3 mb-lg-0">
+                              <label for="procesoApellido1" class="form-label">Primer apellido <span class="text-danger">*</span></label>
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="procesoApellido1"
+                                name="apellido1"
+                                autocomplete="family-name"
+                                required
+                                aria-required="true"
+                              >
+                            </div>
+                          </div>
+                          <div class="col-12 col-lg-6">
+                            <div class="mb-3 mb-lg-0">
+                              <label for="procesoApellido2" class="form-label">
+                                Segundo apellido
+                                <span class="text-secondary small ms-1">(opcional)</span>
+                              </label>
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="procesoApellido2"
+                                name="apellido2"
+                                autocomplete="additional-name"
+                              >
+                            </div>
+                          </div>
+                          <div class="col-12 col-lg-6">
+                            <div class="mb-3 mb-lg-0">
+                              <label for="procesoDocumento" class="form-label">Documento de identidad <span class="text-danger">*</span></label>
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="procesoDocumento"
+                                name="ndocumentoidentidad"
+                                autocomplete="off"
+                                required
+                                aria-required="true"
+                                data-validate="documento"
+                              >
+                            </div>
+                          </div>
+                          <div class="col-12 col-lg-6">
+                            <div class="mb-0">
+                              <label for="procesoTelefono1" class="form-label">Teléfono principal <span class="text-danger">*</span></label>
+                              <input
+                                type="tel"
+                                class="form-control"
+                                id="procesoTelefono1"
+                                name="telefono1"
+                                inputmode="tel"
+                                autocomplete="tel"
+                                required
+                                aria-required="true"
+                                data-validate="telefono"
+                              >
+                            </div>
+                          </div>
+                        </form>
+                        <div class="mt-3 d-flex justify-content-end gap-2">
+                          <button type="button" class="btn btn-outline-secondary" data-proceso-cancelar>
+                            Cancelar
+                          </button>
+                          <button type="button" class="btn btn-warning" data-proceso-publicar>
+                            Publicar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="resizable-handle" data-resizable-handle aria-label="Redimensionar paneles" title="Arrastra para redimensionar los paneles"></button>
+              <div class="resizable-panel" data-resizable-bottom>
+                <div class="card border-0 shadow-sm rounded-3 h-100">
+                  <div class="card-body p-3 p-md-4">
+                    <div class="d-flex flex-column h-100">
+                      <div class="d-none d-flex flex-column flex-grow-1" data-clientes-detail-tabs-wrapper>
+                        <ul class="nav nav-tabs nav-tabs-line" id="clientesDetailTabs" role="tablist">
+                          <li class="nav-item">
+                            <a class="nav-link active" id="clientes-detail-basicos-tab" data-bs-toggle="tab" href="#clientes-detail-basicos" role="tab" aria-controls="clientes-detail-basicos" aria-selected="true">Datos básicos</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" id="clientes-detail-historicos-tab" data-bs-toggle="tab" href="#clientes-detail-historicos" role="tab" aria-controls="clientes-detail-historicos" aria-selected="false">Históricos</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" id="clientes-detail-documentacion-tab" data-bs-toggle="tab" href="#clientes-detail-documentacion" role="tab" aria-controls="clientes-detail-documentacion" aria-selected="false">Documentación</a>
+                          </li>
+                        </ul>
+                    <div class="tab-content flex-grow-1 mt-4 position-relative" id="clientesDetailTabsContent" data-clientes-detail-container>
+                          <div class="tab-pane fade show active" id="clientes-detail-basicos" role="tabpanel" aria-labelledby="clientes-detail-basicos-tab">
+                            <div class="detail-layout" data-clientes-detail-layout>
+                              <div class="detail-layout-content" data-clientes-detail-content>
+                                <div class="detail-field-search d-none" data-clientes-detail-search>
+                                  <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-transparent border-end-0 text-secondary detail-field-search-icon">
+                                      <i data-lucide="search"></i>
+                                    </span>
+                                    <input type="search" class="form-control border-start-0 ps-0" placeholder="Buscar campos..." aria-label="Buscar campos" data-clientes-detail-search-input>
+                                  </div>
+                                </div>
+                                <form class="pb-2 d-none" data-clientes-detail-form novalidate>
+                                  <div class="detail-grid" data-clientes-detail-grid></div>
+                                </form>
+                              </div>
+                              <div class="detail-category-tools">
+                                <nav class="detail-category-nav" data-clientes-detail-category-nav aria-label="Secciones del detalle"></nav>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="tab-pane fade" id="clientes-detail-historicos" role="tabpanel" aria-labelledby="clientes-detail-historicos-tab">
+                            <div class="text-secondary" data-clientes-detail-historicos>Sin datos históricos disponibles.</div>
+                          </div>
+                          <div class="tab-pane fade" id="clientes-detail-documentacion" role="tabpanel" aria-labelledby="clientes-detail-documentacion-tab">
+                            <div class="text-secondary" data-clientes-detail-documentacion>Sin documentación disponible.</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flex-grow-1 d-flex align-items-center justify-content-center text-secondary text-center px-3" data-clientes-detail-empty>
+                        Selecciona un conductor de la lista superior para ver su información aquí.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <div class="modal fade" id="nuevoConductorModal" tabindex="-1" aria-labelledby="nuevoConductorModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+          <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0">
+              <div class="modal-header bg-success text-white border-0">
+                <h5 class="modal-title text-white" id="nuevoConductorModalLabel">Nuevo conductor</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+              <div class="modal-body pb-4">
+                <form data-conductor-form>
+                  <p class="text-secondary small mb-4">Los campos marcados con <span class="text-danger">*</span> son obligatorios.</p>
+                  <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                      <label for="conductorNombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="conductorNombre" name="nombre" autocomplete="given-name" required aria-required="true">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="conductorApellido1" class="form-label">Primer apellido <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="conductorApellido1" name="apellido1" autocomplete="family-name" required aria-required="true">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="conductorApellido2" class="form-label">Segundo apellido <span class="text-secondary small ms-1">(opcional)</span></label>
+                      <input type="text" class="form-control" id="conductorApellido2" name="apellido2" autocomplete="additional-name">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="conductorDocumento" class="form-label">Documento de identidad <span class="text-danger">*</span></label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="conductorDocumento"
+                        name="ndocumentoidentidad"
+                        autocomplete="off"
+                        required
+                        aria-required="true"
+                        data-validate="documento"
+                      >
+                    </div>
+                    <div class="col-md-6">
+                      <label for="conductorTelefono1" class="form-label">Teléfono principal <span class="text-danger">*</span></label>
+                      <input
+                        type="tel"
+                        class="form-control"
+                        id="conductorTelefono1"
+                        name="telefono1"
+                        inputmode="tel"
+                        autocomplete="tel"
+                        required
+                        aria-required="true"
+                        data-validate="telefono"
+                      >
+                    </div>
+                    <div class="col-md-6">
+                      <label for="conductorTelefono2" class="form-label">Teléfono alternativo <span class="text-secondary small ms-1">(opcional)</span></label>
+                      <input type="tel" class="form-control" id="conductorTelefono2" name="telefono2" inputmode="tel" autocomplete="tel">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="conductorFechaNacimiento" class="form-label">Fecha de nacimiento <span class="text-secondary small ms-1">(opcional)</span></label>
+                      <input type="text" class="form-control" id="conductorFechaNacimiento" name="fechaNacimiento" data-conductor-fecha autocomplete="bday" placeholder="Selecciona una fecha">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="conductorNacionalidad" class="form-label">Nacionalidad <span class="text-secondary small ms-1">(opcional)</span></label>
+                      <select class="form-select" id="conductorNacionalidad" name="nacionalidad" data-conductor-nacionalidad data-placeholder="Selecciona un país">
+                        <option value="" selected>Selecciona un país</option>
+                      </select>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" data-role="conductor-guardar">Guardar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal de confirmación para publicar -->
+        <div class="modal fade" id="publicarConfirmModal" tabindex="-1" aria-labelledby="publicarConfirmModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0">
+              <div class="modal-header bg-warning text-dark border-0">
+                <h5 class="modal-title fw-semibold" id="publicarConfirmModalLabel">
+                  <i class="me-2" data-lucide="alert-triangle"></i>
+                  Atención, Vas a publicar un registro
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+              <div class="modal-body pb-4">
+                <p class="mb-0">
+                  Esto hará que pueda estar disponible para su utilización en otros procesos y otros usuarios, además esta acción no se puede deshacer, ¿estás seguro?
+                </p>
+              </div>
+              <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-warning" data-publicar-confirmar>Confirmar publicación</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="clientesActionsOffcanvas" aria-labelledby="clientesActionsOffcanvasLabel" aria-hidden="true">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="clientesActionsOffcanvasLabel">Acciones del conductor</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+          </div>
+          <div class="offcanvas-body">
+            <p class="text-secondary small mb-4">
+              Gestiona las operaciones del conductor <strong data-clientes-actions-name>seleccionado</strong>.
+            </p>
+            <div class="treeview" data-clientes-treeview>
+              <div class="treeview-header text-secondary">Procesos disponibles</div>
+              <div class="treeview-search mb-2">
+                <span class="treeview-search-icon">
+                  <i class="text-secondary" data-lucide="search"></i>
+                </span>
+                <input type="search" class="form-control form-control-sm" placeholder="Buscar proceso…" aria-label="Buscar proceso" data-treeview-search>
+              </div>
+              <div class="treeview-body" data-treeview-body>
+                <div class="treeview-status" data-treeview-status>Cargando menú…</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" data-clientes-toast-container>
+          <div id="clientesCopyToast" class="toast text-bg-success border-0 shadow-sm" role="status" aria-live="polite" aria-atomic="true" data-bs-delay="2200">
+            <div class="d-flex align-items-center">
+              <div class="toast-body">
+                Datos copiados al portapapeles.
+              </div>
+              <button type="button" class="btn-close btn-close-white ms-2 me-1" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+            </div>
+          </div>
+        </div>
+
+      <!-- partial:partials/_footer.html -->
+
+      <footer class="footer d-flex flex-row align-items-center justify-content-between px-4 py-3 border-top small">
+				<p class="text-secondary mb-1 mb-md-0"><span data-i18n="footer.copyright">Copyright © 2025</span> <a href="https://fmprosoft.com" target="_blank">FleetPilot</a>.</p>
+				<p class="text-secondary"><span data-i18n="footer.handcrafted">Handcrafted with</span> <i class="mb-1 text-primary ms-1 icon-sm" data-lucide="heart"></i></p>
+			</footer>
+
+      <!-- partial -->
+
+    </div>
+  </div>
+
+	<!-- core:js -->
+	<script src="./assets/vendors/core/core.js"></script>
+	<!-- endinject -->
+
+	<!-- Plugin js for this page -->
+  <script src="./assets/vendors/flatpickr/flatpickr.min.js"></script>
+  <script src="./assets/vendors/apexcharts/apexcharts.min.js"></script>
+  <script src="./assets/vendors/select2/select2.min.js"></script>
+ <!-- End plugin js for this page -->
+
+	<!-- inject:js -->
+	<script src="./assets/js/authStorage.js"></script>
+	<script src="./assets/js/apiClient.js"></script>
+	<script src="./assets/js/init-auth.js"></script>
+	<script src="./assets/js/i18n.js"></script>
+ <script src="./assets/js/app.js"></script>
+ <!-- endinject -->
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const COUNTRIES = [
+        'Afganistán',
+        'Albania',
+        'Alemania',
+        'Andorra',
+        'Angola',
+        'Antigua y Barbuda',
+        'Arabia Saudita',
+        'Argelia',
+        'Argentina',
+        'Armenia',
+        'Australia',
+        'Austria',
+        'Azerbaiyán',
+        'Bahamas',
+        'Bangladés',
+        'Barbados',
+        'Baréin',
+        'Bélgica',
+        'Belice',
+        'Benín',
+        'Bielorrusia',
+        'Birmania',
+        'Bolivia',
+        'Bosnia y Herzegovina',
+        'Botsuana',
+        'Brasil',
+        'Brunéi',
+        'Bulgaria',
+        'Burkina Faso',
+        'Burundi',
+        'Bután',
+        'Cabo Verde',
+        'Camboya',
+        'Camerún',
+        'Canadá',
+        'Catar',
+        'Chad',
+        'Chile',
+        'China',
+        'Chipre',
+        'Colombia',
+        'Comoras',
+        'Corea del Norte',
+        'Corea del Sur',
+        'Costa de Marfil',
+        'Costa Rica',
+        'Croacia',
+        'Cuba',
+        'Dinamarca',
+        'Dominica',
+        'Ecuador',
+        'Egipto',
+        'El Salvador',
+        'Emiratos Árabes Unidos',
+        'Eritrea',
+        'Eslovaquia',
+        'Eslovenia',
+        'España',
+        'Estados Unidos',
+        'Estonia',
+        'Etiopía',
+        'Fiyi',
+        'Filipinas',
+        'Finlandia',
+        'Francia',
+        'Gabón',
+        'Gambia',
+        'Georgia',
+        'Ghana',
+        'Granada',
+        'Grecia',
+        'Guatemala',
+        'Guinea',
+        'Guinea-Bisáu',
+        'Guinea Ecuatorial',
+        'Guyana',
+        'Haití',
+        'Honduras',
+        'Hungría',
+        'India',
+        'Indonesia',
+        'Irak',
+        'Irán',
+        'Irlanda',
+        'Islandia',
+        'Islas Marshall',
+        'Islas Salomón',
+        'Israel',
+        'Italia',
+        'Jamaica',
+        'Japón',
+        'Jordania',
+        'Kazajistán',
+        'Kenia',
+        'Kirguistán',
+        'Kiribati',
+        'Kuwait',
+        'Laos',
+        'Lesoto',
+        'Letonia',
+        'Líbano',
+        'Liberia',
+        'Libia',
+        'Liechtenstein',
+        'Lituania',
+        'Luxemburgo',
+        'Macedonia del Norte',
+        'Madagascar',
+        'Malasia',
+        'Malaui',
+        'Maldivas',
+        'Malí',
+        'Malta',
+        'Marruecos',
+        'Mauricio',
+        'Mauritania',
+        'México',
+        'Micronesia',
+        'Moldavia',
+        'Mónaco',
+        'Mongolia',
+        'Montenegro',
+        'Mozambique',
+        'Namibia',
+        'Nauru',
+        'Nepal',
+        'Nicaragua',
+        'Níger',
+        'Nigeria',
+        'Noruega',
+        'Nueva Zelanda',
+        'Omán',
+        'Países Bajos',
+        'Pakistán',
+        'Palaos',
+        'Panamá',
+        'Papúa Nueva Guinea',
+        'Paraguay',
+        'Perú',
+        'Polonia',
+        'Portugal',
+        'Reino Unido',
+        'República Centroafricana',
+        'República Checa',
+        'República del Congo',
+        'República Democrática del Congo',
+        'República Dominicana',
+        'Ruanda',
+        'Rumanía',
+        'Rusia',
+        'Samoa',
+        'San Cristóbal y Nieves',
+        'San Marino',
+        'San Vicente y las Granadinas',
+        'Santa Lucía',
+        'Santo Tomé y Príncipe',
+        'Senegal',
+        'Serbia',
+        'Seychelles',
+        'Sierra Leona',
+        'Singapur',
+        'Siria',
+        'Somalia',
+        'Sri Lanka',
+        'Sudáfrica',
+        'Sudán',
+        'Sudán del Sur',
+        'Suecia',
+        'Suiza',
+        'Surinam',
+        'Tailandia',
+        'Tanzania',
+        'Tayikistán',
+        'Timor Oriental',
+        'Togo',
+        'Tonga',
+        'Trinidad y Tobago',
+        'Túnez',
+        'Turkmenistán',
+        'Turquía',
+        'Tuvalu',
+        'Ucrania',
+        'Uganda',
+        'Uruguay',
+        'Uzbekistán',
+        'Vanuatu',
+        'Venezuela',
+        'Vietnam',
+        'Yemen',
+        'Yibuti',
+        'Zambia',
+        'Zimbabue'
+      ];
+
+      const isDocumentoValido = (value = '') => {
+        const normalized = String(value ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (/^\d{8}[A-Z]$/.test(normalized)) {
+          return true;
+        }
+        if (/^[XYZ]\d{8}$/.test(normalized)) {
+          return true;
+        }
+        return false;
+      };
+
+      const isTelefonoValido = (value = '') => {
+        const digitsOnly = String(value ?? '').replace(/\D/g, '');
+        if (!/^\d{9}$/.test(digitsOnly)) {
+          return false;
+        }
+        return /^[6789]\d{8}$/.test(digitsOnly);
+      };
+
+      const triggerHighlight = (element) => {
+        if (!element) {
+          return;
+        }
+        element.classList.remove('detail-field-highlight');
+        void element.offsetWidth;
+        element.classList.add('detail-field-highlight');
+      };
+
+      const clearHighlight = (element) => {
+        if (!element) {
+          return;
+        }
+        element.classList.remove('detail-field-highlight');
+      };
+
+      const getFieldLabel = (form, field) => {
+        if (!form || !field?.id) {
+          return null;
+        }
+        return form.querySelector(`label[for="${field.id}"]`);
+      };
+
+      const markFieldInvalid = (form, field) => {
+        if (!field) {
+          return;
+        }
+        field.setAttribute('aria-invalid', 'true');
+        field.classList.add('is-field-invalid');
+        triggerHighlight(field);
+      };
+
+      const resetFieldState = (form, field) => {
+        if (!field) {
+          return;
+        }
+        field.removeAttribute('aria-invalid');
+        field.classList.remove('is-field-invalid');
+        clearHighlight(field);
+      };
+
+      const validateField = (form, field, { silent = false, skipEmpty = false } = {}) => {
+        if (!field) {
+          return true;
+        }
+        const rawValue = field.value ?? '';
+        const value = rawValue.trim();
+        if (!value) {
+          if (skipEmpty) {
+            resetFieldState(form, field);
+            return true;
+          }
+          if (!silent) {
+            markFieldInvalid(form, field);
+          }
+          return false;
+        }
+        const validationType = field.dataset.validate;
+        if (validationType === 'documento' && !isDocumentoValido(value)) {
+          if (!silent) {
+            markFieldInvalid(form, field);
+          }
+          return false;
+        }
+        if (validationType === 'telefono' && !isTelefonoValido(value)) {
+          if (!silent) {
+            markFieldInvalid(form, field);
+          }
+          return false;
+        }
+        resetFieldState(form, field);
+        return true;
+      };
+
+      const createConductorFormValidator = (form) => {
+        if (!form) {
+          return null;
+        }
+        const requiredFields = Array.from(form.querySelectorAll('[required]'));
+        requiredFields.forEach((field) => {
+          field.addEventListener('input', () => validateField(form, field, { silent: true, skipEmpty: true }));
+          field.addEventListener('blur', () => validateField(form, field, { skipEmpty: true }));
+        });
+        return {
+          validateAll() {
+            const invalidFields = [];
+            requiredFields.forEach((field) => {
+              if (!validateField(form, field)) {
+                invalidFields.push(field);
+              }
+            });
+            return invalidFields;
+          },
+          resetValidation() {
+            requiredFields.forEach((field) => resetFieldState(form, field));
+          },
+        };
+      };
+
+      const conductorModal = document.getElementById('nuevoConductorModal');
+      if (conductorModal) {
+        const conductorForm = conductorModal.querySelector('[data-conductor-form]');
+        const birthDateInput = conductorModal.querySelector('[data-conductor-fecha]');
+        const nationalitySelect = conductorModal.querySelector('[data-conductor-nacionalidad]');
+        const saveButton = conductorModal.querySelector('[data-role="conductor-guardar"]');
+        const modalContent = conductorModal.querySelector('.modal-content');
+        let birthDatePicker = null;
+        let $nationalitySelect = null;
+        const conductorFormValidator = createConductorFormValidator(conductorForm);
+
+        if (nationalitySelect && !nationalitySelect.dataset.optionsLoaded) {
+          const existingValues = new Set(Array.from(nationalitySelect.options).map((option) => option.value));
+          COUNTRIES.forEach((country) => {
+            if (!existingValues.has(country)) {
+              const option = document.createElement('option');
+              option.value = country;
+              option.textContent = country;
+              nationalitySelect.appendChild(option);
+            }
+          });
+          nationalitySelect.dataset.optionsLoaded = 'true';
+        }
+
+        if (birthDateInput && window.flatpickr) {
+          birthDatePicker = window.flatpickr(birthDateInput, {
+            dateFormat: 'Y-m-d',
+            altInput: true,
+            altFormat: 'd/m/Y',
+            allowInput: true,
+            locale: window.flatpickr?.l10ns?.es ?? 'es'
+          });
+        }
+
+        if (nationalitySelect && window.jQuery?.fn?.select2) {
+          $nationalitySelect = window.jQuery(nationalitySelect);
+          $nationalitySelect.select2({
+            dropdownParent: window.jQuery(conductorModal),
+            width: '100%',
+            placeholder: nationalitySelect.dataset.placeholder || 'Selecciona un país',
+            allowClear: true,
+            language: {
+              noResults: () => 'Sin resultados',
+              searching: () => 'Buscando...',
+              removeAllItems: () => 'Eliminar selección'
+            }
+          });
+          $nationalitySelect.val('').trigger('change');
+        }
+
+        conductorModal.addEventListener('shown.bs.modal', () => {
+          conductorForm?.querySelector('#conductorNombre')?.focus();
+        });
+
+        conductorModal.addEventListener('hidden.bs.modal', () => {
+          conductorForm?.reset();
+          birthDatePicker?.clear();
+          conductorFormValidator?.resetValidation();
+          if ($nationalitySelect) {
+            $nationalitySelect.val(null).trigger('change');
+          } else if (nationalitySelect) {
+            nationalitySelect.value = '';
+          }
+          modalContent?.classList.remove('modal-shake');
+        });
+
+        if (saveButton && conductorForm) {
+          saveButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            const invalidFields = conductorFormValidator ? conductorFormValidator.validateAll() : [];
+            if (invalidFields.length) {
+              invalidFields[0]?.focus({ preventScroll: false });
+              if (modalContent) {
+                modalContent.classList.remove('modal-shake');
+                void modalContent.offsetWidth;
+                modalContent.classList.add('modal-shake');
+              }
+              return;
+            }
+
+            const formData = Object.fromEntries(new FormData(conductorForm).entries());
+            console.log('Nuevo conductor (prototipo):', formData);
+
+            const modalInstance = window.bootstrap?.Modal.getInstance(conductorModal)
+              ?? new window.bootstrap.Modal(conductorModal);
+            modalInstance.hide();
+          });
+        }
+
+        if (modalContent) {
+          modalContent.addEventListener('animationend', (event) => {
+            if (event.animationName === 'modal-shake') {
+              modalContent.classList.remove('modal-shake');
+            }
+          });
+        }
+      }
+
+      const TREEVIEW_DATA_URL = './assets/data/conductores.json';
+      const TREEVIEW_PROCESS_ROUTES = new Map([
+        ['DC36C24D-29FF-435C-A7E9-ED1D31A25450', 'proceso.html']
+      ]);
+      const PROCESS_SELECTION_STORAGE_KEY = 'clientes.process-selection';
+
+      const PROCESO_LOG_DATA = [
+        { publicacion: 1, fechaHora: '2025-03-12 09:18', usuario: 'cmunoz', accion: 'Modificación', nombre: 'Carlos', apellido1: 'Muñoz', apellido2: 'López', documento: '12345678Z', telefono: '678123456' },
+        { publicacion: 2, fechaHora: '2025-03-12 11:42', usuario: 'lgarcia', accion: 'Modificación', nombre: 'Laura', apellido1: 'García', apellido2: 'Santos', documento: 'X2345678A', telefono: '689234567' },
+        { publicacion: 3, fechaHora: '2025-03-13 08:07', usuario: 'rsanz', accion: 'Modificación', nombre: 'Raúl', apellido1: 'Sanz', apellido2: 'Delgado', documento: '23456789M', telefono: '612345678' },
+        { publicacion: 4, fechaHora: '2025-03-14 15:29', usuario: 'mperez', accion: 'Modificación', nombre: 'María', apellido1: 'Pérez', apellido2: 'Camacho', documento: '34567890B', telefono: '699876543' },
+        { publicacion: 5, fechaHora: '2025-03-15 10:55', usuario: 'ajimenez', accion: 'Modificación', nombre: 'Andrés', apellido1: 'Jiménez', apellido2: 'Vega', documento: '45678901C', telefono: '633445566' }
+      ];
+      const PROCESO_DEFAULT_TOP_RATIO = 0.6;
+
+      const procesoForm = document.querySelector('[data-proceso-conductor-form]');
+      const procesoPublishButton = document.querySelector('[data-proceso-publicar]');
+      const procesoCancelButton = document.querySelector('[data-proceso-cancelar]');
+      const procesoToggleTopButton = document.querySelector('[data-proceso-toggle-top]');
+      const procesoFormCard = document.querySelector('[data-proceso-form-card]');
+      const procesoFormValidator = createConductorFormValidator(procesoForm);
+      const procesoSplitHandle = document.querySelector('[data-proceso-side-handle]');
+      const procesoSplitWrapper = document.querySelector('[data-proceso-side-wrapper]');
+      const procesoSplitTop = document.querySelector('[data-proceso-side-top]');
+      const procesoSplitBottom = document.querySelector('[data-proceso-side-bottom]');
+      const procesoTitle = document.querySelector('[data-proceso-title]');
+
+      const fillProcesoForm = (record = null) => {
+        if (!procesoForm) {
+          return;
+        }
+        const fields = {
+          nombre: procesoForm.querySelector('#procesoNombre'),
+          apellido1: procesoForm.querySelector('#procesoApellido1'),
+          apellido2: procesoForm.querySelector('#procesoApellido2'),
+          ndocumentoidentidad: procesoForm.querySelector('#procesoDocumento'),
+          telefono1: procesoForm.querySelector('#procesoTelefono1')
+        };
+        Object.entries(fields).forEach(([key, field]) => {
+          if (!field) {
+            return;
+          }
+          const value = record ? record[key] ?? '' : '';
+          field.value = value;
+          resetFieldState(procesoForm, field);
+        });
+      };
+
+      const initProcesoLogTable = () => {
+        if (!window.jQuery?.fn?.DataTable) {
+          return;
+        }
+        const $table = window.jQuery('#procesoLogTable');
+        if (!$table.length) {
+          return;
+        }
+        if ($table.hasClass('dataTable')) {
+          const instance = $table.DataTable();
+          instance.clear().rows.add(PROCESO_LOG_DATA).draw();
+          const firstRowNode = instance.row(0).node();
+          window.jQuery(instance.rows().nodes()).removeClass('table-active');
+          if (firstRowNode) {
+            window.jQuery(firstRowNode).addClass('table-active');
+          }
+          fillProcesoForm(PROCESO_LOG_DATA[0] ?? null);
+          window.requestAnimationFrame(() => setProcesoSplitTopRows(3));
+          return;
+        }
+        const instance = $table.DataTable({
+          data: PROCESO_LOG_DATA,
+          columns: [
+            { data: 'publicacion', title: 'Publicación' },
+            { data: 'fechaHora', title: 'Fecha y hora' },
+            { data: 'usuario', title: 'Usuario' },
+            { data: 'accion', title: 'Acción' }
+          ],
+          dom: 't',
+          paging: false,
+          searching: false,
+          info: false,
+          ordering: true,
+          autoWidth: false,
+          language: {
+            emptyTable: 'No hay registros de publicaciones.',
+            zeroRecords: 'No hay registros que coincidan con la búsqueda.'
+          }
+        });
+
+        fillProcesoForm(PROCESO_LOG_DATA[0] ?? null);
+        const firstRowNode = instance.row(0).node();
+        if (firstRowNode) {
+          firstRowNode.classList.add('table-active');
+        }
+
+        $table.on('click', 'tbody tr', function () {
+          const row = instance.row(this);
+          if (!row || !row.data()) {
+            return;
+          }
+          fillProcesoForm(row.data());
+          const $row = window.jQuery(this);
+          $row.addClass('table-active');
+          $row.siblings().removeClass('table-active');
+        });
+
+        window.requestAnimationFrame(() => setProcesoSplitTopRows(3));
+      };
+
+      const initProcesoSplit = () => {
+        if (!procesoSplitWrapper || !procesoSplitTop || !procesoSplitBottom || !procesoSplitHandle) {
+          return;
+        }
+
+        let isResizing = false;
+        let startY = 0;
+        let startTopHeight = 0;
+        const defaultTopRatio = 0.6;
+        let storedRatio = PROCESO_DEFAULT_TOP_RATIO;
+        let storedTopHeight = null;
+        const minTop = 120;
+        const minBottom = 140;
+
+        const applyRatio = (ratio) => {
+          const rect = procesoSplitWrapper.getBoundingClientRect();
+          const totalHeight = rect.height > 0 ? rect.height : procesoSplitWrapper.clientHeight;
+          if (!totalHeight) {
+            return;
+          }
+          const clampedRatio = Math.min(Math.max(ratio, minTop / totalHeight), 1 - minBottom / totalHeight);
+          const topHeight = clampedRatio * totalHeight;
+          procesoSplitTop.style.flexBasis = `${topHeight}px`;
+          procesoSplitTop.style.maxHeight = `${totalHeight - minBottom}px`;
+          procesoSplitBottom.style.flexBasis = `${totalHeight - topHeight - procesoSplitHandle.offsetHeight}px`;
+          storedRatio = clampedRatio;
+          storedTopHeight = topHeight;
+        };
+
+        const applyHeight = (height) => {
+          const rect = procesoSplitWrapper.getBoundingClientRect();
+          const totalHeight = rect.height > 0 ? rect.height : procesoSplitWrapper.clientHeight;
+          if (!totalHeight) {
+            return;
+          }
+          const maxTop = totalHeight - minBottom;
+          const clampedHeight = Math.min(Math.max(height, minTop), maxTop);
+          procesoSplitTop.style.flexBasis = `${clampedHeight}px`;
+          procesoSplitTop.style.maxHeight = `${maxTop}px`;
+          procesoSplitBottom.style.flexBasis = `${totalHeight - clampedHeight - procesoSplitHandle.offsetHeight}px`;
+          storedTopHeight = clampedHeight;
+          storedRatio = clampedHeight / totalHeight;
+        };
+
+        const getClientY = (event) => {
+          if (event.touches && event.touches.length) {
+            return event.touches[0].clientY;
+          }
+          if (event.changedTouches && event.changedTouches.length) {
+            return event.changedTouches[0].clientY;
+          }
+          return event.clientY;
+        };
+
+        const updateFromPointer = (clientY) => {
+          const rect = procesoSplitWrapper.getBoundingClientRect();
+          const delta = clientY - startY;
+          let newTop = startTopHeight + delta;
+          const maxTop = rect.height - minBottom;
+          if (newTop < minTop) newTop = minTop;
+          if (newTop > maxTop) newTop = maxTop;
+          const ratio = newTop / rect.height;
+          applyRatio(ratio);
+        };
+
+        const onPointerMove = (event) => {
+          if (!isResizing) {
+            return;
+          }
+          event.preventDefault();
+          const clientY = getClientY(event);
+          if (clientY == null) {
+            return;
+          }
+          updateFromPointer(clientY);
+        };
+
+        const stopResize = () => {
+          if (!isResizing) {
+            return;
+          }
+          isResizing = false;
+          document.removeEventListener('pointermove', onPointerMove);
+          document.removeEventListener('pointerup', stopResize);
+          document.removeEventListener('pointercancel', stopResize);
+          document.removeEventListener('mousemove', onPointerMove);
+          document.removeEventListener('mouseup', stopResize);
+          document.removeEventListener('touchmove', onPointerMove);
+          document.removeEventListener('touchend', stopResize);
+          document.removeEventListener('touchcancel', stopResize);
+          procesoSplitHandle.classList.remove('is-dragging');
+        };
+
+        const startResize = (event) => {
+          event.preventDefault();
+          const clientY = getClientY(event);
+          if (clientY == null) {
+            return;
+          }
+          const rect = procesoSplitWrapper.getBoundingClientRect();
+          startY = clientY;
+          startTopHeight = procesoSplitTop.getBoundingClientRect().height || (storedRatio * rect.height);
+          isResizing = true;
+          procesoSplitHandle.classList.add('is-dragging');
+          if ('PointerEvent' in window && event.type === 'pointerdown') {
+            document.addEventListener('pointermove', onPointerMove);
+            document.addEventListener('pointerup', stopResize);
+            document.addEventListener('pointercancel', stopResize);
+          } else {
+            document.addEventListener('mousemove', onPointerMove);
+            document.addEventListener('mouseup', stopResize);
+            document.addEventListener('touchmove', onPointerMove, { passive: false });
+            document.addEventListener('touchend', stopResize);
+            document.addEventListener('touchcancel', stopResize);
+          }
+        };
+
+        if ('PointerEvent' in window) {
+          procesoSplitHandle.addEventListener('pointerdown', startResize);
+        } else {
+          procesoSplitHandle.addEventListener('mousedown', startResize);
+          procesoSplitHandle.addEventListener('touchstart', (event) => {
+            event.preventDefault();
+            startResize(event);
+          }, { passive: false });
+        }
+
+        procesoSplitHandle.addEventListener('keydown', (event) => {
+          const step = 24;
+          const rect = procesoSplitWrapper.getBoundingClientRect();
+          if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            const topHeight = procesoSplitTop.getBoundingClientRect().height;
+            applyRatio((topHeight - step) / rect.height);
+          } else if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            const topHeight = procesoSplitTop.getBoundingClientRect().height;
+            applyRatio((topHeight + step) / rect.height);
+          } else if (event.key === 'Home') {
+            event.preventDefault();
+            applyRatio(minTop / rect.height);
+          } else if (event.key === 'End') {
+            event.preventDefault();
+            applyRatio((rect.height - minBottom) / rect.height);
+          }
+        });
+
+        const resizeObserver = typeof ResizeObserver === 'function'
+          ? new ResizeObserver(() => {
+              if (storedTopHeight !== null) {
+                applyHeight(storedTopHeight);
+              } else {
+                applyRatio(storedRatio);
+              }
+            })
+          : null;
+        resizeObserver?.observe(procesoSplitWrapper);
+
+        procesoSplitWrapper.dataset.splitMinTop = String(minTop);
+        procesoSplitWrapper.dataset.splitMinBottom = String(minBottom);
+        procesoSplitWrapper.__applySplitRatio = (ratio) => applyRatio(ratio);
+        applyRatio(PROCESO_DEFAULT_TOP_RATIO);
+      };
+
+      const setProcesoSplitTopRows = (rows = 3) => {
+        if (!procesoSplitWrapper || typeof procesoSplitWrapper.__applySplitRatio !== 'function') {
+          return;
+        }
+        const table = document.getElementById('procesoLogTable');
+        if (!table) {
+          procesoSplitWrapper.__applySplitRatio(PROCESO_DEFAULT_TOP_RATIO);
+          return;
+        }
+        const thead = table.tHead;
+        const headerHeight = thead ? (thead.getBoundingClientRect().height || thead.offsetHeight || 0) : 0;
+        const tbody = table.tBodies?.[0];
+        const allRows = tbody ? Array.from(tbody.rows).filter((row) => row.offsetParent !== null) : [];
+        if (!allRows.length) {
+          procesoSplitWrapper.__applySplitRatio(PROCESO_DEFAULT_TOP_RATIO);
+          return;
+        }
+        const selectedRows = allRows.slice(0, Math.max(rows, 1));
+        let desiredHeight = headerHeight;
+        selectedRows.forEach((row) => {
+          desiredHeight += row.getBoundingClientRect().height || row.offsetHeight || 0;
+        });
+        desiredHeight += 24;
+        const totalHeight = procesoSplitWrapper.getBoundingClientRect().height || procesoSplitWrapper.clientHeight || 0;
+        if (!totalHeight) {
+          procesoSplitWrapper.__applySplitRatio(PROCESO_DEFAULT_TOP_RATIO);
+          return;
+        }
+        const minTop = Number(procesoSplitWrapper.dataset.splitMinTop) || 0;
+        const minBottom = Number(procesoSplitWrapper.dataset.splitMinBottom) || 0;
+        const handleHeight = procesoSplitHandle?.offsetHeight ?? 0;
+        const availableMax = totalHeight - minBottom - handleHeight;
+        if (desiredHeight > availableMax) {
+          desiredHeight = availableMax;
+        }
+        if (desiredHeight < minTop) {
+          desiredHeight = minTop;
+        }
+        const ratio = desiredHeight / totalHeight;
+        procesoSplitWrapper.__applySplitRatio(ratio);
+      };
+
+      initProcesoSplit();
+      initProcesoLogTable();
+      window.lucide?.createIcons?.();
+
+      const collapseTopPanel = (focusButton = false) => {
+        if (!procesoSplitTop || !procesoSplitHandle) {
+          return;
+        }
+        procesoSplitTop.classList.add('d-none');
+        procesoSplitHandle.classList.add('d-none');
+        if (procesoTitle) {
+          procesoTitle.classList.add('d-none');
+        }
+        if (procesoToggleTopButton) {
+          procesoToggleTopButton.setAttribute('aria-expanded', 'false');
+          const icon = procesoToggleTopButton.querySelector('[data-lucide]');
+          if (icon) {
+            icon.setAttribute('data-lucide', 'chevrons-down');
+            window.lucide?.createIcons?.();
+          }
+          const label = procesoToggleTopButton.querySelector('[data-proceso-toggle-label]');
+          if (label) {
+            label.textContent = 'Mostrar histórico';
+          }
+          if (focusButton) {
+            procesoToggleTopButton.focus();
+          }
+        }
+        if (procesoSplitBottom) {
+          procesoSplitBottom.style.flexBasis = '100%';
+        }
+      };
+
+      collapseTopPanel();
+
+      if (procesoToggleTopButton) {
+        const toggleLabel = procesoToggleTopButton.querySelector('[data-proceso-toggle-label]');
+        procesoToggleTopButton.addEventListener('click', () => {
+          const isCurrentlyCollapsed = procesoSplitTop.classList.contains('d-none');
+          if (isCurrentlyCollapsed) {
+            procesoSplitTop.classList.remove('d-none');
+            procesoSplitHandle.classList.remove('d-none');
+            if (procesoTitle) {
+              procesoTitle.classList.remove('d-none');
+            }
+            procesoToggleTopButton.setAttribute('aria-expanded', 'true');
+            const icon = procesoToggleTopButton.querySelector('[data-lucide]');
+            if (icon) {
+              icon.setAttribute('data-lucide', 'chevrons-up');
+              window.lucide?.createIcons?.();
+            }
+            if (toggleLabel) {
+              toggleLabel.textContent = 'Ocultar histórico';
+            }
+            procesoSplitBottom.style.flexBasis = '';
+            window.requestAnimationFrame(() => {
+              if (procesoSplitWrapper && typeof procesoSplitWrapper.__applySplitRatio === 'function') {
+                procesoSplitWrapper.__applySplitRatio(0.5);
+              }
+            });
+          } else {
+            collapseTopPanel();
+          }
+        });
+      }
+
+      if (procesoFormCard) {
+        procesoFormCard.addEventListener('animationend', (event) => {
+          if (event.animationName === 'modal-shake') {
+            procesoFormCard.classList.remove('modal-shake');
+          }
+        });
+      }
+
+      if (procesoPublishButton && procesoForm) {
+        procesoPublishButton.addEventListener('click', (event) => {
+          event.preventDefault();
+          const invalidFields = procesoFormValidator ? procesoFormValidator.validateAll() : [];
+          if (invalidFields.length) {
+            invalidFields[0]?.focus({ preventScroll: false });
+            if (procesoFormCard) {
+              procesoFormCard.classList.remove('modal-shake');
+              void procesoFormCard.offsetWidth;
+              procesoFormCard.classList.add('modal-shake');
+            }
+            return;
+          }
+          // Mostrar modal de confirmación
+          const publicarModal = new bootstrap.Modal(document.getElementById('publicarConfirmModal'));
+          publicarModal.show();
+        });
+
+        // Manejar confirmación de publicación
+        const publicarConfirmarButton = document.querySelector('[data-publicar-confirmar]');
+        if (publicarConfirmarButton) {
+          publicarConfirmarButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            const formData = Object.fromEntries(new FormData(procesoForm).entries());
+            console.log('Publicar conductor (prototipo):', formData);
+
+            // Cerrar la modal
+            const publicarModal = bootstrap.Modal.getInstance(document.getElementById('publicarConfirmModal'));
+            if (publicarModal) {
+              publicarModal.hide();
+            }
+          });
+        }
+      }
+
+      if (procesoCancelButton) {
+        procesoCancelButton.addEventListener('click', (event) => {
+          event.preventDefault();
+          window.location.href = 'ListaConductores.html';
+        });
+      }
+
+      const loadProcessSelectionFromStorage = () => {
+        try {
+          if (typeof window === 'undefined' || !window.sessionStorage) {
+            return null;
+          }
+          const raw = window.sessionStorage.getItem(PROCESS_SELECTION_STORAGE_KEY);
+          if (!raw) {
+            return null;
+          }
+          const parsed = JSON.parse(raw);
+          return parsed && typeof parsed === 'object' ? parsed : null;
+        } catch (_) {
+          return null;
+        }
+      };
+
+      const navigateToProcessRoute = (nodeId) => {
+        if (!nodeId) {
+          return false;
+        }
+        const destination = TREEVIEW_PROCESS_ROUTES.get(nodeId);
+        if (!destination) {
+          return false;
+        }
+        window.location.href = destination;
+        return true;
+      };
+
+      const getTreeviewElements = () => {
+        const container = document.querySelector('[data-clientes-treeview]');
+        if (!container) {
+          return null;
+        }
+        return {
+          container,
+          body: container.querySelector('[data-treeview-body]'),
+          status: container.querySelector('[data-treeview-status]')
+        };
+      };
+
+      const getIconNameForType = (type) => {
+        const normalized = String(type ?? '').toLowerCase();
+        if (normalized === 'proceso') {
+          return 'settings';
+        }
+        if (normalized === 'grupo' || normalized === 'subgrupo' || normalized === 'entidad') {
+          return 'folder';
+        }
+        return 'circle';
+      };
+
+      const normalizeFieldKey = (value) => {
+        return String(value ?? '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-zA-Z0-9]+/g, '')
+          .toLowerCase();
+      };
+
+      const getFieldValue = (record, aliases = []) => {
+        if (!record || !Array.isArray(aliases) || !aliases.length) {
+          return '';
+        }
+        const fieldData = record.fieldData ?? {};
+        const normalizedMap = new Map();
+        Object.entries(fieldData).forEach(([key, value]) => {
+          const normalizedKey = normalizeFieldKey(key);
+          if (!normalizedKey || normalizedMap.has(normalizedKey)) {
+            return;
+          }
+          normalizedMap.set(normalizedKey, value);
+        });
+        for (const alias of aliases) {
+          const normalizedAlias = normalizeFieldKey(alias);
+          if (!normalizedAlias) {
+            continue;
+          }
+          if (normalizedMap.has(normalizedAlias)) {
+            const raw = normalizedMap.get(normalizedAlias);
+            if (typeof raw === 'string') {
+              const trimmed = raw.trim();
+              if (trimmed) {
+                return trimmed;
+              }
+            }
+            if (raw !== null && raw !== undefined) {
+              const coerced = String(raw).trim();
+              if (coerced) {
+                return coerced;
+              }
+            }
+          }
+        }
+        return '';
+      };
+
+      const computeRecordDisplayLabel = (record) => {
+        if (!record) {
+          return '';
+        }
+        const preferred = getFieldValue(record, [
+          'Nombre completo',
+          'nombreCompleto',
+          'NombreCompleto',
+          'nombrecompleto',
+          'nombre'
+        ]);
+        if (preferred) {
+          return preferred;
+        }
+        const parts = [
+          getFieldValue(record, ['nombre']),
+          getFieldValue(record, ['apellido1', 'primerApellido']),
+          getFieldValue(record, ['apellido2', 'segundoApellido'])
+        ].filter(Boolean);
+        if (parts.length) {
+          return parts.join(' ');
+        }
+        if (record.recordId !== undefined && record.recordId !== null && String(record.recordId).trim()) {
+          return `ID ${record.recordId}`;
+        }
+        return 'seleccionado';
+      };
+
+      const computeRecordDocumentId = (record) => {
+        return getFieldValue(record, [
+          'ndocumentoidentidad',
+          'nDocumentoIdentidad',
+          'NDocumentoIdentidad',
+          'numeroDocumentoIdentidad',
+          'documentoidentidad',
+          'DocumentoIdentidad',
+          'documentoIdentidad',
+          'dni',
+          'DNI'
+        ]);
+      };
+
+      const updateProcessActionsName = (displayName, record) => {
+        const nameTarget = document.querySelector('[data-clientes-actions-name]');
+        if (!nameTarget) {
+          return;
+        }
+        let finalName = typeof displayName === 'string' && displayName.trim() ? displayName.trim() : '';
+        if (!finalName && record) {
+          finalName = computeRecordDisplayLabel(record);
+        }
+        nameTarget.textContent = finalName || 'seleccionado';
+      };
+
+      const setCurrentRecordSummary = (record) => {
+        if (!record) {
+          currentRecordSummary = { fullName: null, dni: null };
+          return currentRecordSummary;
+        }
+        currentRecordSummary = {
+          fullName: computeRecordDisplayLabel(record) || null,
+          dni: computeRecordDocumentId(record) || null
+        };
+        return currentRecordSummary;
+      };
+
+      const updatePageHeaderFromRecord = (record) => {
+        setCurrentRecordSummary(record);
+        updatePageHeader();
+      };
+
+
+      const buildHierarchy = (records) => {
+        const nodes = new Map();
+        const roots = [];
+
+        records.forEach((record) => {
+          const normalizedId = String(record?.id ?? '').trim();
+          if (!normalizedId) {
+            return;
+          }
+          nodes.set(normalizedId, {
+            ...record,
+            id: normalizedId,
+            idPadre: String(record?.idPadre ?? '').trim(),
+            nivel: Number.parseInt(record?.nivel ?? '0', 10) || 0,
+            orden: Number.parseInt(record?.orden ?? '0', 10) || 0,
+            children: []
+          });
+        });
+
+        nodes.forEach((node) => {
+          if (node.idPadre && nodes.has(node.idPadre)) {
+            nodes.get(node.idPadre).children.push(node);
+          } else {
+            roots.push(node);
+          }
+        });
+
+        const sortNodes = (list) => {
+          list.sort((a, b) => {
+            if (a.orden !== b.orden) {
+              return a.orden - b.orden;
+            }
+            return String(a.nombre ?? '').localeCompare(String(b.nombre ?? ''), 'es', { sensitivity: 'base' });
+          });
+          list.forEach((child) => sortNodes(child.children));
+        };
+
+        sortNodes(roots);
+        return roots;
+      };
+
+      const createTreeItem = (node) => {
+        const hasChildren = Array.isArray(node.children) && node.children.length > 0;
+        const isRoot = !node.idPadre;
+        const listItem = document.createElement('li');
+        listItem.className = 'treeview-item';
+        listItem.setAttribute('role', 'treeitem');
+        listItem.dataset.nodeId = node.id || '';
+        listItem.dataset.defaultExpanded = 'false';
+        listItem.setAttribute('aria-label', node.nombre ?? 'Elemento');
+        if (hasChildren) {
+          listItem.dataset.treeItem = '';
+        }
+        if (node.nivel > 0) {
+          listItem.setAttribute('aria-level', String(node.nivel));
+        }
+
+        const nodeWrapper = document.createElement('div');
+        nodeWrapper.className = `treeview-node${hasChildren ? '' : ' treeview-node--leaf'}`;
+
+        const toggle = document.createElement(hasChildren ? 'button' : 'span');
+        toggle.className = hasChildren ? 'treeview-toggle' : 'treeview-toggle treeview-toggle--placeholder';
+        if (hasChildren) {
+          toggle.type = 'button';
+          toggle.dataset.treeToggle = '';
+          toggle.setAttribute('aria-label', `Alternar ${node.nombre ?? 'elemento'}`);
+        } else {
+          toggle.setAttribute('aria-hidden', 'true');
+        }
+
+        const icon = document.createElement('span');
+        icon.className = 'treeview-icon';
+        const iconName = getIconNameForType(node.tipo);
+        icon.innerHTML = `<i data-lucide="${iconName}"></i>`;
+
+        const isProcessNode = String(node.tipo ?? '').toLowerCase() === 'proceso';
+        const label = document.createElement(isProcessNode ? 'button' : 'span');
+        label.className = 'treeview-label';
+        label.textContent = node.nombre || 'Elemento';
+        if (label.tagName === 'BUTTON') {
+          label.type = 'button';
+        }
+        if (isProcessNode) {
+          label.dataset.treeAction = 'navigate';
+        }
+
+        nodeWrapper.append(toggle, icon, label);
+        listItem.appendChild(nodeWrapper);
+
+        if (hasChildren) {
+          const childList = document.createElement('ul');
+          childList.className = 'treeview-list';
+          childList.setAttribute('role', 'group');
+          const shouldExpand = isRoot;
+          listItem.dataset.defaultExpanded = String(shouldExpand);
+          listItem.setAttribute('aria-expanded', String(shouldExpand));
+          if (!shouldExpand) {
+            listItem.dataset.treeCollapsed = 'true';
+            childList.setAttribute('hidden', '');
+          } else {
+            listItem.classList.remove('is-collapsed');
+          }
+          node.children.forEach((child) => {
+            childList.appendChild(createTreeItem(child));
+          });
+          listItem.appendChild(childList);
+        }
+
+        return listItem;
+      };
+
+      function initTreeview() {
+        const treeRoot = document.querySelector('[data-clientes-treeview] .treeview-list');
+        if (!treeRoot) {
+          return;
+        }
+
+        const setTreeItemState = (item, expanded) => {
+          const childList = item.querySelector(':scope > .treeview-list');
+          const toggle = item.querySelector(':scope > .treeview-node [data-tree-toggle]');
+          item.setAttribute('aria-expanded', String(expanded));
+          item.classList.toggle('is-collapsed', !expanded);
+          if (toggle) {
+            toggle.setAttribute('aria-expanded', String(expanded));
+          }
+          if (childList) {
+            if (expanded) {
+              childList.removeAttribute('hidden');
+            } else {
+              childList.setAttribute('hidden', '');
+            }
+          }
+        };
+
+        const items = treeRoot.querySelectorAll('[data-tree-item]');
+        items.forEach((item) => {
+          const collapsed = item.dataset.treeCollapsed === 'true' || item.getAttribute('aria-expanded') === 'false';
+          setTreeItemState(item, !collapsed);
+        });
+
+        treeRoot.addEventListener('click', (event) => {
+          const toggle = event.target.closest('[data-tree-toggle]');
+          if (!toggle || !treeRoot.contains(toggle)) {
+            return;
+          }
+          event.preventDefault();
+          const item = toggle.closest('[data-tree-item]');
+          if (!item) {
+            return;
+          }
+          const expanded = item.getAttribute('aria-expanded') === 'true';
+          setTreeItemState(item, !expanded);
+        });
+
+        treeRoot.addEventListener('keydown', (event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') {
+            return;
+          }
+          const toggle = event.target.closest('[data-tree-toggle]');
+          if (!toggle || !treeRoot.contains(toggle)) {
+            return;
+          }
+          event.preventDefault();
+          toggle.click();
+        });
+
+        treeRoot.addEventListener('click', (event) => {
+          const label = event.target.closest('.treeview-label');
+          if (!label || !treeRoot.contains(label)) {
+            return;
+          }
+          if (event.target.closest('[data-tree-toggle]')) {
+            return;
+          }
+          const item = label.closest('.treeview-item');
+          if (!item) {
+            return;
+          }
+          const nodeId = item.dataset.nodeId;
+          const record = treeviewCache.nodesById.get(nodeId);
+          if (!record || String(record?.tipo ?? '').toLowerCase() !== 'proceso') {
+            return;
+          }
+          if (navigateToProcessRoute(record.id)) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        });
+
+        treeRoot.addEventListener('keydown', (event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') {
+            return;
+          }
+          if (event.target.closest('[data-tree-toggle]')) {
+            return;
+          }
+          const label = event.target.closest('.treeview-label');
+          if (!label || !treeRoot.contains(label)) {
+            return;
+          }
+          const item = label.closest('.treeview-item');
+          if (!item) {
+            return;
+          }
+          const nodeId = item.dataset.nodeId;
+          const record = treeviewCache.nodesById.get(nodeId);
+          if (!record || String(record?.tipo ?? '').toLowerCase() !== 'proceso') {
+            return;
+          }
+          if (navigateToProcessRoute(record.id)) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        });
+      }
+
+      let treeviewCache = {
+        nodesById: new Map(),
+        rootList: null,
+        searchInput: null
+      };
+
+      const applyDefaultTreeState = () => {
+        if (!treeviewCache.rootList) {
+          return;
+        }
+        const items = treeviewCache.rootList.querySelectorAll('.treeview-item');
+        items.forEach((item) => {
+          item.hidden = false;
+          item.classList.remove('treeview-item--match');
+          const childList = item.querySelector(':scope > .treeview-list');
+          if (childList) {
+            const defaultExpanded = item.dataset.defaultExpanded === 'true';
+            item.setAttribute('aria-expanded', String(defaultExpanded));
+            if (defaultExpanded) {
+              childList.removeAttribute('hidden');
+              item.classList.remove('is-collapsed');
+            } else {
+              childList.setAttribute('hidden', '');
+              item.classList.add('is-collapsed');
+            }
+          }
+        });
+        window.lucide?.createIcons?.();
+      };
+
+      const filterTree = (query) => {
+        const elements = getTreeviewElements();
+        if (!elements || !treeviewCache.rootList) {
+          return;
+        }
+
+        const normalized = query.trim().toLowerCase();
+        const showAll = normalized.length === 0;
+
+        if (showAll) {
+          applyDefaultTreeState();
+          return;
+        }
+
+        const matchesQuery = (node) => {
+          return String(node?.nombre ?? '').toLowerCase().includes(normalized);
+        };
+
+        applyDefaultTreeState();
+
+        const walk = (element) => {
+          const item = element;
+          const nodeId = item.dataset.nodeId;
+          const nodeData = treeviewCache.nodesById.get(nodeId);
+          const hasChildren = item.querySelector(':scope > .treeview-list') !== null;
+          let selfMatches = false;
+          let childrenMatch = false;
+
+          if (hasChildren) {
+            const childItems = Array.from(item.querySelectorAll(':scope > .treeview-list > .treeview-item'));
+            childrenMatch = childItems.some((child) => walk(child));
+          }
+
+          if (nodeData && matchesQuery(nodeData)) {
+            selfMatches = true;
+          }
+
+          const shouldShow = selfMatches || childrenMatch;
+          item.hidden = !shouldShow;
+
+          if (hasChildren) {
+            const childList = item.querySelector(':scope > .treeview-list');
+            if (childList) {
+              const expanded = shouldShow && (selfMatches || childrenMatch);
+              item.setAttribute('aria-expanded', String(expanded));
+              if (expanded) {
+                item.classList.remove('is-collapsed');
+                childList.removeAttribute('hidden');
+              } else {
+                childList.setAttribute('hidden', '');
+                item.classList.add('is-collapsed');
+              }
+            }
+          }
+
+          if (selfMatches) {
+            item.classList.add('treeview-item--match');
+          } else {
+            item.classList.remove('treeview-item--match');
+          }
+
+          return shouldShow;
+        };
+
+        const roots = Array.from(treeviewCache.rootList.children);
+        roots.forEach((root) => walk(root));
+
+        window.lucide?.createIcons?.();
+      };
+
+      const loadTreeviewMenu = async () => {
+        const elements = getTreeviewElements();
+        if (!elements || !elements.body) {
+          return;
+        }
+
+        const { body, status } = elements;
+        const setStatus = (message, isError = false) => {
+          if (!status) {
+            return;
+          }
+          status.textContent = message || '';
+          status.classList.toggle('text-danger', Boolean(message) && isError);
+          status.classList.toggle('d-none', !message);
+        };
+
+        setStatus('Cargando menú…');
+        body.querySelectorAll('.treeview-list').forEach((list) => list.remove());
+
+        try {
+          const response = await fetch(TREEVIEW_DATA_URL, { cache: 'no-store' });
+          if (!response.ok) {
+            throw new Error(`Error ${response.status}`);
+          }
+          const payload = await response.json();
+          const records = Array.isArray(payload?.data) ? payload.data : [];
+          const activeRecords = records.filter((record) => String(record?.activado ?? '0') !== '0');
+          const hierarchy = buildHierarchy(activeRecords);
+          if (!hierarchy.length) {
+            setStatus('Sin procesos disponibles.');
+            return;
+          }
+
+          const rootList = document.createElement('ul');
+          rootList.className = 'treeview-list';
+          rootList.setAttribute('role', 'tree');
+
+          hierarchy.forEach((node) => {
+            const treeItem = createTreeItem(node);
+            rootList.appendChild(treeItem);
+          });
+
+          treeviewCache = {
+            nodesById: new Map(activeRecords.map((record) => [record.id, record])),
+            rootList,
+            searchInput: null
+          };
+
+          const { container } = elements;
+          const searchInput = container.querySelector('[data-treeview-search]');
+          if (searchInput) {
+            searchInput.value = '';
+            searchInput.addEventListener('input', (event) => {
+              filterTree(event.target.value || '');
+            });
+            treeviewCache.searchInput = searchInput;
+          }
+
+          body.appendChild(rootList);
+          setStatus('');
+          window.lucide?.createIcons?.();
+          initTreeview();
+          applyDefaultTreeState();
+        } catch (error) {
+          console.error('No se pudo cargar el menú de procesos', error);
+          setStatus('No se pudo cargar el menú de procesos.', true);
+        }
+      };
+
+      loadTreeviewMenu();
+
+      document.addEventListener('clientesTable:select', () => {
+        if (!treeviewCache.rootList) {
+          return;
+        }
+        if (treeviewCache.searchInput) {
+          treeviewCache.searchInput.value = '';
+        }
+        applyDefaultTreeState();
+      });
+
+      const wrapper = document.querySelector('[data-resizable-wrapper]');
+      if (!wrapper) return;
+
+      const topPanel = wrapper.querySelector('[data-resizable-top]');
+      const bottomPanel = wrapper.querySelector('[data-resizable-bottom]');
+      const handle = wrapper.querySelector('[data-resizable-handle]');
+      if (!topPanel || !bottomPanel || !handle) return;
+      handle.setAttribute('aria-expanded', 'true');
+
+      const detailContainer = bottomPanel.querySelector('[data-clientes-detail-container]');
+      const detailTabsWrapper = bottomPanel.querySelector('[data-clientes-detail-tabs-wrapper]');
+      const detailForm = bottomPanel.querySelector('[data-clientes-detail-form]');
+      const detailGrid = bottomPanel.querySelector('[data-clientes-detail-grid]');
+      const detailLayout = bottomPanel.querySelector('[data-clientes-detail-layout]');
+      const detailContent = bottomPanel.querySelector('[data-clientes-detail-content]');
+      const detailCategoryNav = bottomPanel.querySelector('[data-clientes-detail-category-nav]');
+      const detailSearchWrapper = bottomPanel.querySelector('[data-clientes-detail-search]');
+      const detailSearchInput = bottomPanel.querySelector('[data-clientes-detail-search-input]');
+      const detailEmpty = bottomPanel.querySelector('[data-clientes-detail-empty]');
+      const viewSelect = document.querySelector('[data-clientes-view-select]');
+      const detailSelectOption = viewSelect?.querySelector('option[value="detail"]') ?? null;
+      const columnsWrapper = document.querySelector('[data-clientes-columns-wrapper]');
+      const tableSearchWrapper = document.querySelector('[data-clientes-table-search-wrapper]');
+      const tableSearchInput = document.querySelector('[data-clientes-table-search]');
+      const viewPresetsGroup = document.querySelector('[data-clientes-view-presets]');
+      const viewPresetAddButton = document.querySelector('[data-clientes-view-preset-add]');
+      const viewPresetDropdownToggle = document.querySelector('[data-clientes-view-presets-toggle]');
+      const viewPresetList = document.querySelector('[data-clientes-view-preset-list]');
+      const viewPresetEmpty = document.querySelector('[data-clientes-view-preset-empty]');
+      const pageTitleEl = document.querySelector('[data-clientes-title]');
+      const pageSubtitleEl = document.querySelector('[data-clientes-subtitle]');
+      const defaultPageTitle = pageTitleEl?.textContent?.trim() || 'Conductores';
+      const defaultPageSubtitle = pageSubtitleEl?.textContent?.trim() || 'Gestiona y analiza la lista de conductores.';
+      const allowedViewModes = ['split-vertical'];
+      const initialViewMode = viewSelect && allowedViewModes.includes(viewSelect.value) ? viewSelect.value : 'split-vertical';
+      let currentViewMode = initialViewMode;
+      let hasActiveRecord = false;
+      let currentRecordSummary = {
+        fullName: null,
+        dni: null
+      };
+      const resizableViewModes = new Set(['split-vertical']);
+      const isResizableMode = (mode = currentViewMode) => resizableViewModes.has(mode);
+      const isVerticalSplitMode = (mode = currentViewMode) => mode === 'split-vertical';
+      const detailGridTwoColumnMinWidth = 720;
+      const detailNavBreakpoint = typeof window.matchMedia === 'function'
+        ? window.matchMedia('(max-width: 1199.98px)')
+        : null;
+      const updateDetailGridColumns = () => {
+        if (!detailGrid) {
+          return;
+        }
+        if (!isVerticalSplitMode()) {
+          detailGrid.removeAttribute('data-layout-columns');
+          return;
+        }
+        const width = detailGrid.getBoundingClientRect().width || detailGrid.offsetWidth || 0;
+        const desired = width >= detailGridTwoColumnMinWidth ? '2' : '1';
+        detailGrid.setAttribute('data-layout-columns', desired);
+      };
+      let detailGridResizeObserver = null;
+      let detailSectionObserver = null;
+      let detailNavItems = [];
+      let detailSearchIndex = [];
+      if (typeof ResizeObserver === 'function' && detailGrid) {
+        detailGridResizeObserver = new ResizeObserver(() => {
+          updateDetailGridColumns();
+        });
+        detailGridResizeObserver.observe(bottomPanel);
+      }
+
+      const setActiveDetailNavItem = (sectionId) => {
+        detailNavItems.forEach(({ button, id }) => {
+          const isActive = id === sectionId;
+          button.classList.toggle('active', isActive);
+          button.setAttribute('aria-current', isActive ? 'true' : 'false');
+        });
+      };
+
+      const getDetailScrollContainer = () => detailForm ?? detailContent ?? detailContainer;
+
+      const scrollToDetailSection = (sectionId, { behavior = 'smooth' } = {}) => {
+        const scrollContainer = getDetailScrollContainer();
+        if (!scrollContainer || !sectionId) {
+          return;
+        }
+        const target = scrollContainer.querySelector?.(`#${sectionId}`) ?? detailContent?.querySelector?.(`#${sectionId}`);
+        if (!target) {
+          return;
+        }
+        const contentRect = scrollContainer.getBoundingClientRect();
+        const targetRect = target.getBoundingClientRect();
+        const offset = targetRect.top - contentRect.top + scrollContainer.scrollTop - 12;
+        scrollContainer.scrollTo({
+          top: offset > 0 ? offset : 0,
+          behavior,
+        });
+        setActiveDetailNavItem(sectionId);
+      };
+
+      const scrollToDetailFieldElement = (element, { behavior = 'smooth' } = {}) => {
+        const scrollContainer = getDetailScrollContainer();
+        if (!scrollContainer || !element) {
+          return;
+        }
+        const contentRect = scrollContainer.getBoundingClientRect();
+        const elementRect = element.getBoundingClientRect();
+        const offset = elementRect.top - contentRect.top + scrollContainer.scrollTop - 16;
+        scrollContainer.scrollTo({
+          top: offset > 0 ? offset : 0,
+          behavior,
+        });
+      };
+
+      const clearDetailFieldHighlights = () => {
+        detailSearchIndex.forEach(({ element }) => {
+          element.classList.remove('detail-field-highlight');
+        });
+      };
+
+      const applyFieldHighlight = (element) => {
+        if (!element) return;
+        element.classList.remove('detail-field-highlight');
+        void element.offsetWidth;
+        element.classList.add('detail-field-highlight');
+      };
+
+      const syncDetailCategoryNavVisibility = (mode = currentViewMode) => {
+        if (!detailCategoryNav) {
+          return;
+        }
+        const isCompact = detailNavBreakpoint?.matches ?? false;
+        const shouldShow = mode === 'split-vertical' && detailNavItems.length > 0 && !isCompact;
+        detailCategoryNav.classList.toggle('d-none', !shouldShow);
+        detailCategoryNav.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
+      };
+
+      if (detailCategoryNav) {
+        detailCategoryNav.addEventListener('click', (event) => {
+          const trigger = event.target instanceof HTMLElement ? event.target.closest('[data-detail-nav-target]') : null;
+          if (!trigger) {
+            return;
+          }
+          event.preventDefault();
+          const targetId = trigger.getAttribute('data-detail-nav-target');
+          if (targetId) {
+            scrollToDetailSection(targetId);
+          }
+        });
+      }
+
+      if (detailSearchInput) {
+        detailSearchInput.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+          }
+        });
+        detailSearchInput.addEventListener('input', (event) => {
+          const term = String(event.target.value ?? '').trim();
+          clearDetailFieldHighlights();
+          if (!term) {
+            return;
+          }
+          const normalizedTerm = normalizeDetailFieldName(term);
+          if (!normalizedTerm) {
+            return;
+          }
+          const matches = detailSearchIndex.filter(
+            ({ normalizedLabel }) => typeof normalizedLabel === 'string' && normalizedLabel.includes(normalizedTerm)
+          );
+          if (!matches.length) {
+            return;
+          }
+          matches.forEach(({ element }) => applyFieldHighlight(element));
+          const primary = matches[0];
+          if (primary?.element) {
+            if (primary.sectionId) {
+              setActiveDetailNavItem(primary.sectionId);
+            }
+            scrollToDetailFieldElement(primary.element);
+          }
+        });
+      }
+      const syncViewSelect = (mode) => {
+        if (!viewSelect) {
+          return;
+        }
+        viewSelect.value = allowedViewModes.includes(mode) ? mode : 'split-vertical';
+      };
+
+      const setDetailOptionEnabled = (enabled) => {
+        if (!detailSelectOption) {
+          return;
+        }
+        detailSelectOption.disabled = !enabled;
+        detailSelectOption.hidden = !enabled;
+        if (!enabled) {
+          detailSelectOption.selected = false;
+          if (viewSelect && viewSelect.value === 'detail') {
+            viewSelect.value = 'split-vertical';
+          }
+        }
+      };
+
+      const updateTableSearchVisibility = () => {
+        if (!tableSearchWrapper) {
+          return;
+        }
+        const shouldHide = currentViewMode === 'detail';
+        tableSearchWrapper.classList.toggle('d-none', shouldHide);
+        tableSearchWrapper.setAttribute('aria-hidden', shouldHide ? 'true' : 'false');
+        if (tableSearchInput) {
+          if (shouldHide && document.activeElement === tableSearchInput) {
+            tableSearchInput.blur();
+          }
+          tableSearchInput.disabled = shouldHide;
+        }
+      };
+
+      const escapeHtml = (value) => {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      };
+
+      const getViewModeLabel = (mode) => {
+        switch (mode) {
+          case 'split':
+            return 'Horizontal';
+          case 'split-vertical':
+            return 'Vertical';
+          case 'detail':
+            return 'Detalle';
+          case 'list':
+            return 'Listado';
+          default:
+            return 'Vista';
+        }
+      };
+
+      const getPresetStorage = (() => {
+        let cached = undefined;
+        return () => {
+          if (cached !== undefined) {
+            return cached;
+          }
+          cached = null;
+          try {
+            if (typeof window !== 'undefined' && window.localStorage) {
+              const testKey = '__vp_test__';
+              window.localStorage.setItem(testKey, '1');
+              window.localStorage.removeItem(testKey);
+              cached = window.localStorage;
+            }
+          } catch (_) {
+            cached = null;
+          }
+          return cached;
+        };
+      })();
+
+      const getPresetStorageKey = () => {
+        const rawUser = window.AuthStorage?.getUser?.();
+        const normalizedUser = typeof rawUser === 'string' && rawUser.trim()
+          ? rawUser.trim().toLowerCase().replace(/[^a-z0-9_-]+/gi, '_')
+          : 'anonimo';
+        return `clientes.view-presets:${normalizedUser}`;
+      };
+
+      const generatePresetId = () => {
+        const fallback = `vp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        try {
+          if (typeof window !== 'undefined' && window.crypto?.randomUUID) {
+            return `vp-${window.crypto.randomUUID()}`;
+          }
+        } catch (_) {
+          // Ignore and use fallback.
+        }
+        return fallback;
+      };
+
+      let viewPresets = [];
+      let isTableReady = false;
+      let pendingTablePreset = null;
+      let pendingHandleRestore = null;
+
+      const loadViewPresets = () => {
+        const storage = getPresetStorage();
+        if (!storage) {
+          viewPresets = [];
+          return;
+        }
+        try {
+          const raw = storage.getItem(getPresetStorageKey());
+          if (!raw) {
+            viewPresets = [];
+            return;
+          }
+          const parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed)) {
+            viewPresets = [];
+            return;
+          }
+          viewPresets = parsed
+            .filter((item) => item && typeof item === 'object' && typeof item.name === 'string')
+            .map((item) => ({
+              id: typeof item.id === 'string' ? item.id : generatePresetId(),
+              name: item.name,
+              viewMode: typeof item.viewMode === 'string' ? item.viewMode : 'split-vertical',
+              table: item.table && typeof item.table === 'object' ? item.table : {},
+              handle: item.handle && typeof item.handle === 'object' ? item.handle : null
+            }));
+        } catch (_) {
+          viewPresets = [];
+        }
+      };
+
+      const saveViewPresets = () => {
+        const storage = getPresetStorage();
+        if (!storage) {
+          return;
+        }
+        try {
+          storage.setItem(getPresetStorageKey(), JSON.stringify(viewPresets));
+        } catch (_) {
+          // Ignore storage issues (quota, privacy mode, etc.).
+        }
+      };
+
+      const renderViewPresetMenu = () => {
+        if (!viewPresetList || !viewPresetEmpty) {
+          return;
+        }
+        viewPresetList.innerHTML = '';
+        if (!Array.isArray(viewPresets) || !viewPresets.length) {
+          viewPresetEmpty.classList.remove('d-none');
+          window.lucide?.createIcons?.();
+          return;
+        }
+        viewPresetEmpty.classList.add('d-none');
+        viewPresets.forEach((preset) => {
+          const item = document.createElement('button');
+          item.type = 'button';
+          item.className = 'dropdown-item d-flex align-items-center justify-content-between gap-2';
+          item.dataset.clientesViewPresetItem = preset.id;
+          item.innerHTML = `
+            <span class="flex-grow-1 text-start text-truncate">${escapeHtml(preset.name)}</span>
+            <span class="badge bg-light text-body-secondary border">${escapeHtml(getViewModeLabel(preset.viewMode))}</span>
+          `;
+          viewPresetList.appendChild(item);
+        });
+        window.lucide?.createIcons?.();
+      };
+
+      const updateViewPresetControlsAvailability = () => {
+        const shouldDisableAdd = !isTableReady;
+        if (viewPresetAddButton) {
+          viewPresetAddButton.disabled = shouldDisableAdd;
+          viewPresetAddButton.setAttribute('aria-disabled', shouldDisableAdd ? 'true' : 'false');
+        }
+        if (viewPresetsGroup) {
+          viewPresetsGroup.dataset.disabled = shouldDisableAdd ? 'true' : 'false';
+        }
+      };
+
+      const captureHandleState = () => {
+        if (!isResizableMode()) {
+          return null;
+        }
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const axisSize = isVerticalSplitMode() ? wrapperRect.width : wrapperRect.height;
+        const primarySize = getPanelCurrentSize(topPanel);
+        const ratio = axisSize ? primarySize / axisSize : null;
+        return {
+          mode: currentViewMode,
+          orientation: isVerticalSplitMode() ? 'vertical' : 'horizontal',
+          primarySize: Number.isFinite(primarySize) ? primarySize : null,
+          axisSize: Number.isFinite(axisSize) ? axisSize : null,
+          ratio: Number.isFinite(ratio) ? ratio : null
+        };
+      };
+
+      const captureCurrentPresetSnapshot = () => {
+        const getTableState = window.ClientesTable?.getState;
+        if (typeof getTableState !== 'function') {
+          return null;
+        }
+        const tableState = getTableState();
+        if (!tableState) {
+          return null;
+        }
+        return {
+          viewMode: currentViewMode,
+          handle: captureHandleState(),
+          table: tableState
+        };
+      };
+
+      const applyPendingHandleRestore = () => {
+        if (!pendingHandleRestore) {
+          return;
+        }
+        if (!isResizableMode() || !pendingHandleRestore || !isResizableMode(pendingHandleRestore.mode)) {
+          pendingHandleRestore = null;
+          return;
+        }
+        const orientationMatches =
+          (pendingHandleRestore.orientation === 'vertical') === isVerticalSplitMode();
+        if (!orientationMatches) {
+          pendingHandleRestore = null;
+          return;
+        }
+        const bounds = getBounds();
+        if (!bounds) {
+          return;
+        }
+        let desired = null;
+        if (Number.isFinite(pendingHandleRestore.ratio) && Number.isFinite(bounds.axisSize)) {
+          desired = pendingHandleRestore.ratio * bounds.axisSize;
+        } else if (Number.isFinite(pendingHandleRestore.primarySize)) {
+          desired = pendingHandleRestore.primarySize;
+        }
+        if (Number.isFinite(desired)) {
+          scheduleApplySizes(desired);
+        }
+        pendingHandleRestore = null;
+      };
+
+      const closeViewPresetDropdown = () => {
+        if (!viewPresetDropdownToggle || typeof bootstrap === 'undefined') {
+          return;
+        }
+        const instance = bootstrap.Dropdown.getOrCreateInstance(viewPresetDropdownToggle);
+        instance?.hide?.();
+      };
+
+      const applyTablePresetState = (preset) => {
+        if (!preset || !preset.table) {
+          return;
+        }
+        const applyTableState = window.ClientesTable?.applyState;
+        if (typeof applyTableState !== 'function') {
+          return;
+        }
+        applyTableState(preset.table);
+      };
+
+      const applyViewPreset = (preset) => {
+        if (!preset) {
+          return;
+        }
+        pendingHandleRestore = preset.handle ?? null;
+        setViewMode(preset.viewMode ?? 'split-vertical', { force: true });
+        if (isTableReady) {
+          applyTablePresetState(preset);
+        } else {
+          pendingTablePreset = preset;
+        }
+        requestAnimationFrame(() => applyPendingHandleRestore());
+        closeViewPresetDropdown();
+      };
+
+      const handleViewPresetAdd = () => {
+        const snapshot = captureCurrentPresetSnapshot();
+        if (!snapshot) {
+          window.alert?.('La tabla todavía no está disponible para guardar la visualización.');
+          return;
+        }
+        const suggestedName = `Vista ${viewPresets.length + 1}`;
+        const rawName = window.prompt?.('Introduce un nombre para la visualización:', suggestedName) ?? '';
+        const name = rawName.trim();
+        if (!name) {
+          return;
+        }
+        const preset = {
+          id: generatePresetId(),
+          name,
+          viewMode: snapshot.viewMode,
+          handle: snapshot.handle,
+          table: snapshot.table
+        };
+        viewPresets.push(preset);
+        saveViewPresets();
+        renderViewPresetMenu();
+      };
+
+      const handleViewPresetSelection = (event) => {
+        const target = event.target;
+        const option = target?.closest?.('[data-clientes-view-preset-item]');
+        if (!option) {
+          return;
+        }
+        const presetId = option.dataset.clientesViewPresetItem;
+        const preset = viewPresets.find((item) => item.id === presetId);
+        if (preset) {
+          applyViewPreset(preset);
+        }
+      };
+
+      loadViewPresets();
+      renderViewPresetMenu();
+      updateViewPresetControlsAvailability();
+
+      const updatePageHeader = () => {
+        if (!pageTitleEl || !pageSubtitleEl) {
+          return;
+        }
+        pageSubtitleEl.classList.remove('text-muted', 'text-secondary');
+        if (hasActiveRecord && (currentRecordSummary.fullName || currentRecordSummary.dni)) {
+          const name = currentRecordSummary.fullName || defaultPageTitle;
+          const subtitle = currentRecordSummary.dni || '';
+          pageTitleEl.textContent = name;
+          if (subtitle) {
+            pageSubtitleEl.textContent = subtitle;
+            pageSubtitleEl.classList.add('text-secondary');
+          } else {
+            pageSubtitleEl.textContent = defaultPageSubtitle;
+            pageSubtitleEl.classList.add('text-secondary');
+          }
+          return;
+        }
+        pageTitleEl.textContent = defaultPageTitle;
+        pageSubtitleEl.textContent = defaultPageSubtitle;
+        pageSubtitleEl.classList.add('text-secondary');
+      };
+
+      syncViewSelect(currentViewMode);
+      updateTableSearchVisibility();
+
+      const copyToastEl = document.getElementById('clientesCopyToast');
+      const copyToastBodyEl = copyToastEl ? copyToastEl.querySelector('.toast-body') : null;
+      const copyToastInstance = copyToastEl && typeof bootstrap !== 'undefined'
+        ? bootstrap.Toast.getOrCreateInstance(copyToastEl)
+        : null;
+
+      const copyTextToClipboard = async (text) => {
+        const value = String(text ?? '');
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+          try {
+            await navigator.clipboard.writeText(value);
+            return true;
+          } catch (error) {
+            // Fallback to legacy approach below.
+          }
+        }
+
+        const helper = document.createElement('textarea');
+        helper.value = value;
+        helper.setAttribute('readonly', '');
+        helper.style.position = 'fixed';
+        helper.style.opacity = '0';
+        helper.style.pointerEvents = 'none';
+        helper.style.zIndex = '-1';
+        document.body.appendChild(helper);
+        helper.select();
+        helper.setSelectionRange(0, helper.value.length);
+        let success = false;
+        try {
+          success = typeof document.execCommand === 'function' ? document.execCommand('copy') : false;
+        } catch (error) {
+          success = false;
+        }
+        document.body.removeChild(helper);
+        return success;
+      };
+
+      const formatDetailLabel = (label) => {
+        const raw = String(label ?? '').trim();
+        if (!raw) {
+          return '';
+        }
+        const spaced = raw
+          .replace(/[_\-]+/g, ' ')
+          .replace(/([a-z])([A-Z])/g, '$1 $2')
+          .replace(/\s+/g, ' ')
+          .trim();
+        if (!spaced) {
+          return '';
+        }
+        return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+      };
+
+      const formatDetailValue = (value) => {
+        if (value === null || value === undefined) {
+          return '—';
+        }
+        if (Array.isArray(value)) {
+          const parts = value
+            .map((item) => formatDetailValue(item))
+            .filter((part) => part !== null && part !== undefined && part !== '');
+          if (!parts.length) {
+            return '—';
+          }
+          if (parts.every((part) => part === '—')) {
+            return '—';
+          }
+          return parts.join(', ');
+        }
+        if (typeof value === 'object') {
+          try {
+            return JSON.stringify(value);
+          } catch (error) {
+            return String(value);
+          }
+        }
+        const text = String(value);
+        return text.trim() === '' ? '—' : text;
+      };
+
+      const stringifyRecordValue = (value) => {
+        if (value === null || value === undefined) {
+          return '';
+        }
+        if (typeof value === 'object') {
+          try {
+            return JSON.stringify(value);
+          } catch (error) {
+            return String(value);
+          }
+        }
+        return String(value);
+      };
+
+      const normalizeDetailFieldName = (name) => {
+        const raw = String(name ?? '').trim();
+        const withoutPrefix = raw.includes('::') ? raw.split('::').pop() : raw;
+        const ascii = withoutPrefix.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        return ascii.replace(/[^a-z0-9]/gi, '').toLowerCase();
+      };
+
+      const isHiddenDetailField = () => false;
+
+      const DETAIL_GROUPS = [
+        {
+          title: 'Datos básicos',
+          icon: 'user',
+          fields: [
+            'id',
+            ['idregistro', '__recordId'],
+            'nombre',
+            'apellido1',
+            'apellido2',
+            'nombreCompleto',
+            'fechaNacimiento',
+            'edad',
+            ['ndocumentoidentidad', 'nDocumentoIdentidad'],
+            'tipoDocumentoIdentidad',
+            'nacionalidad',
+            'nivelFormativoTrabajador',
+            'aniosCarnetConducir',
+            'numeroPuntosDGT',
+            'estado'
+          ]
+        },
+        {
+          title: 'Dirección',
+          icon: 'home',
+          fields: [
+            'direccionConcatenada',
+            'tipoVia',
+            'nombreVia',
+            'numero',
+            'pisoYLetra',
+            'cp',
+            'codigoLocalidad',
+            'localidad',
+            'provincia',
+            'paisNacimiento'
+          ]
+        },
+        {
+          title: 'Datos de contacto',
+          icon: 'phone',
+          fields: [
+            'telefono1',
+            'telefono2',
+            'telefonoBolt',
+            'telefonoBoltCompleto',
+            'prefijoTelefonoBolt',
+            'correoPersonal',
+            'correoPlataforma'
+          ]
+        },
+        {
+          title: 'Datos laborales y contractuales',
+          icon: 'briefcase',
+          fields: [
+            'codigoContrato',
+            'tipoContrato',
+            'fechaContrato',
+            'fechaFirma',
+            'fechaAltaSS',
+            'nAfiliacionSS',
+            'altaEnGestion'
+          ]
+        },
+        {
+          title: 'Datos del vehículo',
+          icon: 'car',
+          fields: [
+            'matriculaVehiculoAsignado',
+            'fechaAsignacionVehiculo'
+          ]
+        },
+        {
+          title: 'Datos de tarjeta de combustible',
+          icon: 'fuel',
+          fields: [
+            ['numeroTarjetaCombustible', 'nTarjetaCombustible', 'ntarjetaCombustible'],
+            'estadoTarjetaCombustible',
+            'contraseniaTarjetaCombustible',
+            'fechaAsignacionTarjetaCombustible'
+          ]
+        },
+        {
+          title: 'Datos de tarjeta de efectivo',
+          icon: 'credit-card',
+          fields: [
+            ['numeroTarjetaEfectivo', 'nTarjetaEfectivo', 'ntarjetaEfectivo'],
+            'estadoTarjetaEfectivo',
+            'fechaAsignacionTarjetaEfectivo'
+          ]
+        },
+        {
+          title: 'Datos de inversor',
+          icon: 'users',
+          fields: [
+            'idInversorAsignado',
+            'nombreInversor'
+          ]
+        },
+        {
+          title: 'Datos bancarios',
+          icon: 'banknote',
+          fields: [
+            'iban',
+            'ibanEntidad',
+            'ibanOficina',
+            'ibanDC',
+            'ibanNumeroCuenta'
+          ]
+        },
+        {
+          title: 'Documentación',
+          icon: 'file-text',
+          fields: [
+            'fechaExpedicionCarnetConducir',
+            'fechaCaducidadCarnetConducir',
+            'fechaExpedicionCartillaVTC',
+            'fechaRenovacionCartillaVTC',
+            'fechaExpedicionDelitosSexuales',
+            'fechaRenovacionDelitosSexuales',
+            'fechaExpedicionVidaLaboral',
+            'fechaCaducidadDocumento'
+          ]
+        },
+        {
+          title: 'Control interno y sistema',
+          icon: 'settings',
+          fields: [
+            'creadoEl',
+            'creadoPor',
+            'modificadoEl',
+            'modificadoPor'
+          ]
+        }
+      ];
+
+      const flattenRecordFieldsForDetail = (record) => {
+        const aggregated = {};
+        const ensureKey = (key) => {
+          if (!aggregated[key]) {
+            aggregated[key] = [];
+          }
+          return aggregated[key];
+        };
+        const appendValue = (key, rawValue, prefix = '') => {
+          const bucket = ensureKey(key);
+          const value = stringifyRecordValue(rawValue);
+          const trimmedPrefix = prefix.trim();
+          if (trimmedPrefix && value) {
+            bucket.push(`${trimmedPrefix} ${value}`.trim());
+          } else if (trimmedPrefix && !value) {
+            bucket.push(trimmedPrefix);
+          } else {
+            bucket.push(value);
+          }
+        };
+
+        const fieldData = record?.fieldData ?? {};
+        Object.entries(fieldData).forEach(([fieldName, value]) => {
+          if (isHiddenDetailField(fieldName)) {
+            return;
+          }
+          appendValue(fieldName, value);
+        });
+
+        const portalData = record?.portalData ?? {};
+        Object.entries(portalData).forEach(([portalName, rows]) => {
+          if (!Array.isArray(rows)) {
+            return;
+          }
+          const multipleRows = rows.length > 1;
+          rows.forEach((portalRow, index) => {
+            const rowFieldData = portalRow?.fieldData ?? {};
+            const rowPrefix = multipleRows ? `[${index + 1}]` : '';
+            Object.entries(rowFieldData).forEach(([fieldName, value]) => {
+              const combinedName = `${portalName}::${fieldName}`;
+              if (isHiddenDetailField(combinedName)) {
+                return;
+              }
+              appendValue(combinedName, value, rowPrefix);
+            });
+          });
+        });
+
+        if (record?.recordId !== undefined && record?.recordId !== null && record?.recordId !== '') {
+          appendValue('__recordId', record.recordId);
+        }
+
+        return aggregated;
+      };
+
+      const renderDetail = (record, order = []) => {
+        if (!detailForm || !detailGrid || !detailEmpty || !detailTabsWrapper) {
+          return;
+        }
+
+        if (detailCategoryNav) {
+          detailCategoryNav.innerHTML = '';
+        }
+        detailNavItems = [];
+        if (detailSectionObserver) {
+          detailSectionObserver.disconnect();
+          detailSectionObserver = null;
+        }
+        syncDetailCategoryNavVisibility(currentViewMode);
+        detailSearchIndex = [];
+        if (detailSearchInput) {
+          detailSearchInput.value = '';
+        }
+        if (detailSearchWrapper) {
+          detailSearchWrapper.classList.add('d-none');
+          detailSearchWrapper.setAttribute('aria-hidden', 'true');
+          if (detailSearchInput) {
+            detailSearchInput.disabled = true;
+          }
+        }
+
+        const createFieldControl = (label, rawValue, options = {}) => {
+          const displayLabel = formatDetailLabel(label) || label || 'Campo';
+          const displayValueRaw = formatDetailValue(rawValue);
+          const isMeaningful =
+            typeof displayValueRaw === 'string'
+              ? displayValueRaw.trim().length > 0 && displayValueRaw.trim() !== '—'
+              : displayValueRaw !== '—';
+          const displayValue = isMeaningful ? displayValueRaw : '';
+          const item = document.createElement('div');
+          item.className = 'detail-grid-item';
+          const normalizedLabel = normalizeDetailFieldName(displayLabel);
+          item.dataset.detailFieldLabel = displayLabel;
+          item.dataset.detailFieldNormalized = normalizedLabel;
+          if (options.fieldName) {
+            item.dataset.detailFieldName = options.fieldName;
+          }
+          if (options.sectionId) {
+            item.dataset.detailSection = options.sectionId;
+          }
+
+          const labelEl = document.createElement('label');
+          labelEl.className = 'form-label text-secondary fw-semibold text-uppercase small mb-0';
+          labelEl.textContent = displayLabel;
+          item.appendChild(labelEl);
+
+          const requiresTextarea = displayValue !== '—' && (displayValue.length > 120 || displayValue.includes('\n'));
+          if (requiresTextarea) {
+            const textarea = document.createElement('textarea');
+            textarea.className = 'form-control';
+            textarea.readOnly = true;
+            textarea.setAttribute('aria-readonly', 'true');
+            textarea.value = displayValue;
+            textarea.rows = Math.min(6, Math.max(3, Math.ceil(displayValue.length / 60)));
+            textarea.style.resize = 'none';
+            item.appendChild(textarea);
+          } else {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'form-control';
+            input.readOnly = true;
+            input.setAttribute('aria-readonly', 'true');
+            input.value = displayValue;
+            item.appendChild(input);
+          }
+
+          return item;
+        };
+
+        const createGroupCard = (title, iconName) => {
+          const card = document.createElement('div');
+          card.className = 'detail-card card shadow-sm';
+          if (title) {
+            const header = document.createElement('div');
+            header.className = 'card-header bg-transparent border-0 pb-0';
+            if (iconName) {
+              const iconWrapper = document.createElement('span');
+              iconWrapper.className = 'detail-card-icon';
+              iconWrapper.innerHTML = `<i data-lucide=\"${iconName}\"></i>`;
+              header.appendChild(iconWrapper);
+            }
+            const titleEl = document.createElement('h3');
+            titleEl.className = 'card-title h6 mb-0';
+            titleEl.textContent = title;
+            header.appendChild(titleEl);
+            card.appendChild(header);
+          }
+          const body = document.createElement('div');
+          body.className = 'card-body';
+          const grid = document.createElement('div');
+          grid.className = 'detail-group-grid';
+          body.appendChild(grid);
+          card.appendChild(body);
+          return { card, grid };
+        };
+
+        const sectionIds = new Set();
+        const detailSections = [];
+        const createSectionId = (title) => {
+          const normalizedTitle = normalizeDetailFieldName(title);
+          const base = (normalizedTitle && normalizedTitle.length ? normalizedTitle : `seccion${sectionIds.size + 1}`).replace(/-+/g, '');
+          let candidate = `detail-section-${base}`;
+          let suffix = 1;
+          while (sectionIds.has(candidate)) {
+            suffix += 1;
+            candidate = `detail-section-${base}-${suffix}`;
+          }
+          sectionIds.add(candidate);
+          return candidate;
+        };
+
+        const appendGroupCard = (title, items, context, iconName) => {
+          if (!items.length) {
+            return;
+          }
+          const { card, grid } = createGroupCard(title, iconName);
+          const controls = [];
+          items.forEach((item, index) => {
+            const rawValue = item.fieldName ? context.fields[item.fieldName] ?? null : null;
+            const controlLabel = item.label ?? item.fieldName ?? 'Campo';
+            const control = createFieldControl(controlLabel, rawValue, {
+              fieldName: item.fieldName
+            });
+            grid.appendChild(control);
+            controls.push({ control, controlLabel, fieldName: item.fieldName, index });
+            if (item.fieldName) {
+              context.seen.add(item.fieldName);
+            }
+          });
+          if (controls.length) {
+            const sectionTitle = title || 'Sección';
+            const sectionId = createSectionId(sectionTitle);
+            card.id = sectionId;
+            card.setAttribute('data-detail-section', sectionId);
+            controls.forEach(({ control, controlLabel, index }) => {
+              control.dataset.detailSection = sectionId;
+              const normalizedLabel = control.dataset.detailFieldNormalized || normalizeDetailFieldName(controlLabel);
+              const fieldSlug = normalizedLabel || `campo${index + 1}`;
+              const controlId = `${sectionId}-${fieldSlug}-${index}`;
+              control.id = controlId;
+              detailSearchIndex.push({
+                element: control,
+                label: controlLabel,
+                normalizedLabel,
+                sectionId,
+                controlId
+              });
+            });
+            const order = detailSections.length;
+            detailSections.push({
+              id: sectionId,
+              title: sectionTitle,
+              icon: iconName || null,
+              order
+            });
+            detailGrid.appendChild(card);
+          }
+        };
+
+        const appendConfiguredGroup = (group, context) => {
+          const items = [];
+          const canonicalSeen = new Set();
+          group.fields.forEach((entry) => {
+            const aliases = Array.isArray(entry) ? entry : [entry];
+            if (!aliases.length) {
+              return;
+            }
+            const canonicalAlias = aliases[0];
+            const canonicalNormalized = normalizeDetailFieldName(canonicalAlias);
+            if (canonicalSeen.has(canonicalNormalized)) {
+              return;
+            }
+            canonicalSeen.add(canonicalNormalized);
+
+            let actualFieldName = null;
+            for (const alias of aliases) {
+              const normalized = normalizeDetailFieldName(alias);
+              const candidates = context.normalizedToActual.get(normalized);
+              if (!candidates) {
+                continue;
+              }
+              const candidate = candidates.find((name) => !context.seen.has(name));
+              if (candidate) {
+                actualFieldName = candidate;
+                break;
+              }
+            }
+
+            items.push({
+              fieldName: actualFieldName,
+              label: canonicalAlias
+            });
+          });
+          if (items.length) {
+            appendGroupCard(group.title, items, context, group.icon);
+          }
+        };
+
+        if (!record) {
+          hasActiveRecord = false;
+          setCurrentRecordSummary(null);
+          setDetailOptionEnabled(false);
+          if (currentViewMode === 'detail') {
+            setViewMode('split-vertical', { force: true });
+          }
+          detailGrid.innerHTML = '';
+          detailForm.classList.add('d-none');
+          detailTabsWrapper.classList.add('d-none');
+          detailEmpty.classList.remove('d-none');
+          const scrollContainer = getDetailScrollContainer();
+          if (scrollContainer) {
+            scrollContainer.scrollTop = 0;
+          }
+          updatePageHeader();
+          updateDetailGridColumns();
+          updateTableSearchVisibility();
+          return;
+        }
+
+        hasActiveRecord = true;
+        setCurrentRecordSummary(record);
+        setDetailOptionEnabled(true);
+        updatePageHeader();
+        const flattenedFields = flattenRecordFieldsForDetail(record);
+        const flattenedFieldNames = Object.keys(flattenedFields);
+
+        detailGrid.innerHTML = '';
+
+        const normalizedToActual = new Map();
+        flattenedFieldNames.forEach((fieldName) => {
+          const normalized = normalizeDetailFieldName(fieldName);
+          if (!normalizedToActual.has(normalized)) {
+            normalizedToActual.set(normalized, []);
+          }
+          normalizedToActual.get(normalized).push(fieldName);
+        });
+
+        const context = {
+          fields: flattenedFields,
+          normalizedToActual,
+          seen: new Set()
+        };
+
+        DETAIL_GROUPS.forEach((group) => appendConfiguredGroup(group, context));
+
+        const normalizedOrder = Array.isArray(order)
+          ? order.map((name) => normalizeDetailFieldName(name))
+          : [];
+        const leftover = [];
+
+        normalizedOrder.forEach((normalizedName) => {
+          const candidates = normalizedToActual.get(normalizedName);
+          if (!candidates) {
+            return;
+          }
+          candidates.forEach((candidate) => {
+            if (!context.seen.has(candidate) && !leftover.includes(candidate)) {
+              leftover.push(candidate);
+            }
+          });
+        });
+
+        flattenedFieldNames.forEach((fieldName) => {
+          if (!context.seen.has(fieldName) && !leftover.includes(fieldName)) {
+            leftover.push(fieldName);
+          }
+        });
+
+        if (leftover.length) {
+          const leftoverItems = leftover.map((name) => ({
+            fieldName: name,
+            label: name
+          }));
+          appendGroupCard('Otros datos', leftoverItems, context, 'info');
+        }
+
+        if (detailCategoryNav) {
+          detailCategoryNav.innerHTML = '';
+          if (detailSections.length) {
+            const fragment = document.createDocumentFragment();
+            const heading = document.createElement('div');
+            heading.className = 'detail-category-nav-heading text-secondary text-uppercase small fw-semibold';
+            heading.textContent = 'Categorías';
+            fragment.appendChild(heading);
+
+            const list = document.createElement('ul');
+            list.className = 'detail-category-nav-list';
+            const navItems = [];
+
+            detailSections.forEach((section) => {
+              const item = document.createElement('li');
+              const button = document.createElement('button');
+              button.type = 'button';
+              button.className = 'detail-category-nav-button';
+              button.setAttribute('data-detail-nav-target', section.id);
+              button.setAttribute('aria-current', 'false');
+
+              if (section.icon) {
+                const iconSpan = document.createElement('span');
+                iconSpan.className = 'detail-category-nav-icon';
+                iconSpan.innerHTML = `<i data-lucide="${section.icon}"></i>`;
+                button.appendChild(iconSpan);
+              }
+
+              const labelSpan = document.createElement('span');
+              labelSpan.className = 'detail-category-nav-label';
+              labelSpan.textContent = section.title;
+              button.appendChild(labelSpan);
+
+              item.appendChild(button);
+              list.appendChild(item);
+              navItems.push({ button, id: section.id, order: section.order });
+            });
+
+            fragment.appendChild(list);
+            detailCategoryNav.appendChild(fragment);
+            detailNavItems = navItems;
+            syncDetailCategoryNavVisibility(currentViewMode);
+            if (detailSections.length) {
+              setActiveDetailNavItem(detailSections[0].id);
+            }
+            if (detailSectionObserver) {
+              detailSectionObserver.disconnect();
+            }
+
+            const scrollContainer = getDetailScrollContainer();
+            if (typeof IntersectionObserver === 'function' && scrollContainer) {
+              const orderLookup = new Map(detailSections.map((section) => [section.id, section.order]));
+              detailSectionObserver = new IntersectionObserver(
+                (entries) => {
+                  const intersecting = entries
+                    .filter((entry) => entry.isIntersecting)
+                    .sort(
+                      (a, b) => (orderLookup.get(a.target.id) ?? 0) - (orderLookup.get(b.target.id) ?? 0)
+                    );
+
+                  if (intersecting.length > 0) {
+                    const activeId = intersecting[0].target.id;
+                    setActiveDetailNavItem(activeId);
+                    return;
+                  }
+
+                  const scrollTop = scrollContainer.scrollTop;
+                  let fallbackId = null;
+                  for (const section of detailSections) {
+                    const element = scrollContainer.querySelector(`#${section.id}`);
+                    if (!element) {
+                      continue;
+                    }
+                    const elementTop = element.offsetTop;
+                    if (elementTop - 24 <= scrollTop) {
+                      fallbackId = section.id;
+                      continue;
+                    }
+                    if (fallbackId === null) {
+                      fallbackId = section.id;
+                    }
+                    break;
+                  }
+                  if (fallbackId) {
+                    setActiveDetailNavItem(fallbackId);
+                  }
+                },
+                {
+                  root: scrollContainer,
+                  threshold: 0.35,
+                  rootMargin: '-10% 0px -45% 0px'
+                }
+              );
+
+              detailSections.forEach(({ id }) => {
+                const element = scrollContainer.querySelector(`#${id}`);
+                if (element) {
+                  detailSectionObserver.observe(element);
+                }
+              });
+            }
+
+            if (scrollContainer) {
+              if (detailSections.length) {
+                scrollToDetailSection(detailSections[0].id, { behavior: 'auto' });
+              } else {
+                scrollContainer.scrollTop = 0;
+              }
+            }
+          } else {
+            detailNavItems = [];
+            syncDetailCategoryNavVisibility(currentViewMode);
+          }
+        }
+
+        if (!detailGrid.children.length) {
+          const placeholderCard = document.createElement('div');
+          placeholderCard.className = 'detail-card card shadow-sm';
+          const placeholderBody = document.createElement('div');
+          placeholderBody.className = 'card-body text-secondary';
+          placeholderBody.textContent = 'No hay datos disponibles.';
+          placeholderCard.appendChild(placeholderBody);
+          detailGrid.appendChild(placeholderCard);
+        }
+
+        detailEmpty.classList.add('d-none');
+        detailTabsWrapper.classList.remove('d-none');
+        detailForm.classList.remove('d-none');
+        if (detailSearchWrapper) {
+          const hasSearchableFields = detailSearchIndex.length > 0;
+          detailSearchWrapper.classList.toggle('d-none', !hasSearchableFields);
+          detailSearchWrapper.setAttribute('aria-hidden', hasSearchableFields ? 'false' : 'true');
+          if (detailSearchInput) {
+            detailSearchInput.disabled = !hasSearchableFields;
+          }
+        }
+        const resetScrollContainer = getDetailScrollContainer();
+        if (resetScrollContainer) {
+          resetScrollContainer.scrollTop = 0;
+          if (detailSections.length) {
+            scrollToDetailSection(detailSections[0].id, { behavior: 'auto' });
+          }
+        }
+        updatePageHeader();
+        updateDetailGridColumns();
+        window.lucide?.createIcons?.();
+      };
+
+      if (detailForm) {
+        detailForm.addEventListener('dblclick', async (event) => {
+          const target = event.target;
+          const isInput = target instanceof HTMLInputElement;
+          const isTextarea = target instanceof HTMLTextAreaElement;
+          if (!isInput && !isTextarea) {
+            return;
+          }
+          const isReadOnly = target.hasAttribute('readonly') || target.getAttribute('aria-readonly') === 'true';
+          if (!isReadOnly) {
+            return;
+          }
+          const rawValue = typeof target.value === 'string' ? target.value : '';
+          const success = await copyTextToClipboard(rawValue);
+          if (success) {
+            if (copyToastBodyEl) {
+              const normalizedValue = rawValue.trim().replace(/\s+/g, ' ');
+              const preview = normalizedValue.length > 64 ? `${normalizedValue.slice(0, 64)}…` : normalizedValue;
+              copyToastBodyEl.textContent = preview
+                ? `Copiado al portapapeles: ${preview}`
+                : 'Valor vacío copiado al portapapeles.';
+            }
+            if (copyToastInstance) {
+              copyToastInstance.show();
+            }
+          } else {
+            console.warn('No se pudo copiar el texto al portapapeles.');
+          }
+        });
+      }
+
+      const minSecondarySize = 0;
+      const collapseThreshold = 32;
+      const keyboardStep = 32;
+      const mobileQuery = window.matchMedia('(max-width: 991.98px)');
+
+      const supportsPointerEvents = 'PointerEvent' in window;
+      let isResizing = false;
+      let pointerId = null;
+      let activeResizeMode = null;
+      let startCoordinate = 0;
+      let startPrimarySize = 0;
+      let resizeRAF = null;
+      let lastAppliedPrimarySize = null;
+
+      const getClientCoordinate = (event) => {
+        const axis = isVerticalSplitMode() ? 'X' : 'Y';
+        if (event.touches && event.touches.length > 0) {
+          return event.touches[0][`client${axis}`];
+        }
+        if (event.changedTouches && event.changedTouches.length > 0) {
+          return event.changedTouches[0][`client${axis}`];
+        }
+        if (typeof event[`client${axis}`] === 'number') {
+          return event[`client${axis}`];
+        }
+        return null;
+      };
+
+      const getComputedMinSize = (element) => {
+        const styles = window.getComputedStyle(element);
+        const property = isVerticalSplitMode() ? 'minWidth' : 'minHeight';
+        const parsed = parseFloat(styles[property]);
+        return Number.isFinite(parsed) ? parsed : 0;
+      };
+
+      const getPanelCurrentSize = (panel) => {
+        const rect = panel.getBoundingClientRect();
+        return isVerticalSplitMode() ? rect.width : rect.height;
+      };
+
+      const getBounds = () => {
+        const rect = wrapper.getBoundingClientRect();
+        const axisSize = isVerticalSplitMode() ? rect.width : rect.height;
+        if (!axisSize) {
+          return null;
+        }
+        const minPrimary = Math.max(getComputedMinSize(topPanel), isVerticalSplitMode() ? 200 : 160);
+        const minSecondary = Math.max(getComputedMinSize(bottomPanel), minSecondarySize);
+        const maxPrimary = Math.max(axisSize - minSecondary, minPrimary);
+        return {
+          axisSize,
+          minPrimary,
+          minSecondary,
+          maxPrimary
+        };
+      };
+
+      const computeLayout = (desiredPrimarySize) => {
+        const bounds = getBounds();
+        if (!bounds) {
+          return null;
+        }
+
+        const primary = Math.min(Math.max(desiredPrimarySize, bounds.minPrimary), bounds.maxPrimary);
+        const secondary = Math.max(bounds.axisSize - primary, bounds.minSecondary);
+        return {
+          primary,
+          secondary
+        };
+      };
+
+      const applySizes = (desiredPrimarySize) => {
+        if (mobileQuery.matches || !isResizableMode()) {
+          return;
+        }
+        const layout = computeLayout(desiredPrimarySize);
+        if (!layout) {
+          return;
+        }
+
+        lastAppliedPrimarySize = layout.primary;
+        const primaryValue = `${layout.primary}px`;
+        const secondaryValue = `${layout.secondary}px`;
+
+        topPanel.style.flexBasis = primaryValue;
+        bottomPanel.style.flexBasis = secondaryValue;
+
+        if (isVerticalSplitMode()) {
+          topPanel.style.width = primaryValue;
+          bottomPanel.style.width = secondaryValue;
+          topPanel.style.height = '';
+          bottomPanel.style.height = '';
+        } else {
+          topPanel.style.height = primaryValue;
+          bottomPanel.style.height = secondaryValue;
+          topPanel.style.width = '';
+          bottomPanel.style.width = '';
+        }
+
+        const isCollapsed = layout.secondary <= collapseThreshold;
+        bottomPanel.classList.toggle('is-collapsed', isCollapsed);
+        handle.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+        updateDetailGridColumns();
+      };
+
+      const scheduleApplySizes = (size) => {
+        if (!isResizableMode()) {
+          return;
+        }
+        cancelAnimationFrame(resizeRAF);
+        resizeRAF = requestAnimationFrame(() => applySizes(size));
+      };
+
+      const stopResizing = () => {
+        if (!isResizing) {
+          return;
+        }
+        isResizing = false;
+        if (activeResizeMode === 'pointer' && pointerId !== null && typeof handle.releasePointerCapture === 'function') {
+          handle.releasePointerCapture(pointerId);
+        }
+        pointerId = null;
+        activeResizeMode = null;
+        document.body.classList.remove('user-select-none');
+        cancelAnimationFrame(resizeRAF);
+        resizeRAF = null;
+        if (lastAppliedPrimarySize !== null && isResizableMode()) {
+          applySizes(lastAppliedPrimarySize);
+        }
+      };
+
+      const onDragMove = (event) => {
+        if (!isResizing) {
+          return;
+        }
+        const coordinate = getClientCoordinate(event);
+        if (coordinate === null) {
+          return;
+        }
+        scheduleApplySizes(startPrimarySize + (coordinate - startCoordinate));
+        if (activeResizeMode === 'touch') {
+          event.preventDefault();
+        }
+      };
+
+      const startResizing = (event, mode) => {
+        if (mobileQuery.matches || !isResizableMode()) {
+          return;
+        }
+        if ((mode === 'pointer' || mode === 'mouse') && typeof event.button === 'number' && event.button !== 0) {
+          return;
+        }
+        const coordinate = getClientCoordinate(event);
+        if (coordinate === null) {
+          return;
+        }
+        activeResizeMode = mode;
+        isResizing = true;
+        pointerId = mode === 'pointer' ? event.pointerId ?? null : null;
+        startCoordinate = coordinate;
+        const currentSize = getPanelCurrentSize(topPanel);
+        const layout = computeLayout(currentSize || lastAppliedPrimarySize || ((getBounds()?.axisSize ?? 0) * 0.55));
+        startPrimarySize = layout?.primary ?? 0;
+        if (mode === 'pointer' && pointerId !== null && typeof handle.setPointerCapture === 'function') {
+          handle.setPointerCapture(pointerId);
+        }
+        document.body.classList.add('user-select-none');
+        event.preventDefault();
+      };
+
+      const snapToMinimum = () => {
+        if (!isResizableMode()) {
+          return;
+        }
+        const bounds = getBounds();
+        if (!bounds) {
+          return;
+        }
+        scheduleApplySizes(bounds.minPrimary);
+      };
+
+      const snapToMaximum = () => {
+        if (!isResizableMode()) {
+          return;
+        }
+        const bounds = getBounds();
+        if (!bounds) {
+          return;
+        }
+        scheduleApplySizes(bounds.maxPrimary);
+      };
+
+      const adjustPrimarySizeByPixels = (delta) => {
+        if (mobileQuery.matches || !isResizableMode()) {
+          return;
+        }
+        const currentSize = getPanelCurrentSize(topPanel) || lastAppliedPrimarySize;
+        const fallback = getBounds()?.minPrimary ?? 0;
+        scheduleApplySizes((currentSize ?? fallback) + delta);
+      };
+
+      const resetPanelSizes = () => {
+        topPanel.style.flexBasis = '';
+        bottomPanel.style.flexBasis = '';
+        topPanel.style.width = '';
+        topPanel.style.height = '';
+        bottomPanel.style.width = '';
+        bottomPanel.style.height = '';
+      };
+
+      const handleLayoutChange = () => {
+        cancelAnimationFrame(resizeRAF);
+        resizeRAF = null;
+
+        if (mobileQuery.matches || !isResizableMode()) {
+          stopResizing();
+          resetPanelSizes();
+          bottomPanel.classList.remove('is-collapsed');
+          handle.setAttribute('aria-expanded', 'true');
+          lastAppliedPrimarySize = null;
+          updateDetailGridColumns();
+          pendingHandleRestore = null;
+          return;
+        }
+
+        const currentSize = getPanelCurrentSize(topPanel) || lastAppliedPrimarySize;
+        const bounds = getBounds();
+        const fallbackSize = bounds
+          ? Math.min(Math.max(bounds.axisSize * 0.55, bounds.minPrimary), bounds.maxPrimary)
+          : null;
+        const desired = currentSize ?? fallbackSize;
+        if (desired !== null) {
+          applySizes(desired);
+        } else {
+          updateDetailGridColumns();
+        }
+        applyPendingHandleRestore();
+      };
+
+      function applyViewModeLayout(mode) {
+        const targetMode = allowedViewModes.includes(mode) ? mode : 'split-vertical';
+
+        if (isResizableMode(targetMode)) {
+          wrapper.classList.remove('view-detail-only', 'view-list-only');
+          wrapper.classList.toggle('view-split-vertical', isVerticalSplitMode(targetMode));
+          topPanel.classList.remove('d-none');
+          bottomPanel.classList.remove('d-none');
+          handle.classList.remove('d-none');
+          handle.setAttribute('aria-orientation', isVerticalSplitMode(targetMode) ? 'vertical' : 'horizontal');
+          if (columnsWrapper) {
+            columnsWrapper.classList.remove('d-none');
+          }
+          handleLayoutChange();
+          updateDetailGridColumns();
+          updateTableSearchVisibility();
+          updatePageHeader();
+          syncDetailCategoryNavVisibility(targetMode);
+          return;
+        }
+
+        stopResizing();
+        cancelAnimationFrame(resizeRAF);
+        resizeRAF = null;
+        resetPanelSizes();
+        bottomPanel.classList.remove('is-collapsed');
+        lastAppliedPrimarySize = null;
+        handle.setAttribute('aria-expanded', 'true');
+        wrapper.classList.remove('view-split-vertical');
+
+        if (targetMode === 'detail') {
+          topPanel.classList.add('d-none');
+          bottomPanel.classList.remove('d-none');
+          handle.classList.add('d-none');
+          handle.setAttribute('aria-orientation', 'horizontal');
+          wrapper.classList.add('view-detail-only');
+          wrapper.classList.remove('view-list-only');
+          if (columnsWrapper) {
+            columnsWrapper.classList.add('d-none');
+          }
+        } else {
+          topPanel.classList.remove('d-none');
+          bottomPanel.classList.add('d-none');
+          handle.classList.add('d-none');
+          handle.setAttribute('aria-orientation', 'horizontal');
+          wrapper.classList.add('view-list-only');
+          wrapper.classList.remove('view-detail-only');
+          if (columnsWrapper) {
+            columnsWrapper.classList.remove('d-none');
+          }
+        }
+
+        updateTableSearchVisibility();
+        updateDetailGridColumns();
+        updatePageHeader();
+        syncDetailCategoryNavVisibility(targetMode);
+      }
+
+      function setViewMode(mode, { force = false } = {}) {
+        if (!allowedViewModes.includes(mode)) {
+          mode = 'split-vertical';
+        }
+        if (mode === 'detail' && !hasActiveRecord) {
+          mode = isResizableMode(currentViewMode) ? currentViewMode : 'split-vertical';
+        }
+        const changed = currentViewMode !== mode;
+        if (!changed && !force) {
+          syncViewSelect(currentViewMode);
+          updateTableSearchVisibility();
+          return;
+        }
+        currentViewMode = mode;
+        syncViewSelect(currentViewMode);
+        applyViewModeLayout(currentViewMode);
+      }
+
+      if (viewSelect) {
+        viewSelect.addEventListener('change', () => {
+          setViewMode(viewSelect.value);
+        });
+      }
+
+      if (viewPresetAddButton) {
+        viewPresetAddButton.addEventListener('click', () => handleViewPresetAdd());
+      }
+
+      if (viewPresetList) {
+        viewPresetList.addEventListener('click', handleViewPresetSelection);
+      }
+
+      setViewMode(currentViewMode, { force: true });
+
+      if (supportsPointerEvents) {
+        handle.addEventListener('pointerdown', (event) => startResizing(event, 'pointer'));
+        document.addEventListener('pointermove', onDragMove);
+        document.addEventListener('pointerup', stopResizing);
+        document.addEventListener('pointercancel', stopResizing);
+      } else {
+        handle.addEventListener('mousedown', (event) => startResizing(event, 'mouse'));
+        document.addEventListener('mousemove', onDragMove);
+        document.addEventListener('mouseup', stopResizing);
+        handle.addEventListener('touchstart', (event) => startResizing(event, 'touch'), { passive: false });
+        document.addEventListener('touchmove', onDragMove, { passive: false });
+        document.addEventListener('touchend', stopResizing);
+        document.addEventListener('touchcancel', stopResizing);
+      }
+
+      handle.addEventListener('keydown', (event) => {
+        const isVertical = isVerticalSplitMode();
+        if ((event.key === 'ArrowUp' && !isVertical) || (event.key === 'ArrowLeft' && isVertical)) {
+          event.preventDefault();
+          adjustPrimarySizeByPixels(-keyboardStep);
+        } else if ((event.key === 'ArrowDown' && !isVertical) || (event.key === 'ArrowRight' && isVertical)) {
+          event.preventDefault();
+          adjustPrimarySizeByPixels(keyboardStep);
+        } else if (event.key === 'Home') {
+          event.preventDefault();
+          snapToMinimum();
+        } else if (event.key === 'End') {
+          event.preventDefault();
+          snapToMaximum();
+        }
+      });
+
+      document.addEventListener('clientesTable:select', (event) => {
+        const detail = event.detail ?? {};
+        const record = detail.record ?? null;
+        renderDetail(record, detail.fieldOrder ?? []);
+        updateProcessActionsName(detail.displayName ?? null, record);
+      });
+
+      document.addEventListener('clientesTable:ready', () => {
+        isTableReady = true;
+        updateViewPresetControlsAvailability();
+        if (pendingTablePreset) {
+          const presetToApply = pendingTablePreset;
+          pendingTablePreset = null;
+          applyTablePresetState(presetToApply);
+          requestAnimationFrame(() => applyPendingHandleRestore());
+        }
+      });
+
+      document.addEventListener('clientesTable:destroy', () => {
+        isTableReady = false;
+        updateViewPresetControlsAvailability();
+        updateProcessActionsName(null, null);
+        updatePageHeaderFromRecord(null);
+      });
+
+      const applyInitialProcessSelection = () => {
+        const selectionLoader = window.ClientesProcessSelection?.load;
+        let selection = typeof selectionLoader === 'function' ? selectionLoader() : null;
+        if (!selection || typeof selection !== 'object' || !selection.record) {
+          selection = loadProcessSelectionFromStorage();
+        }
+        if (selection && typeof selection === 'object' && selection.record) {
+          const order = Array.isArray(selection.fieldOrder) ? selection.fieldOrder : [];
+          updateProcessActionsName(selection.displayName ?? null, selection.record);
+          renderDetail(selection.record, order);
+          return;
+        }
+        renderDetail(null, []);
+        updateProcessActionsName(null, null);
+      };
+
+      applyInitialProcessSelection();
+      mobileQuery.addEventListener('change', handleLayoutChange);
+      if (detailNavBreakpoint) {
+        detailNavBreakpoint.addEventListener('change', () => syncDetailCategoryNavVisibility(currentViewMode));
+      }
+      window.addEventListener('resize', handleLayoutChange);
+
+      handleLayoutChange();
+    });
+  </script>
+
+  <!-- Plugin js for this page -->
+  <script src="./assets/vendors/jquery/jquery.min.js"></script>
+  <script src="./assets/vendors/datatables.net/dataTables.js"></script>
+  <script src="./assets/vendors/datatables.net-bs5/dataTables.bootstrap5.js"></script>
+  <!-- End plugin js for this page -->
+
+  <script src="./assets/js/dashboard.js"></script>
+  <script src="./assets/js/clientes-table.js"></script>
+
+</body>
+</html>

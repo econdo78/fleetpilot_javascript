@@ -1,0 +1,221 @@
+{
+	"info": {
+		"_postman_id": "097e73bf-7acf-4d65-8348-f980a95b5e90",
+		"name": "Fleetpilot OData",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "10217525"
+	},
+	"item": [
+		{
+			"name": "Get records",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "{{pass}}",
+						"username": "{{user}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "{{server}}/fmi/odata/{{version}}/{{database}}/{{table}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Listado conductores",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "{{pass}}",
+						"username": "{{user}}"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"scriptParameterValue\": \"\"\n}"
+				},
+				"url": "{{server}}/fmi/odata/{{version}}/{{database}}/Script.conductor.Listar"
+			},
+			"response": []
+		},
+		{
+			"name": "Listado inversores",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "{{pass}}",
+						"username": "{{user}}"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"scriptParameterValue\": \"\"\n}"
+				},
+				"url": "{{server}}/fmi/odata/{{version}}/{{database}}/Script.inversor.Listar"
+			},
+			"response": []
+		},
+		{
+			"name": "Listado vehiculos",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "{{pass}}",
+						"username": "{{user}}"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"scriptParameterValue\": \"\"\n}"
+				},
+				"url": "{{server}}/fmi/odata/{{version}}/{{database}}/Script.vehiculo.Listar"
+			},
+			"response": []
+		},
+		{
+			"name": "Listado tarjetas combustible",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "{{pass}}",
+						"username": "{{user}}"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"scriptParameterValue\": \"\"\n}"
+				},
+				"url": "{{server}}/fmi/odata/{{version}}/{{database}}/Script.tarjetaCombustible.Listar"
+			},
+			"response": []
+		},
+		{
+			"name": "Listado tarjetas efectivo",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "{{pass}}",
+						"username": "{{user}}"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"scriptParameterValue\": \"\"\n}"
+				},
+				"url": "{{server}}/fmi/odata/{{version}}/{{database}}/Script.tarjetaEfectivo.Listar"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "server",
+			"value": "https://fleetpad.app"
+		},
+		{
+			"key": "database",
+			"value": "fleetpad_des"
+		},
+		{
+			"key": "table",
+			"value": "conductor"
+		},
+		{
+			"key": "version",
+			"value": "v4"
+		},
+		{
+			"key": "user",
+			"value": "Appdashboard"
+		},
+		{
+			"key": "pass",
+			"value": "DashboarD2025"
+		}
+	]
+}

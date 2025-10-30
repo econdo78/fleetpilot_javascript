@@ -1,0 +1,655 @@
+{
+    "titulo": "Menú de Conductores",
+    "data": [
+        {
+            "activado": "1",
+            "id": "8FCAD162-8AD0-4B61-AC56-49ED73C879DD",
+            "idPadre": "",
+            "nivel": "1",
+            "nombre": "INVERSOR",
+            "orden": "190",
+            "presentacion": "",
+            "tipo": "Entidad"
+        },
+        {
+            "activado": "1",
+            "id": "D0CBFBE8-13A6-4A90-9D90-30E1D69CD816",
+            "idPadre": "8FCAD162-8AD0-4B61-AC56-49ED73C879DD",
+            "nivel": "1",
+            "nombre": "ALTA Y BAJA EN SISTEMA Y GESTION",
+            "orden": "191",
+            "presentacion": "",
+            "tipo": "Grupo"
+        },
+        {
+            "activado": "1",
+            "id": "CE6556A0-0378-483E-AD7D-089B6FFA1514",
+            "idPadre": "8FCAD162-8AD0-4B61-AC56-49ED73C879DD",
+            "nivel": "1",
+            "nombre": "DATOS DEL INVERSOR",
+            "orden": "192",
+            "presentacion": "",
+            "tipo": "Grupo"
+        },
+        {
+            "activado": "1",
+            "id": "5FE47F9D-8F01-40F8-A452-9E65900731CF",
+            "idPadre": "8FCAD162-8AD0-4B61-AC56-49ED73C879DD",
+            "nivel": "1",
+            "nombre": "DOCUMENTACION DEL INVERSOR",
+            "orden": "196",
+            "presentacion": "",
+            "tipo": "Grupo"
+        },
+        {
+            "activado": "1",
+            "id": "CFE41C96-0EDD-4388-BFCA-793200B20FF5",
+            "idPadre": "8FCAD162-8AD0-4B61-AC56-49ED73C879DD",
+            "nivel": "1",
+            "nombre": "HACIENDA",
+            "orden": "197",
+            "presentacion": "",
+            "tipo": "Grupo"
+        },
+        {
+            "activado": "1",
+            "id": "5C5DA0B0-6F5A-4626-B363-08B126CBE0AC",
+            "idPadre": "8FCAD162-8AD0-4B61-AC56-49ED73C879DD",
+            "nivel": "1",
+            "nombre": "LEGAL",
+            "orden": "198",
+            "presentacion": "",
+            "tipo": "Grupo"
+        },
+        {
+            "activado": "1",
+            "id": "A19C8DE8-15CF-472E-9A56-A11B0F5C4BA1",
+            "idPadre": "8FCAD162-8AD0-4B61-AC56-49ED73C879DD",
+            "nivel": "1",
+            "nombre": "REGISTRO MERCANTIL",
+            "orden": "199",
+            "presentacion": "",
+            "tipo": "Grupo"
+        },
+        {
+            "activado": "1",
+            "id": "3E5DDC2C-5F69-43CA-B322-36393735B4A5",
+            "idPadre": "8FCAD162-8AD0-4B61-AC56-49ED73C879DD",
+            "nivel": "1",
+            "nombre": "LABORAL",
+            "orden": "200",
+            "presentacion": "",
+            "tipo": "Grupo"
+        },
+        {
+            "activado": "1",
+            "id": "6C4F8A0F-1E9C-4EB5-9866-132B52990C1B",
+            "idPadre": "8FCAD162-8AD0-4B61-AC56-49ED73C879DD",
+            "nivel": "1",
+            "nombre": "SEGUROS",
+            "orden": "201",
+            "presentacion": "",
+            "tipo": "Grupo"
+        },
+        {
+            "activado": "1",
+            "id": "5A1CE11A-797F-4BE5-8EBD-FAEA3308BC25",
+            "idPadre": "8FCAD162-8AD0-4B61-AC56-49ED73C879DD",
+            "nivel": "1",
+            "nombre": "BANCOS",
+            "orden": "202",
+            "presentacion": "",
+            "tipo": "Grupo"
+        },
+        {
+            "activado": "1",
+            "id": "D6ED5BC5-8E6B-450F-B862-FD719635EEBE",
+            "idPadre": "8FCAD162-8AD0-4B61-AC56-49ED73C879DD",
+            "nivel": "1",
+            "nombre": "COMBUSTIBLE",
+            "orden": "203",
+            "presentacion": "",
+            "tipo": "Grupo"
+        },
+        {
+            "activado": "1",
+            "id": "3B18F70B-664E-41E9-881D-BDE0D1619DC5",
+            "idPadre": "8FCAD162-8AD0-4B61-AC56-49ED73C879DD",
+            "nivel": "1",
+            "nombre": "PLATAFORMAS",
+            "orden": "204",
+            "presentacion": "",
+            "tipo": "Grupo"
+        },
+        {
+            "activado": "1",
+            "id": "712978F2-4586-43FF-8C41-E0E6F1794847",
+            "idPadre": "D0CBFBE8-13A6-4A90-9D90-30E1D69CD816",
+            "nivel": "2",
+            "nombre": "ALTA",
+            "orden": "193",
+            "presentacion": "",
+            "tipo": "Subgrupo"
+        },
+        {
+            "activado": "1",
+            "id": "049ECB91-5D62-4930-86CF-A39AFAAEB59E",
+            "idPadre": "D0CBFBE8-13A6-4A90-9D90-30E1D69CD816",
+            "nivel": "2",
+            "nombre": "BAJA",
+            "orden": "194",
+            "presentacion": "",
+            "tipo": "Subgrupo"
+        },
+        {
+            "activado": "1",
+            "id": "5B28EDC7-807C-4A1A-94CD-ED5BA77E5A2C",
+            "idPadre": "CE6556A0-0378-483E-AD7D-089B6FFA1514",
+            "nivel": "2",
+            "nombre": "DATOS BÁSICOS DEL INVERSOR",
+            "orden": "195",
+            "presentacion": "",
+            "tipo": "Subgrupo"
+        },
+        {
+            "activado": "0",
+            "id": "2C42F445-C36E-4955-A92B-B06D989E3F72",
+            "idPadre": "5FE47F9D-8F01-40F8-A452-9E65900731CF",
+            "nivel": "2",
+            "nombre": "DOCUMENTO DE IDENTIDAD",
+            "orden": "216",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "B65BBF30-9BE5-4E87-B9D9-21E43D67A5C6",
+            "idPadre": "5FE47F9D-8F01-40F8-A452-9E65900731CF",
+            "nivel": "2",
+            "nombre": "ESCRITURAS DE LA EMPRESA",
+            "orden": "217",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "A432C946-3C74-4D77-9F03-B89EB3F66EB4",
+            "idPadre": "CFE41C96-0EDD-4388-BFCA-793200B20FF5",
+            "nivel": "2",
+            "nombre": "NIF",
+            "orden": "218",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "1201B25F-D677-4170-96B2-877AC76F5F9F",
+            "idPadre": "CFE41C96-0EDD-4388-BFCA-793200B20FF5",
+            "nivel": "2",
+            "nombre": "IAE",
+            "orden": "219",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "3D9EB664-60FE-4FD2-8DDE-1FEDEF86D40C",
+            "idPadre": "CFE41C96-0EDD-4388-BFCA-793200B20FF5",
+            "nivel": "2",
+            "nombre": "ROI",
+            "orden": "220",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "1",
+            "id": "C4A2596B-244C-4621-93FB-CD5530218ED2",
+            "idPadre": "5C5DA0B0-6F5A-4626-B363-08B126CBE0AC",
+            "nivel": "2",
+            "nombre": "SANCIONES",
+            "orden": "221",
+            "presentacion": "",
+            "tipo": "Subgrupo"
+        },
+        {
+            "activado": "1",
+            "id": "7CE02EC8-2BDC-45F2-B4A1-57B2C929B832",
+            "idPadre": "5C5DA0B0-6F5A-4626-B363-08B126CBE0AC",
+            "nivel": "2",
+            "nombre": "EXPEDIENTES ADMINISTRATIVOS",
+            "orden": "222",
+            "presentacion": "",
+            "tipo": "Subgrupo"
+        },
+        {
+            "activado": "0",
+            "id": "C78979E1-29B3-48AB-9983-986DC70D626C",
+            "idPadre": "A19C8DE8-15CF-472E-9A56-A11B0F5C4BA1",
+            "nivel": "2",
+            "nombre": "ALTA REGISTRO MERCANTIL",
+            "orden": "224",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "EA62E2BA-7EFC-4414-9329-2281430ABCA3",
+            "idPadre": "A19C8DE8-15CF-472E-9A56-A11B0F5C4BA1",
+            "nivel": "2",
+            "nombre": "MODIFICACION REGISTRO MERCANTIL",
+            "orden": "225",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "1",
+            "id": "89B53935-645E-4CBA-B9A9-5B11233B7976",
+            "idPadre": "3E5DDC2C-5F69-43CA-B322-36393735B4A5",
+            "nivel": "2",
+            "nombre": "SEGURIDAD SOCIAL",
+            "orden": "226",
+            "presentacion": "",
+            "tipo": "Subgrupo"
+        },
+        {
+            "activado": "1",
+            "id": "44B93E46-C286-4C2A-A81E-F76F0A112689",
+            "idPadre": "3E5DDC2C-5F69-43CA-B322-36393735B4A5",
+            "nivel": "2",
+            "nombre": "PREVENCION RIESGOS LABORALES",
+            "orden": "235",
+            "presentacion": "",
+            "tipo": "Subgrupo"
+        },
+        {
+            "activado": "1",
+            "id": "301CDBF7-430E-4DBA-9AA5-8E468D931F9F",
+            "idPadre": "6C4F8A0F-1E9C-4EB5-9866-132B52990C1B",
+            "nivel": "2",
+            "nombre": "POLIZA ACCIDENTES COLECTIVO",
+            "orden": "239",
+            "presentacion": "",
+            "tipo": "Subgrupo"
+        },
+        {
+            "activado": "1",
+            "id": "17FBB9A3-55DD-4486-A49F-742127379A31",
+            "idPadre": "6C4F8A0F-1E9C-4EB5-9866-132B52990C1B",
+            "nivel": "2",
+            "nombre": "SEGURO RESPONSABILIDAD CIVIL",
+            "orden": "243",
+            "presentacion": "",
+            "tipo": "Subgrupo"
+        },
+        {
+            "activado": "1",
+            "id": "56269762-CC3F-4440-AC30-6E8CBB296749",
+            "idPadre": "5A1CE11A-797F-4BE5-8EBD-FAEA3308BC25",
+            "nivel": "2",
+            "nombre": "TARJETA CASH IN",
+            "orden": "247",
+            "presentacion": "",
+            "tipo": "Subgrupo"
+        },
+        {
+            "activado": "1",
+            "id": "4B534167-05D0-4501-95C1-E63FBE507727",
+            "idPadre": "5A1CE11A-797F-4BE5-8EBD-FAEA3308BC25",
+            "nivel": "2",
+            "nombre": "CUENTA BANCARIA",
+            "orden": "213",
+            "presentacion": "",
+            "tipo": "Subgrupo"
+        },
+        {
+            "activado": "1",
+            "id": "BA12BB91-A742-4900-A9EF-5E8A6D8B3D89",
+            "idPadre": "D6ED5BC5-8E6B-450F-B862-FD719635EEBE",
+            "nivel": "2",
+            "nombre": "TARJETAS COMBUSTIBLE",
+            "orden": "251",
+            "presentacion": "",
+            "tipo": "Subgrupo"
+        },
+        {
+            "activado": "1",
+            "id": "272B262C-463A-481E-88FF-B1C35B901204",
+            "idPadre": "D6ED5BC5-8E6B-450F-B862-FD719635EEBE",
+            "nivel": "2",
+            "nombre": "CONTRATO COMBUSTIBLE",
+            "orden": "214",
+            "presentacion": "",
+            "tipo": "Subgrupo"
+        },
+        {
+            "activado": "0",
+            "id": "34650284-0C4D-404E-8D24-337E7640A913",
+            "idPadre": "3B18F70B-664E-41E9-881D-BDE0D1619DC5",
+            "nivel": "2",
+            "nombre": "ALTA PLATAFORMA",
+            "orden": "257",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "1",
+            "id": "F22EC7FD-7784-47F9-9845-8CA2134D2E59",
+            "idPadre": "712978F2-4586-43FF-8C41-E0E6F1794847",
+            "nivel": "3",
+            "nombre": "ALTA INVERSOR EN SISTEMA",
+            "orden": "205",
+            "presentacion": "FichaAltaInversor",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "1",
+            "id": "43B3FC53-251C-478F-9EE6-1AC71676CEEA",
+            "idPadre": "712978F2-4586-43FF-8C41-E0E6F1794847",
+            "nivel": "3",
+            "nombre": "ALTA INVERSOR EN GESTION",
+            "orden": "206",
+            "presentacion": "FichaAltaInversorEnGestion",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "1",
+            "id": "550ACDCE-CDB9-4115-9190-20CA516916CA",
+            "idPadre": "049ECB91-5D62-4930-86CF-A39AFAAEB59E",
+            "nivel": "3",
+            "nombre": "BAJA INVERSOR EN GESTION",
+            "orden": "207",
+            "presentacion": "FichaBajaInversor",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "1",
+            "id": "DC36C24D-29FF-435C-A7E9-ED1D31A25450",
+            "idPadre": "5B28EDC7-807C-4A1A-94CD-ED5BA77E5A2C",
+            "nivel": "3",
+            "nombre": "DATOS BASICOS",
+            "orden": "208",
+            "presentacion": "FichaPersonaFisicaAutonomoInversor",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "1",
+            "id": "D80C9C81-4CC1-4A4B-8A5C-A7F4E5A9FD1A",
+            "idPadre": "7CE02EC8-2BDC-45F2-B4A1-57B2C929B832",
+            "nivel": "3",
+            "nombre": "MULTAS / INSOECION",
+            "orden": "223",
+            "presentacion": "",
+            "tipo": "Subgrupo2"
+        },
+        {
+            "activado": "1",
+            "id": "EB34167C-C28D-470C-9455-541962C5C366",
+            "idPadre": "89B53935-645E-4CBA-B9A9-5B11233B7976",
+            "nivel": "3",
+            "nombre": "RETA",
+            "orden": "227",
+            "presentacion": "",
+            "tipo": "Subgrupo2"
+        },
+        {
+            "activado": "1",
+            "id": "F62923AD-6D55-4075-93D3-C7C86B5219C5",
+            "idPadre": "89B53935-645E-4CBA-B9A9-5B11233B7976",
+            "nivel": "3",
+            "nombre": "CUENTA DE COTIZACION",
+            "orden": "228",
+            "presentacion": "",
+            "tipo": "Subgrupo2"
+        },
+        {
+            "activado": "0",
+            "id": "250C4839-56D9-4388-8386-EC6D023D1C31",
+            "idPadre": "44B93E46-C286-4C2A-A81E-F76F0A112689",
+            "nivel": "3",
+            "nombre": "ALTA PRL",
+            "orden": "236",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "5ACD0239-0FCE-45EB-AB32-8CC79066AC28",
+            "idPadre": "44B93E46-C286-4C2A-A81E-F76F0A112689",
+            "nivel": "3",
+            "nombre": "MODIFICACION PRL",
+            "orden": "237",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "574115A0-2C0F-4AAB-B246-F918D9275E81",
+            "idPadre": "44B93E46-C286-4C2A-A81E-F76F0A112689",
+            "nivel": "3",
+            "nombre": "BAJA PRL",
+            "orden": "238",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "0E121BAC-7E11-481F-AF56-016951DCA7E1",
+            "idPadre": "301CDBF7-430E-4DBA-9AA5-8E468D931F9F",
+            "nivel": "3",
+            "nombre": "ALTA ACC",
+            "orden": "240",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "3DC51C10-99CD-454E-B3C2-349B9661A8C0",
+            "idPadre": "301CDBF7-430E-4DBA-9AA5-8E468D931F9F",
+            "nivel": "3",
+            "nombre": "MODIFICACION ACC",
+            "orden": "241",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "7C38DE60-4966-4D80-884B-768CD0BF4EE5",
+            "idPadre": "301CDBF7-430E-4DBA-9AA5-8E468D931F9F",
+            "nivel": "3",
+            "nombre": "BAJA ACC",
+            "orden": "242",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "C0C3157A-191C-43C5-AD31-9972B681EBAC",
+            "idPadre": "17FBB9A3-55DD-4486-A49F-742127379A31",
+            "nivel": "3",
+            "nombre": "ALTA RC",
+            "orden": "244",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "674D9CD0-18B5-4839-B16D-950115EF92DB",
+            "idPadre": "17FBB9A3-55DD-4486-A49F-742127379A31",
+            "nivel": "3",
+            "nombre": "MODIFICACION RC",
+            "orden": "245",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "335BDD47-0C0C-446F-B64D-1673F8A62852",
+            "idPadre": "17FBB9A3-55DD-4486-A49F-742127379A31",
+            "nivel": "3",
+            "nombre": "BAJA RC",
+            "orden": "246",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "1",
+            "id": "B92510BC-18A1-4DF6-8865-B176EA2C8349",
+            "idPadre": "56269762-CC3F-4440-AC30-6E8CBB296749",
+            "nivel": "3",
+            "nombre": "ALTA TARJETA CASH IN",
+            "orden": "249",
+            "presentacion": "ListadoAltaTarjetaEfectivo",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "9405733B-C401-44E1-825E-215822C84B7B",
+            "idPadre": "56269762-CC3F-4440-AC30-6E8CBB296749",
+            "nivel": "3",
+            "nombre": "MODIFICACION TARJETA CASH IN",
+            "orden": "250",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "7E77E9FF-7F9F-4A48-B85A-F431C24ACCA2",
+            "idPadre": "56269762-CC3F-4440-AC30-6E8CBB296749",
+            "nivel": "3",
+            "nombre": "BAJA TARJETA CASH IN",
+            "orden": "324",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "1",
+            "id": "F373AE12-B11E-4172-8817-976A96D7CF91",
+            "idPadre": "4B534167-05D0-4501-95C1-E63FBE507727",
+            "nivel": "3",
+            "nombre": "ALTA CUENTA BANCARIA",
+            "orden": "210",
+            "presentacion": "FichaAltaCuentaBancaria",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "74E23647-6017-400C-BBF2-B7A0BD34140E",
+            "idPadre": "4B534167-05D0-4501-95C1-E63FBE507727",
+            "nivel": "3",
+            "nombre": "BAJA CUENTA BANCARIA",
+            "orden": "248",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "1",
+            "id": "637927C6-23A6-458E-911E-D7CF9428FB59",
+            "idPadre": "BA12BB91-A742-4900-A9EF-5E8A6D8B3D89",
+            "nivel": "3",
+            "nombre": "ALTA TARJETA COMBUSTIBLE",
+            "orden": "255",
+            "presentacion": "ListadoAltaTarjetaCombustible",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "11DB762A-0EF8-467E-99B6-06243BA3AAEA",
+            "idPadre": "BA12BB91-A742-4900-A9EF-5E8A6D8B3D89",
+            "nivel": "3",
+            "nombre": "MODIFICACIÓN TARJETA COMBUSTIBLE",
+            "orden": "256",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "A957AC51-991A-4909-9EFE-17EF5F8C6BD3",
+            "idPadre": "BA12BB91-A742-4900-A9EF-5E8A6D8B3D89",
+            "nivel": "3",
+            "nombre": "BAJA TARJETA COMBUSTIBLE",
+            "orden": "326",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "BC4CAFFC-CA2F-4302-BDFA-5367ABB809FB",
+            "idPadre": "272B262C-463A-481E-88FF-B1C35B901204",
+            "nivel": "3",
+            "nombre": "ALTA CONTRATO COMBUSTIBLE",
+            "orden": "252",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "E09D4474-3D1A-45BD-87FE-8568144E8744",
+            "idPadre": "272B262C-463A-481E-88FF-B1C35B901204",
+            "nivel": "3",
+            "nombre": "BAJA CONTRATO COMBUSTIBLE",
+            "orden": "253",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "EAE9966C-FD47-409E-AFE6-8CDDE23FC6B0",
+            "idPadre": "EB34167C-C28D-470C-9455-541962C5C366",
+            "nivel": "4",
+            "nombre": "ALTA RETA",
+            "orden": "229",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "56997817-D711-4288-A2F6-C82A37563255",
+            "idPadre": "EB34167C-C28D-470C-9455-541962C5C366",
+            "nivel": "4",
+            "nombre": "MODIFICACIÓN RETA",
+            "orden": "230",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "6BF6AAD2-8FEB-4926-BB73-C2991A794603",
+            "idPadre": "EB34167C-C28D-470C-9455-541962C5C366",
+            "nivel": "4",
+            "nombre": "BAJA RETA",
+            "orden": "231",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "DFA3D607-F39C-489B-AFDE-F4D1184FCB53",
+            "idPadre": "EB34167C-C28D-470C-9455-541962C5C366",
+            "nivel": "4",
+            "nombre": "MUTUA DE ACCIDENTES",
+            "orden": "232",
+            "presentacion": "",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "1",
+            "id": "9023ACE0-D5E1-46F7-9CCD-5B3817E1191D",
+            "idPadre": "F62923AD-6D55-4075-93D3-C7C86B5219C5",
+            "nivel": "4",
+            "nombre": "ALTA CCC",
+            "orden": "233",
+            "presentacion": "FichaAltaCccInversor",
+            "tipo": "Proceso"
+        },
+        {
+            "activado": "0",
+            "id": "B39281A9-095D-44AB-9DD3-11BCE10333E4",
+            "idPadre": "F62923AD-6D55-4075-93D3-C7C86B5219C5",
+            "nivel": "4",
+            "nombre": "MODIFICACION CCC",
+            "orden": "234",
+            "presentacion": "",
+            "tipo": "Proceso"
+        }
+    ]
+}

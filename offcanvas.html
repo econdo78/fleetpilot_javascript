@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<!--
+Template Name: NobleUI - HTML Bootstrap 5 Admin Dashboard Template
+Author: NobleUI
+Website: https://nobleui.com
+Contact: nobleui.team@gmail.com
+Purchase: https://1.envato.market/nobleui_html
+License: You must have a valid license to legally use this template for your project.
+-->
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="Responsive HTML Admin Dashboard Template based on Bootstrap 5">
+	<meta name="author" content="NobleUI">
+	<meta name="keywords" content="nobleui, bootstrap, bootstrap 5, bootstrap5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+
+	<title>NobleUI - HTML Bootstrap 5 Admin Dashboard Template</title>
+
+  <!-- color-modes:js -->
+  <script src="../../../assets/js/color-modes.js"></script>
+  <!-- endinject -->
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <!-- End fonts -->
+
+	<!-- core:css -->
+	<link rel="stylesheet" href="../../../assets/vendors/core/core.css">
+	<!-- endinject -->
+
+	<!-- Plugin css for this page -->
+	<link rel="stylesheet" href="../../../assets/vendors/prism-themes/prism-coldark-dark.css">
+	<!-- End plugin css for this page -->
+
+	<!-- inject:css -->
+	<!-- endinject -->
+
+  <!-- Layout styles -->  
+	<link rel="stylesheet" href="../../../assets/css/demo1/style.css">
+  <!-- End layout styles -->
+
+  <link rel="shortcut icon" href="../../../assets/images/favicon.png" />
+</head>
+<body>
+	<div class="main-wrapper">
+
+		<!-- partial:partials/_sidebar.html -->
+		<nav class="sidebar">
+      <div class="sidebar-header">
+        <a href="#" class="sidebar-brand">Fleet<span>Pilot</span></a>
+        <div class="sidebar-toggler">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div class="sidebar-body">
+        <ul class="nav" id="sidebarNav">
+          <li class="nav-item nav-category" data-i18n="sidebar.category.main">Principal</li>
+          <li class="nav-item">
+            <a href="dashboard.html" class="nav-link">
+              <i class="link-icon" data-lucide="box"></i>
+              <span class="link-title" data-i18n="sidebar.link.dashboard">Inicio</span>
+            </a>
+          </li>
+          <li class="nav-item nav-category" data-i18n="sidebar.category.customers">Conductores</li>
+          <li class="nav-item">
+            <a href="ListaConductores.html" class="nav-link">
+              <i class="link-icon" data-lucide="users"></i>
+              <span class="link-title" data-i18n="sidebar.category.customersList">Todos los conductores</span>
+            </a>
+          </li>
+          <li class="nav-item nav-category">Inversores</li>
+          <li class="nav-item">
+            <a href="ListaInversores.html" class="nav-link">
+              <i class="link-icon" data-lucide="briefcase"></i>
+              <span class="link-title">Todos los inversores</span>
+            </a>
+          </li>
+          <li class="nav-item nav-category">Vehículos</li>
+          <li class="nav-item">
+            <a href="ListaVehiculos.html" class="nav-link">
+              <i class="link-icon" data-lucide="car"></i>
+              <span class="link-title">Todos los vehículos</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+		<!-- partial -->
+	
+		<div class="page-wrapper">
+				
+			<!-- partial:partials/_navbar.html -->
+			<nav class="navbar">
+				<div class="navbar-content">
+
+          <div class="logo-mini-wrapper">
+            <img src="assets/images/logo-mini-light.png" class="logo-mini logo-mini-light" alt="logo">
+            <img src="assets/images/logo-mini-dark.png" class="logo-mini logo-mini-dark" alt="logo">
+          </div>
+
+					<form class="search-form" role="search">
+						<div class="input-group">
+              <div class="input-group-text">
+                <i data-lucide="search"></i>
+              </div>
+							<input type="text" class="form-control" id="navbarForm" placeholder="Search here..." data-i18n-placeholder="navbar.search.placeholder">
+						</div>
+            <div class="search-panel" role="dialog" aria-modal="false" aria-hidden="true">
+              <ul class="nav nav-tabs search-panel-tabs" id="navbarSearchTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="navbar-search-tab-drivers" data-bs-toggle="tab" data-bs-target="#navbar-search-pane-drivers" type="button" role="tab" aria-controls="navbar-search-pane-drivers" aria-selected="true">
+                    Conductores
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="navbar-search-tab-investors" data-bs-toggle="tab" data-bs-target="#navbar-search-pane-investors" type="button" role="tab" aria-controls="navbar-search-pane-investors" aria-selected="false">
+                    Inversores
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="navbar-search-tab-vehicles" data-bs-toggle="tab" data-bs-target="#navbar-search-pane-vehicles" type="button" role="tab" aria-controls="navbar-search-pane-vehicles" aria-selected="false">
+                    Vehículos
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="navbar-search-tab-global" data-bs-toggle="tab" data-bs-target="#navbar-search-pane-global" type="button" role="tab" aria-controls="navbar-search-pane-global" aria-selected="false">
+                    En todo FleetPilot
+                  </button>
+                </li>
+              </ul>
+              <div class="tab-content search-panel-content">
+                <div class="tab-pane fade show active" id="navbar-search-pane-drivers" role="tabpanel" aria-labelledby="navbar-search-tab-drivers">
+                  <div class="search-panel-intro">
+                    <p class="search-panel-placeholder mb-3">
+                      Empieza a escribir para buscar conductores o ordena por columna.
+                    </p>
+                  </div>
+                  <div class="search-panel-table-wrapper">
+                    <table class="table table-hover table-striped align-middle mb-0 search-panel-table" data-search-panel-table="drivers">
+                      <thead class="bg-body-tertiary">
+                        <tr>
+                          <th scope="col">NOMBRECOMPLETO</th>
+                          <th scope="col">NDOCUMENTOIDENTIDAD</th>
+                          <th scope="col">ESTADO</th>
+                          <th scope="col">NOMBREINVERSOR</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr data-search-panel-loading class="d-none">
+                          <td colspan="4" class="text-secondary text-center py-4">Cargando conductores...</td>
+                        </tr>
+                        <tr data-search-panel-error class="d-none">
+                          <td colspan="4" class="text-danger text-center py-4">No se pudieron cargar los conductores.</td>
+                        </tr>
+                        <tr data-search-panel-empty>
+                          <td colspan="4" class="text-secondary text-center py-4">Sin resultados disponibles.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="navbar-search-pane-investors" role="tabpanel" aria-labelledby="navbar-search-tab-investors">
+                  <p class="search-panel-placeholder">
+                    Empieza a escribir para buscar inversores.
+                  </p>
+                </div>
+                <div class="tab-pane fade" id="navbar-search-pane-vehicles" role="tabpanel" aria-labelledby="navbar-search-tab-vehicles">
+                  <p class="search-panel-placeholder">
+                    Empieza a escribir para buscar vehículos.
+                  </p>
+                </div>
+                <div class="tab-pane fade" id="navbar-search-pane-global" role="tabpanel" aria-labelledby="navbar-search-tab-global">
+                  <p class="search-panel-placeholder">
+                    Escribe para buscar en todo FleetPilot.
+                  </p>
+                </div>
+              </div>
+            </div>
+						</form>
+
+					<ul class="navbar-nav">
+            <li class="theme-switcher-wrapper nav-item">
+              <input type="checkbox" value="" id="theme-switcher">
+              <label for="theme-switcher">
+                <div class="box">
+                  <div class="ball"></div>
+                  <div class="icons">
+                    <i data-lucide="sun"></i>
+                    <i data-lucide="moon"></i>
+                  </div>
+                </div>
+              </label>
+            </li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i data-lucide="bell"></i>
+                <!--
+								<div class="indicator">
+									<div class="circle"></div>
+								</div>
+                 -->
+							</a>
+							<div class="dropdown-menu p-0" aria-labelledby="notificationDropdown">
+								<div class="px-3 py-2 d-flex align-items-center justify-content-between border-bottom">
+							<p data-i18n="navbar.dropdown.notifications">Sin notificaciones</p>
+              
+						</div>
+								<div class="px-3 py-2 d-flex align-items-center justify-content-center border-top">
+									<a href="javascript:;" class="text-secondary" data-i18n="navbar.dropdown.clear">Clear all</a>
+								</div>
+							</div>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<img class="w-30px h-30px ms-1 rounded-circle" data-auth-avatar data-avatar-size="128" src="https://ui-avatars.com/api/?name=User&background=6571ff&color=fff&size=128" alt="profile">
+							</a>
+							<div class="dropdown-menu p-0" aria-labelledby="profileDropdown">
+								<div class="d-flex flex-column align-items-center border-bottom px-5 py-3">
+									<div class="mb-3">
+										<img class="w-80px h-80px rounded-circle" data-auth-avatar data-avatar-size="256" src="https://ui-avatars.com/api/?name=User&background=6571ff&color=fff&size=256" alt="">
+									</div>
+									<div class="text-center">
+										<p class="fs-16px fw-bolder" data-auth-user data-default-value="Amiah Burton">Amiah Burton</p>
+									</div>
+								</div>
+                <ul class="list-unstyled p-1">
+                  <li>
+                    <a href="javascript:;" class="dropdown-item py-2 text-body ms-0" data-auth-action="logout">
+                      <i class="me-2 icon-md" data-lucide="log-out"></i>
+                      <span data-i18n="navbar.user.logout">Log Out</span>
+                    </a>
+                  </li>
+                </ul>
+							</div>
+						</li>
+					</ul>
+
+          <a href="#" class="sidebar-toggler">
+            <i data-lucide="menu"></i>
+          </a>
+
+				</div>
+			</nav>
+
+			<!-- partial -->
+
+			<div class="page-content container-xxl">
+				<div class="row">
+					<div class="col-xl-10 main-content ps-xl-4 pe-xl-5">
+						<h1 class="page-title">Offcanvas</h1>
+						<p class="lead">Build hidden sidebars into your project for navigation, shopping carts, and more with a few classes and our JavaScript plugin. Read the <a href="https://getbootstrap.com/docs/5.3/components/offcanvas/" target="_blank">Official Bootstrap Documentation</a> for a full list of instructions and other options.</p>
+						
+						<hr>
+						
+						<h4 id="default">Live demo</h4>
+            <p class="mb-3">You can use a link with the <code>href</code> attribute, or a button with the <code>data-bs-target</code> attribute. In both cases, the <code>data-bs-toggle="offcanvas"</code> is required.</p>
+						<div class="example">
+							<a class="btn btn-primary" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+                Link with href
+              </a>
+              <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                Button with data-bs-target
+              </button>
+              
+              <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                <div class="offcanvas-header">
+                  <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                  <div>
+                    Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
+                  </div>
+                  <div class="dropdown mt-3">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                      Dropdown button
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="#">Action</a></li>
+                      <li><a class="dropdown-item" href="#">Another action</a></li>
+                      <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+						</div>
+						<figure class="highlight" id="Default">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><a class="btn btn-primary" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+  Link with href
+</a>
+<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+  Button with data-bs-target
+</button>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div>
+      Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
+    </div>
+    <div class="dropdown mt-3">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        Dropdown button
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#">Action</a></li>
+        <li><a class="dropdown-item" href="#">Another action</a></li>
+        <li><a class="dropdown-item" href="#">Something else here</a></li>
+      </ul>
+    </div>
+  </div>
+</div></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#Default">copy</button>
+            </figure>
+            
+						<hr>
+						
+						<h4 id="placement">Placement</h4>
+            <p class="mb-3">There’s no default placement for offcanvas components, so you must add one of the modifier classes below.</p>
+						<ul class="mb-3">
+              <li><code>.offcanvas-start</code> places offcanvas on the left of the viewport (shown above)</li>
+              <li><code>.offcanvas-end</code> places offcanvas on the right of the viewport</li>
+              <li><code>.offcanvas-top</code> places offcanvas on the top of the viewport</li>
+              <li><code>.offcanvas-bottom</code> places offcanvas on the bottom of the viewport</li>
+            </ul>
+            <p class="mb-3">Try the top, right, and bottom examples out below.</p>
+            <div class="example">
+							<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop" aria-controls="offcanvasTop">Toggle top offcanvas</button>
+
+              <div class="offcanvas offcanvas-top" tabindex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel">
+                <div class="offcanvas-header">
+                  <h5 class="offcanvas-title" id="offcanvasTopLabel">Offcanvas top</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                  ...
+                </div>
+              </div>
+						</div>
+						<figure class="highlight" id="PlacementTop">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop" aria-controls="offcanvasTop">Toggle top offcanvas</button>
+
+<div class="offcanvas offcanvas-top" tabindex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasTopLabel">Offcanvas top</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    ...
+  </div>
+</div></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#PlacementTop">copy</button>
+						</figure>
+            
+            <div class="example">
+							<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Toggle right offcanvas</button>
+
+              <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                <div class="offcanvas-header">
+                  <h5 class="offcanvas-title" id="offcanvasRightLabel">Offcanvas right</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                  ...
+                </div>
+              </div>
+						</div>
+						<figure class="highlight" id="PlacementRight">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Toggle right offcanvas</button>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasRightLabel">Offcanvas right</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    ...
+  </div>
+</div></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#PlacementRight">copy</button>
+						</figure>
+
+            <div class="example">
+							<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Toggle bottom offcanvas</button>
+
+              <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+                <div class="offcanvas-header">
+                  <h5 class="offcanvas-title" id="offcanvasBottomLabel">Offcanvas bottom</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body small">
+                  ...
+                </div>
+              </div>
+						</div>
+						<figure class="highlight" id="PlacementBottom">
+<pre><code class="language-markup"><script type="script/prism-html-markup"><button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Toggle bottom offcanvas</button>
+
+<div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasBottomLabel">Offcanvas bottom</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body small">
+    ...
+  </div>
+</div></script></code></pre>
+							<button type="button" class="btn btn-clipboard" data-clipboard-target="#PlacementBottom">copy</button>
+						</figure>
+						
+					</div>
+					<div class="col-xl-2 content-nav-wrapper">
+						<ul class="nav content-nav d-flex flex-column">
+							<li class="nav-item">
+								<a href="#default" class="nav-link">Live demo</a>
+							</li>
+							<li class="nav-item">
+								<a href="#placement" class="nav-link">Placement</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<!-- partial:partials/_footer.html -->
+			<footer class="footer d-flex flex-row align-items-center justify-content-between px-4 py-3 border-top small">
+				<p class="text-secondary mb-1 mb-md-0"><span data-i18n="footer.copyright">Copyright © 2025</span> <a href="https://fmprosoft.com" target="_blank">FleetPilot</a>.</p>
+				<p class="text-secondary"><span data-i18n="footer.handcrafted">Handcrafted with</span> <i class="mb-1 text-primary ms-1 icon-sm" data-lucide="heart"></i></p>
+			</footer>
+			<!-- partial -->
+	
+		</div>
+	</div>
+
+	<!-- core:js -->
+	<script src="../../../assets/vendors/core/core.js"></script>
+	<!-- endinject -->
+
+	<!-- Plugin js for this page -->
+	<script src="../../../assets/vendors/prismjs/prism.js"></script>
+	<script src="../../../assets/vendors/clipboard/clipboard.min.js"></script>
+	<!-- End plugin js for this page -->
+
+	<!-- inject:js -->
+	<script src="../../../assets/js/app.js"></script>
+	<!-- endinject -->
+
+	<!-- Custom js for this page -->
+	<!-- End custom js for this page -->
+
+</body>
+</html>

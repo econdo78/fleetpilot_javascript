@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de la Serpiente</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        
+        #game-container {
+            text-align: center;
+        }
+        
+        #game-board {
+            border: 2px solid #333;
+            background-color: #fff;
+        }
+        
+        #score {
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        #game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="game-board" width="400" height="400"></canvas>
+        <div id="score">Puntuación: 0</div>
+        <div id="game-over">
+            <h2>Juego Terminado</h2>
+            <p>La serpiente chocó con el muro o consigo misma.</p>
+            <button onclick="restartGame()">Reiniciar Juego</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuración del juego
+        const canvas = document.getElementById('game-board');
+        const ctx = canvas.getContext('2d');
+        const scoreDisplay = document.getElementById('score');
+        const gameOverScreen = document.getElementById('game-over');
+
+        const gridSize = 20;
+        const gridWidth = canvas.width / gridSize;
+        const gridHeight = canvas.height / gridSize;
+
+        let snake = [];
+        let food = {};
+        let direction = 'right';
+        let nextDirection = 'right';
+        let score = 0;
+        let gameSpeed = 150;
+        let gameRunning = false;
+
+        // Inicializar el juego
+        function initGame() {
+            snake = [
+                {x: 5, y: 10},
+                {x: 4, y: 10},
+                {x: 3, y: 10}
+            ];
+            
+            generateFood();
+            score = 0;
+            scoreDisplay.textContent = 'Puntuación: ' + score;
+            direction = 'right';
+            nextDirection = 'right';
+            gameRunning = true;
+            gameOverScreen.style.display = 'none';
+        }
+
+        // Generar comida en una posición aleatoria
+        function generateFood() {
+            food = {
+                x: Math.floor(Math.random() * gridWidth),
+                y: Math.floor(Math.random() * gridHeight)
+            };
+
+            // Asegurarse de que la comida no aparezca sobre la serpiente
+            for (let segment of snake) {
+                if (segment.x === food.x && segment.y === food.y) {
+                    generateFood();
+                    return;
+                }
+            }
+        }
+
+        // Dibujar el tablero del juego
+        function draw() {
+            // Limpiar el canvas
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Dibujar la serpiente
+            snake.forEach((segment, index) => {
+                if (index === 0) {
+                    // Cabeza de la serpiente
+                    ctx.fillStyle = '#28a745';
+                } else {
+                    // Cuerpo de la serpiente
+                    ctx.fillStyle = '#20c997';
+                }
+                ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 1, gridSize - 1);
+            });
+
+            // Dibujar la comida
+            ctx.fillStyle = '#dc3545';
+            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 1, gridSize - 1);
+        }
+
+        // Actualizar la posición de la serpiente
+        function update() {
+            direction = nextDirection;
+
+            // Crear una nueva cabeza basada en la dirección actual
+            const head = {x: snake[0].x, y: snake[0].y};
+
+            switch (direction) {
+                case 'up':
+                    head.y -= 1;
+                    break;
+                case 'down':
+                    head.y += 1;
+                    break;
+                case 'left':
+                    head.x -= 1;
+                    break;
+                case 'right':
+                    head.x += 1;
+                    break;
+            }
+
+            // Verificar colisión con los bordes
+            if (head.x < 0 || head.x >= gridWidth || head.y < 0 || head.y >= gridHeight) {
+                gameOver();
+                return;
+            }
+
+            // Verificar colisión con el cuerpo de la serpiente
+            for (let i = 0; i < snake.length; i++) {
+                if (snake[i].x === head.x && snake[i].y === head.y) {
+                    gameOver();
+                    return;
+                }
+            }
+
+            // Agregar la nueva cabeza
+            snake.unshift(head);
+
+            // Verificar si la serpiente comió la comida
+            if (head.x === food.x && head.y === food.y) {
+                // Aumentar la puntuación
+                score += 10;
+                scoreDisplay.textContent = 'Puntuación: ' + score;
+
+                // Generar nueva comida
+                generateFood();
+
+                // Aumentar la velocidad cada 50 puntos
+                if (score % 50 === 0 && gameSpeed > 50) {
+                    gameSpeed -= 10;
+                }
+            } else {
+                // Eliminar la cola si no comió
+                snake.pop();
+            }
+        }
+
+        // Función principal del juego (bucle)
+        function gameLoop() {
+            if (gameRunning) {
+                update();
+                draw();
+                setTimeout(gameLoop, gameSpeed);
+            }
+        }
+
+        // Manejar las entradas del teclado
+        function handleKeydown(e) {
+            switch (e.key) {
+                case 'ArrowUp':
+                    if (direction !== 'down') nextDirection = 'up';
+                    break;
+                case 'ArrowDown':
+                    if (direction !== 'up') nextDirection = 'down';
+                    break;
+                case 'ArrowLeft':
+                    if (direction !== 'right') nextDirection = 'left';
+                    break;
+                case 'ArrowRight':
+                    if (direction !== 'left') nextDirection = 'right';
+                    break;
+            }
+        }
+
+        // Función para reiniciar el juego
+        function restartGame() {
+            initGame();
+            gameLoop();
+        }
+
+        // Función para terminar el juego
+        function gameOver() {
+            gameRunning = false;
+            gameOverScreen.style.display = 'block';
+        }
+
+        // Event listener para las teclas
+        document.addEventListener('keydown', handleKeydown);
+
+        // Iniciar el juego cuando se carga la página
+        window.onload = function() {
+            initGame();
+            gameLoop();
+        };
+    </script>
+</body>
+</html>
