@@ -1,0 +1,22 @@
+FleetPilot - Paleta Principal
+6571ff - Primary (Azul/Índigo)
+7987a1 - Secondary (Gris)
+05a34a - Success (Verde)
+66d1d1 - Info (Cyan)
+fbbc06 - Warning (Amarillo)
+ff3366 - Danger (Rojo)
+
+FleetPilot - Escala de Grises
+f8f9fa - Gray 100
+e9ecef - Gray 200
+cbd1db - Gray 400
+7987a1 - Gray 600
+41516c - Gray 700
+060c17 - Gray 900
+
+FleetPilot - Modo Oscuro
+0c1427 - Body Background
+212a3a - Secondary Background
+1a1d29 - Card Background
+d0d6e1 - Text Color
+172340 - Border Color
