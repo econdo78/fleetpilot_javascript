@@ -4653,6 +4653,20 @@ License: You must have a valid license to legally use this template for your pro
             currentPageFields.forEach(fieldName => {
               if (Object.prototype.hasOwnProperty.call(formData, fieldName)) {
                 pageFormData[fieldName] = formData[fieldName];
+
+                // Debug adicional para campos de fecha
+                if (fieldName === 'fechaNacimiento' || fieldName === 'fechaFirma') {
+                  const field = procesoForm.querySelector(`[name="${fieldName}"]`);
+                  if (field && field._flatpickr) {
+                    console.log(`🔍 Debug ${fieldName}:`, {
+                      formDataValue: formData[fieldName],
+                      fieldValue: field.value,
+                      flatpickrValue: field._flatpickr.input.value,
+                      altInputValue: field._flatpickr.altInput?.value,
+                      selectedDates: field._flatpickr.selectedDates
+                    });
+                  }
+                }
               }
             });
             console.log('📄 Datos página actual:', pageFormData);
@@ -4663,15 +4677,15 @@ License: You must have a valid license to legally use this template for your pro
             publicarConfirmarButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Publicando...';
 
             try {
-              // Limpiar campos vacíos solo de la página actual (enviar solo campos con valores)
+              // Incluir TODOS los campos de la página, incluso los vacíos
+              // Esto permite que los campos borrados se guarden como vacíos en el backend
               const cleanedFormData = {};
               Object.entries(pageFormData).forEach(([key, value]) => {
-                if (value !== null && value !== undefined && value !== '') {
-                  cleanedFormData[key] = value;
-                }
+                // Convertir null/undefined a string vacío
+                cleanedFormData[key] = (value === null || value === undefined) ? '' : value;
               });
 
-              console.log('🧹 Campos con valores (limpiados):', cleanedFormData);
+              console.log('🧹 Datos preparados para enviar (incluye campos vacíos):', cleanedFormData);
               console.log(`📊 Total: ${Object.keys(cleanedFormData).length} de ${currentPageFields.length} campos de la página`);
 
               // Preparar los datos para FileMaker (convertir fechas, etc.)
