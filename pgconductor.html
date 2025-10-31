@@ -3537,6 +3537,11 @@ License: You must have a valid license to legally use this template for your pro
             isActive: button.classList.contains('active')
           });
         });
+
+        // Actualizar los iconos del TreeView después de actualizar el progreso
+        if (typeof updateWizardStateTreeIcons === 'function') {
+          updateWizardStateTreeIcons();
+        }
       };
 
       const loadHistoricoFromFileMaker = async (conductorId = null, procesoId = null) => {
@@ -5503,7 +5508,199 @@ License: You must have a valid license to legally use this template for your pro
         }
       };
 
-      loadTreeviewMenu();
+      // Función para crear el árbol personalizado de estado del wizard
+      const createWizardStateTree = () => {
+        const elements = getTreeviewElements();
+        if (!elements || !elements.body) {
+          return;
+        }
+
+        const { body, status } = elements;
+        const setStatus = (message, isError = false) => {
+          if (!status) {
+            return;
+          }
+          status.textContent = message || '';
+          status.classList.toggle('text-danger', Boolean(message) && isError);
+          status.classList.toggle('d-none', !message);
+        };
+
+        setStatus('');
+        body.querySelectorAll('.treeview-list').forEach((list) => list.remove());
+
+        // Definir las páginas del wizard con sus nombres
+        const wizardPages = [
+          { id: 1, name: 'Datos personales' },
+          { id: 2, name: 'Datos de contacto' },
+          { id: 3, name: 'Dirección' },
+          { id: 4, name: 'Otros datos' }
+        ];
+
+        // Función auxiliar para obtener el icono SVG según el estado de la página
+        const getWizardPageIcon = (pageNumber) => {
+          const percentage = getPageFieldsPercentage(pageNumber);
+          const allRequiredComplete = areRequiredFieldsComplete(pageNumber);
+          const pageIsPublished = isPagePublished(pageNumber);
+          const allFieldsPublished = areAllPageFieldsPublished(pageNumber);
+
+          if (percentage === 100 && allFieldsPublished) {
+            // Estado 1: Verde con ✓ (100% completado Y TODOS los campos publicados)
+            return `<svg viewBox="0 0 20 20" width="20" height="20" style="color: #05a34a;">
+              <circle cx="10" cy="10" r="8" fill="currentColor"/>
+              <path d="M14 7l-5 5-2-2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>`;
+          } else if (allRequiredComplete && pageIsPublished && percentage < 100) {
+            // Estado 2: Esfera medio llena verde (campos requeridos completos Y publicado, pero no 100%)
+            return `<svg viewBox="0 0 20 20" width="20" height="20" style="color: #05a34a;">
+              <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M 2 10 A 8 8 0 0 0 18 10 Z" fill="currentColor"/>
+            </svg>`;
+          } else {
+            // Estado 3: Esfera vacía con borde (no publicado o no cumple requisitos)
+            return `<svg viewBox="0 0 20 20" width="20" height="20" style="color: currentColor;">
+              <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+            </svg>`;
+          }
+        };
+
+        // Crear el nodo raíz
+        const rootItem = document.createElement('li');
+        rootItem.className = 'treeview-item';
+        rootItem.setAttribute('role', 'treeitem');
+        rootItem.dataset.nodeId = 'wizard-root';
+        rootItem.dataset.defaultExpanded = 'true';
+        rootItem.dataset.treeItem = '';
+        rootItem.setAttribute('aria-expanded', 'true');
+        rootItem.setAttribute('aria-label', 'Datos del conductor');
+
+        const rootWrapper = document.createElement('div');
+        rootWrapper.className = 'treeview-node';
+
+        const rootToggle = document.createElement('button');
+        rootToggle.className = 'treeview-toggle';
+        rootToggle.type = 'button';
+        rootToggle.dataset.treeToggle = '';
+        rootToggle.setAttribute('aria-label', 'Alternar Datos del conductor');
+
+        const rootIcon = document.createElement('span');
+        rootIcon.className = 'treeview-icon';
+        rootIcon.innerHTML = `<i data-lucide="user"></i>`;
+
+        const rootLabel = document.createElement('span');
+        rootLabel.className = 'treeview-label';
+        rootLabel.textContent = 'Datos del conductor';
+
+        rootWrapper.append(rootToggle, rootIcon, rootLabel);
+        rootItem.appendChild(rootWrapper);
+
+        // Crear lista de hijos
+        const childList = document.createElement('ul');
+        childList.className = 'treeview-list';
+        childList.setAttribute('role', 'group');
+
+        // Crear un item para cada página del wizard
+        wizardPages.forEach((page) => {
+          const pageItem = document.createElement('li');
+          pageItem.className = 'treeview-item treeview-item--leaf';
+          pageItem.setAttribute('role', 'treeitem');
+          pageItem.dataset.nodeId = `wizard-page-${page.id}`;
+          pageItem.dataset.wizardPageId = page.id;
+          pageItem.setAttribute('aria-label', page.name);
+
+          const pageWrapper = document.createElement('div');
+          pageWrapper.className = 'treeview-node treeview-node--leaf';
+
+          const pageToggle = document.createElement('span');
+          pageToggle.className = 'treeview-toggle treeview-toggle--placeholder';
+          pageToggle.setAttribute('aria-hidden', 'true');
+
+          const pageIcon = document.createElement('span');
+          pageIcon.className = 'treeview-icon';
+          pageIcon.dataset.wizardStateIcon = page.id;
+          pageIcon.innerHTML = getWizardPageIcon(page.id);
+
+          const pageLabel = document.createElement('button');
+          pageLabel.className = 'treeview-label';
+          pageLabel.type = 'button';
+          pageLabel.textContent = page.name;
+          pageLabel.dataset.wizardPageNavigate = page.id;
+
+          // Al hacer clic, navegar a esa página del wizard
+          pageLabel.addEventListener('click', (e) => {
+            e.preventDefault();
+            showWizardPage(page.id);
+            // Cerrar el offcanvas
+            const offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('clientesActionsOffcanvas'));
+            if (offcanvas) {
+              offcanvas.hide();
+            }
+          });
+
+          pageWrapper.append(pageToggle, pageIcon, pageLabel);
+          pageItem.appendChild(pageWrapper);
+          childList.appendChild(pageItem);
+        });
+
+        rootItem.appendChild(childList);
+
+        // Crear la lista raíz del TreeView
+        const rootList = document.createElement('ul');
+        rootList.className = 'treeview-list';
+        rootList.setAttribute('role', 'tree');
+        rootList.appendChild(rootItem);
+
+        treeviewCache = {
+          nodesById: new Map(),
+          rootList,
+          searchInput: null
+        };
+
+        body.appendChild(rootList);
+        window.lucide?.createIcons?.();
+        initTreeview();
+      };
+
+      // Función para actualizar los iconos del TreeView según el estado del wizard
+      const updateWizardStateTreeIcons = () => {
+        if (!treeviewCache.rootList) {
+          return;
+        }
+
+        // Actualizar cada icono de página
+        [1, 2, 3, 4].forEach((pageNumber) => {
+          const iconElement = treeviewCache.rootList.querySelector(`[data-wizard-state-icon="${pageNumber}"]`);
+          if (!iconElement) {
+            return;
+          }
+
+          const percentage = getPageFieldsPercentage(pageNumber);
+          const allRequiredComplete = areRequiredFieldsComplete(pageNumber);
+          const pageIsPublished = isPagePublished(pageNumber);
+          const allFieldsPublished = areAllPageFieldsPublished(pageNumber);
+
+          if (percentage === 100 && allFieldsPublished) {
+            // Estado 1: Verde con ✓
+            iconElement.innerHTML = `<svg viewBox="0 0 20 20" width="20" height="20" style="color: #05a34a;">
+              <circle cx="10" cy="10" r="8" fill="currentColor"/>
+              <path d="M14 7l-5 5-2-2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>`;
+          } else if (allRequiredComplete && pageIsPublished && percentage < 100) {
+            // Estado 2: Esfera medio llena verde
+            iconElement.innerHTML = `<svg viewBox="0 0 20 20" width="20" height="20" style="color: #05a34a;">
+              <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M 2 10 A 8 8 0 0 0 18 10 Z" fill="currentColor"/>
+            </svg>`;
+          } else {
+            // Estado 3: Esfera vacía con borde
+            iconElement.innerHTML = `<svg viewBox="0 0 20 20" width="20" height="20" style="color: currentColor;">
+              <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+            </svg>`;
+          }
+        });
+      };
+
+      // Usar el árbol personalizado en lugar del TreeView normal
+      createWizardStateTree();
 
       document.addEventListener('clientesTable:select', () => {
         if (!treeviewCache.rootList) {
@@ -5513,6 +5710,8 @@ License: You must have a valid license to legally use this template for your pro
           treeviewCache.searchInput.value = '';
         }
         applyDefaultTreeState();
+        // Actualizar los iconos cuando se selecciona un conductor
+        updateWizardStateTreeIcons();
       });
 
       const wrapper = document.querySelector('[data-resizable-wrapper]');
