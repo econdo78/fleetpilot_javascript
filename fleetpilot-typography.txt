@@ -1,0 +1,56 @@
+FleetPilot - Tipografías del Proyecto
+======================================
+
+FUENTE PRINCIPAL
+----------------
+Nombre: Roboto
+Origen: Google Fonts
+URL: https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap
+
+PESOS UTILIZADOS
+----------------
+- 300 (Light)
+- 400 (Regular/Normal)
+- 500 (Medium)
+- 700 (Bold)
+- 900 (Black)
+
+FAMILIA DE FUENTES (Fallbacks)
+-------------------------------
+Font-family: "Roboto", Helvetica, sans-serif
+
+Fallback 1: Helvetica
+Fallback 2: sans-serif (fuente genérica del sistema)
+
+TAMAÑOS DE FUENTE BASE
+-----------------------
+Base:   0.875rem (14px)
+Large:  1rem (16px)
+Small:  0.812rem (13px)
+
+PESOS DE FUENTE (Variables SCSS)
+---------------------------------
+$font-weight-lighter:  lighter
+$font-weight-light:    300
+$font-weight-normal:   400
+$font-weight-bold:     500
+$font-weight-bolder:   700
+$font-weight-boldest:  900
+
+CONFIGURACIÓN TÉCNICA
+----------------------
+- Preconnect a fonts.googleapis.com para optimizar la carga
+- Preconnect a fonts.gstatic.com (CDN de Google Fonts)
+- Parámetro display=swap para mejor rendimiento de carga
+
+FUENTES ADICIONALES (Vendors)
+------------------------------
+- Fuentes monospace para editores de código (CodeMirror/EasyMDE)
+- System fonts como fallback en componentes específicos
+
+NOTAS
+-----
+- Roboto es una fuente sans-serif moderna y limpia diseñada por Google
+- Es altamente legible en pantallas de diferentes tamaños
+- Los múltiples pesos permiten crear jerarquías visuales claras
+- Compatible con la mayoría de navegadores modernos
