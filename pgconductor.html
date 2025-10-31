@@ -1523,7 +1523,7 @@ License: You must have a valid license to legally use this template for your pro
       bottom: 0;
       left: 0;
       right: 0;
-      padding: 1rem;
+      padding: 1rem 1rem 1.5rem 1rem;
       background: var(--bs-body-bg);
       border-top: 1px solid var(--bs-border-color);
       display: flex;
@@ -1580,13 +1580,39 @@ License: You must have a valid license to legally use this template for your pro
       outline-offset: 2px;
     }
 
-    .wizard-step-button.active::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 20px;
-      box-shadow: inset 0 0 0 2px rgba(101, 113, 255, 0.3);
-      pointer-events: none;
+    /* Botón activo (página actual) - Con texto subrayado y negrita */
+    .wizard-step-button.active {
+      font-weight: 700;
+      position: relative;
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
+    }
+
+    .wizard-step-button.active::before {
+      background: rgba(101, 113, 255, 0.3);
+    }
+
+    /* Botón activo cuando está completado - color verde */
+    .wizard-step-button.active.completed,
+    .wizard-step-button.completed.active {
+      color: #05a34a !important;
+      border-color: #05a34a !important;
+    }
+
+    .wizard-step-button.active.completed::before {
+      background: rgba(5, 163, 74, 0.3);
+    }
+
+    /* Botón activo cuando está publicado (sin 100%) - color verde */
+    .wizard-step-button.active.published,
+    .wizard-step-button.published.active {
+      color: #05a34a !important;
+      border-color: #05a34a !important;
+    }
+
+    .wizard-step-button.active.published::before {
+      background: rgba(5, 163, 74, 0.3);
     }
 
     /* Estado completado al 100% - Modo claro */
@@ -1616,6 +1642,39 @@ License: You must have a valid license to legally use this template for your pro
       color: #05a34a;
       z-index: 1;
       box-shadow: none;
+    }
+
+    /* Sobrescribir el ::after del botón activo cuando está completado */
+    .wizard-step-button.completed.active::after,
+    .wizard-step-button.active.completed::after {
+      content: '✓';
+      position: absolute;
+      right: 0.875rem;
+      top: 50%;
+      left: auto;
+      bottom: auto;
+      transform: translateY(-50%);
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #05a34a;
+      z-index: 1;
+      box-shadow: none;
+      border-radius: 0;
+      pointer-events: auto;
+    }
+
+    /* Estado publicado (sin 100%) - Modo claro */
+    .wizard-step-button.published {
+      border-color: #05a34a;
+      color: #05a34a;
+    }
+
+    .wizard-step-button.published::before {
+      background: rgba(5, 163, 74, 0.2);
+    }
+
+    .wizard-step-button.published:hover::before {
+      background: rgba(5, 163, 74, 0.25);
     }
 
     /* Animación de celebración al completar */
@@ -1682,8 +1741,31 @@ License: You must have a valid license to legally use this template for your pro
       background: rgba(129, 140, 248, 0.25);
     }
 
-    [data-bs-theme='dark'] .wizard-step-button.active::after {
-      box-shadow: inset 0 0 0 2px rgba(129, 140, 248, 0.4);
+    /* Botón activo (página actual) - Modo oscuro */
+    [data-bs-theme='dark'] .wizard-step-button.active::before {
+      background: rgba(129, 140, 248, 0.35);
+    }
+
+    /* Botón activo cuando está completado - Modo oscuro con color verde */
+    [data-bs-theme='dark'] .wizard-step-button.active.completed,
+    [data-bs-theme='dark'] .wizard-step-button.completed.active {
+      color: #10b981 !important;
+      border-color: #10b981 !important;
+    }
+
+    [data-bs-theme='dark'] .wizard-step-button.active.completed::before {
+      background: rgba(16, 185, 129, 0.35);
+    }
+
+    /* Botón activo cuando está publicado - Modo oscuro con color verde */
+    [data-bs-theme='dark'] .wizard-step-button.active.published,
+    [data-bs-theme='dark'] .wizard-step-button.published.active {
+      color: #10b981 !important;
+      border-color: #10b981 !important;
+    }
+
+    [data-bs-theme='dark'] .wizard-step-button.active.published::before {
+      background: rgba(16, 185, 129, 0.35);
     }
 
     /* Estado completado al 100% - Modo oscuro */
@@ -1703,6 +1785,39 @@ License: You must have a valid license to legally use this template for your pro
     /* Icono de check en modo oscuro */
     [data-bs-theme='dark'] .wizard-step-button.completed::after {
       color: #10b981;
+    }
+
+    /* Sobrescribir el ::after del botón activo cuando está completado - Modo oscuro */
+    [data-bs-theme='dark'] .wizard-step-button.completed.active::after,
+    [data-bs-theme='dark'] .wizard-step-button.active.completed::after {
+      content: '✓';
+      position: absolute;
+      right: 0.875rem;
+      top: 50%;
+      left: auto;
+      bottom: auto;
+      transform: translateY(-50%);
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #10b981;
+      z-index: 1;
+      box-shadow: none;
+      border-radius: 0;
+      pointer-events: auto;
+    }
+
+    /* Estado publicado (sin 100%) - Modo oscuro */
+    [data-bs-theme='dark'] .wizard-step-button.published {
+      border-color: #10b981;
+      color: #10b981;
+    }
+
+    [data-bs-theme='dark'] .wizard-step-button.published::before {
+      background: rgba(16, 185, 129, 0.25);
+    }
+
+    [data-bs-theme='dark'] .wizard-step-button.published:hover::before {
+      background: rgba(16, 185, 129, 0.3);
     }
 
     /* Animación de glow en modo oscuro */
@@ -3230,12 +3345,65 @@ License: You must have a valid license to legally use this template for your pro
         });
       };
 
+      // Función auxiliar para verificar si una página está publicada
+      // Revisa si existe algún registro en el histórico que contenga al menos uno de los campos de la página
+      const isPagePublished = (pageNumber) => {
+        // Obtener los nombres de campos de esta página
+        const pageFieldNames = WIZARD_PAGE_FIELDS[pageNumber] || [];
+
+        if (pageFieldNames.length === 0) {
+          console.log(`⚠️ Página ${pageNumber} no tiene campos definidos`);
+          return false;
+        }
+
+        // Si no hay registros de histórico, la página no está publicada
+        if (!procesoLogDataCache || procesoLogDataCache.length === 0) {
+          console.log(`📋 Página ${pageNumber}: Sin registros de histórico`);
+          return false;
+        }
+
+        // Buscar en los registros del histórico si alguno contiene datos de esta página
+        const hasPublishedData = procesoLogDataCache.some(record => {
+          // El campo 'datos' contiene un JSON string con los campos publicados
+          let datos = {};
+
+          if (record.datos) {
+            try {
+              // Si es string, parsear el JSON
+              if (typeof record.datos === 'string') {
+                datos = JSON.parse(record.datos);
+              } else if (typeof record.datos === 'object') {
+                datos = record.datos;
+              }
+            } catch (error) {
+              console.warn(`⚠️ Error al parsear datos del histórico:`, error);
+              return false;
+            }
+          }
+
+          // Verificar si algún campo de la página está en los datos publicados
+          const hasFieldFromPage = pageFieldNames.some(fieldName => {
+            return datos.hasOwnProperty(fieldName);
+          });
+
+          return hasFieldFromPage;
+        });
+
+        console.log(`${hasPublishedData ? '✅' : '❌'} Página ${pageNumber}: ${hasPublishedData ? 'PUBLICADA' : 'NO PUBLICADA'} (${procesoLogDataCache.length} registros histórico)`);
+        return hasPublishedData;
+      };
+
       // Función para calcular y actualizar el progreso de cada página del wizard
       const updateWizardProgress = () => {
         const wizardPages = document.querySelectorAll('[data-wizard-page]');
 
+        // Si no hay páginas del wizard, salir
+        if (!wizardPages || wizardPages.length === 0) {
+          return;
+        }
+
         wizardPages.forEach(page => {
-          const pageNumber = page.getAttribute('data-wizard-page');
+          const pageNumber = parseInt(page.getAttribute('data-wizard-page'));
           const button = document.querySelector(`[data-wizard-step="${pageNumber}"]`);
 
           if (!button) return;
@@ -3245,6 +3413,8 @@ License: You must have a valid license to legally use this template for your pro
 
           let totalFields = 0;
           let completedFields = 0;
+          let requiredFields = 0;
+          let completedRequiredFields = 0;
 
           fields.forEach(field => {
             // Ignorar campos sin id y sin nombre (campos generados por Select2, etc.)
@@ -3263,7 +3433,10 @@ License: You must have a valid license to legally use this template for your pro
               return;
             }
 
+            const isRequired = field.hasAttribute('required');
+
             totalFields++;
+            if (isRequired) requiredFields++;
 
             // Verificar si el campo está completado y es válido
             const hasValue = field.value && field.value.trim() !== '';
@@ -3271,6 +3444,7 @@ License: You must have a valid license to legally use this template for your pro
 
             if (hasValue && isValid) {
               completedFields++;
+              if (isRequired) completedRequiredFields++;
             }
           });
 
@@ -3280,27 +3454,44 @@ License: You must have a valid license to legally use this template for your pro
           // Actualizar la variable CSS --progress
           button.style.setProperty('--progress', `${percentage}%`);
 
-          // Detectar si acaba de completarse (transición a 100%)
-          const wasCompleted = button.classList.contains('completed');
-          const isNowCompleted = percentage === 100;
+          // Verificar si la página está publicada (datos coinciden con backend)
+          const pageIsPublished = isPagePublished(pageNumber);
 
-          // Añadir o quitar clase 'completed' si está al 100%
-          if (isNowCompleted) {
+          // Determinar si todos los campos requeridos están completos
+          const allRequiredComplete = requiredFields === 0 || completedRequiredFields === requiredFields;
+
+          // APLICAR ESTADOS SEGÚN LA LÓGICA DE 3 ESTADOS
+          const wasCompleted = button.classList.contains('completed');
+
+          // Limpiar todas las clases de estado antes de aplicar el nuevo estado
+          button.classList.remove('completed', 'published', 'just-completed');
+
+          if (percentage === 100 && pageIsPublished) {
+            // Estado 1: Verde con ✓ (100% completado Y publicado)
             button.classList.add('completed');
 
-            // Si acaba de completarse (no estaba antes), añadir animación
+            // Si acaba de completarse, añadir animación
             if (!wasCompleted) {
               button.classList.add('just-completed');
-
-              // Quitar la clase de animación después de que termine
               setTimeout(() => {
                 button.classList.remove('just-completed');
               }, 600);
             }
-          } else {
-            button.classList.remove('completed');
-            button.classList.remove('just-completed');
+          } else if (allRequiredComplete && pageIsPublished && percentage < 100) {
+            // Estado 2: Verde sin ✓ (campos requeridos completos Y publicado, pero no 100%)
+            button.classList.add('published');
           }
+          // Estado 3: Azul con progreso (sin clases especiales, estado por defecto)
+          // No se necesita añadir ninguna clase, el CSS base se aplica automáticamente
+
+          // Debug: log del estado de cada botón
+          console.log(`Botón página ${pageNumber}:`, {
+            percentage,
+            pageIsPublished,
+            allRequiredComplete,
+            classes: button.className,
+            isActive: button.classList.contains('active')
+          });
         });
       };
 
@@ -7362,6 +7553,19 @@ License: You must have a valid license to legally use this template for your pro
 
             // Para campos Select2, usar jQuery para establecer el valor
             if (field.classList.contains('select2-hidden-accessible')) {
+              // Caso especial: Select de Teléfono Bolt
+              // Si el valor no existe como opción, añadirlo antes de establecerlo
+              if (fieldId === 'procesoTelefonoBolt' && value) {
+                const optionExists = Array.from(field.options).some(opt => opt.value === value);
+                if (!optionExists) {
+                  console.log(`  ℹ️ Añadiendo opción faltante al select: ${value}`);
+                  const newOption = document.createElement('option');
+                  newOption.value = value;
+                  newOption.textContent = value;
+                  field.appendChild(newOption);
+                }
+              }
+
               jQuery(field).val(value).trigger('change');
             }
             // Para campos de fecha con Flatpickr
@@ -7388,8 +7592,12 @@ License: You must have a valid license to legally use this template for your pro
         // Actualizar resaltado de campos vacíos
         updateEmptyFieldsHighlight();
 
-        // Actualizar progreso del wizard
-        updateWizardProgress();
+        // Actualizar progreso del wizard después de un pequeño delay para asegurar
+        // que Flatpickr y Select2 estén completamente inicializados
+        setTimeout(() => {
+          console.log('🔄 Actualizando progreso del wizard tras inicialización de campos...');
+          updateWizardProgress();
+        }, 100);
 
         // Verificar el estado del botón publicar después de cargar los datos
         if (typeof window.checkFormChangesAfterLoad === 'function') {
@@ -7846,6 +8054,9 @@ License: You must have a valid license to legally use this template for your pro
         };
 
         if (fechaNacimientoField && window.flatpickr) {
+          // Guardar el valor que ya está en el campo (si lo hay) antes de inicializar Flatpickr
+          const existingValue = fechaNacimientoField.value || '';
+
           const flatpickrInstance = window.flatpickr(fechaNacimientoField, {
             dateFormat: 'd/m/Y',
             locale: 'es',
@@ -7866,6 +8077,23 @@ License: You must have a valid license to legally use this template for your pro
               }
             },
             onReady: function(selectedDates, dateStr, instance) {
+              // Si había un valor antes de inicializar, establecerlo en Flatpickr
+              if (existingValue) {
+                console.log('🔄 Restableciendo valor de fecha en Flatpickr:', existingValue);
+                const dateParts = existingValue.split('/');
+                if (dateParts.length === 3) {
+                  const [day, month, year] = dateParts;
+                  const dateObj = new Date(year, month - 1, day);
+                  instance.setDate(dateObj, false);
+
+                  // Actualizar también la edad
+                  if (edadField) {
+                    const edad = calcularEdad(dateObj);
+                    edadField.value = edad;
+                  }
+                }
+              }
+
               // Personalizar el botón de limpiar
               const clearBtn = document.createElement('div');
               clearBtn.className = 'flatpickr-clear';
@@ -7878,6 +8106,12 @@ License: You must have a valid license to legally use this template for your pro
                 }
               });
               instance.calendarContainer.appendChild(clearBtn);
+
+              // Actualizar el progreso del wizard después de inicializar Flatpickr
+              if (typeof updateWizardProgress === 'function') {
+                console.log('🔄 Actualizando progreso del wizard después de inicializar Flatpickr de fecha nacimiento');
+                updateWizardProgress();
+              }
             }
           });
 
@@ -7903,6 +8137,9 @@ License: You must have a valid license to legally use this template for your pro
         }
 
         if (fechaFirmaField && window.flatpickr) {
+          // Guardar el valor que ya está en el campo (si lo hay) antes de inicializar Flatpickr
+          const existingValue = fechaFirmaField.value || '';
+
           window.flatpickr(fechaFirmaField, {
             dateFormat: 'd/m/Y',
             locale: 'es',
@@ -7911,6 +8148,17 @@ License: You must have a valid license to legally use this template for your pro
             altFormat: 'd/m/Y',
             disableMobile: true,
             onReady: function(selectedDates, dateStr, instance) {
+              // Si había un valor antes de inicializar, establecerlo en Flatpickr
+              if (existingValue) {
+                console.log('🔄 Restableciendo valor de fecha firma en Flatpickr:', existingValue);
+                const dateParts = existingValue.split('/');
+                if (dateParts.length === 3) {
+                  const [day, month, year] = dateParts;
+                  const dateObj = new Date(year, month - 1, day);
+                  instance.setDate(dateObj, false);
+                }
+              }
+
               // Personalizar el botón de limpiar
               const clearBtn = document.createElement('div');
               clearBtn.className = 'flatpickr-clear';
@@ -7919,6 +8167,12 @@ License: You must have a valid license to legally use this template for your pro
                 instance.clear();
               });
               instance.calendarContainer.appendChild(clearBtn);
+
+              // Actualizar el progreso del wizard después de inicializar Flatpickr
+              if (typeof updateWizardProgress === 'function') {
+                console.log('🔄 Actualizando progreso del wizard después de inicializar Flatpickr de fecha firma');
+                updateWizardProgress();
+              }
             }
           });
         }
@@ -7933,6 +8187,9 @@ License: You must have a valid license to legally use this template for your pro
         if (!selectElement) {
           return;
         }
+
+        // Guardar el valor que ya estaba seleccionado antes de reinicializar
+        const existingValue = selectElement.value || '';
 
         try {
           // Cargar datos desde FileMaker
@@ -7963,6 +8220,15 @@ License: You must have a valid license to legally use this template for your pro
             }
           });
 
+          // Si había un valor seleccionado y no existe en las opciones, añadirlo
+          if (existingValue && !Array.from(selectElement.options).some(opt => opt.value === existingValue)) {
+            console.log('🔄 Añadiendo opción de teléfono Bolt que no existía:', existingValue);
+            const option = document.createElement('option');
+            option.value = existingValue;
+            option.textContent = existingValue;
+            selectElement.appendChild(option);
+          }
+
           // Inicializar Select2 con configuración personalizada
           if (typeof jQuery !== 'undefined' && jQuery.fn.select2) {
             jQuery(selectElement).select2({
@@ -7985,6 +8251,20 @@ License: You must have a valid license to legally use this template for your pro
                 return data.text;
               }
             });
+
+            // Restaurar el valor si lo había
+            if (existingValue) {
+              console.log('🔄 Restableciendo valor de teléfono Bolt en Select2:', existingValue);
+              jQuery(selectElement).val(existingValue).trigger('change');
+            }
+
+            // Actualizar el progreso del wizard después de inicializar Select2
+            setTimeout(() => {
+              if (typeof updateWizardProgress === 'function') {
+                console.log('🔄 Actualizando progreso del wizard después de inicializar Select2 de teléfono Bolt');
+                updateWizardProgress();
+              }
+            }, 50);
           }
 
         } catch (error) {
