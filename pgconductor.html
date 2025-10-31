@@ -276,6 +276,37 @@ License: You must have a valid license to legally use this template for your pro
       justify-content: center;
     }
 
+    /* Campos de solo lectura del panel de detalle - fondo gris sutil */
+    [data-clientes-detail-form] .form-control[readonly],
+    [data-clientes-detail-form] .form-control[aria-readonly="true"] {
+      background: linear-gradient(to bottom, #f8f9fa, #f1f3f5);
+      border-color: #dee2e6;
+      color: var(--bs-body-color);
+      cursor: default;
+    }
+
+    /* Modo oscuro - tonos grises apropiados */
+    [data-bs-theme='dark'] [data-clientes-detail-form] .form-control[readonly],
+    [data-bs-theme='dark'] [data-clientes-detail-form] .form-control[aria-readonly="true"] {
+      background: linear-gradient(to bottom, #2d3142, #1f222e);
+      border-color: #404456;
+    }
+
+    /* Focus sutil para campos de solo lectura (para navegación por teclado) */
+    [data-clientes-detail-form] .form-control[readonly]:focus,
+    [data-clientes-detail-form] .form-control[aria-readonly="true"]:focus {
+      background-color: rgba(101, 113, 255, 0.12);
+      border-color: rgba(101, 113, 255, 0.3);
+      box-shadow: 0 0 0 0.15rem rgba(101, 113, 255, 0.15);
+    }
+
+    [data-bs-theme='dark'] [data-clientes-detail-form] .form-control[readonly]:focus,
+    [data-bs-theme='dark'] [data-clientes-detail-form] .form-control[aria-readonly="true"]:focus {
+      background-color: rgba(101, 113, 255, 0.2);
+      border-color: rgba(101, 113, 255, 0.4);
+      box-shadow: 0 0 0 0.15rem rgba(101, 113, 255, 0.2);
+    }
+
     .detail-category-nav {
       display: none;
       overflow-y: auto;
