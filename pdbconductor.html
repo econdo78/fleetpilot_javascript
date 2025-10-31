@@ -445,6 +445,67 @@ License: You must have a valid license to legally use this template for your pro
       overflow: auto;
     }
 
+    /* Campos vacíos en formulario de proceso - Modo claro */
+    :root:not([data-bs-theme='dark']) [data-proceso-conductor-form] .form-control.field-empty,
+    :root:not([data-bs-theme='dark']) [data-proceso-conductor-form] .form-select.field-empty,
+    [data-bs-theme='light'] [data-proceso-conductor-form] .form-control.field-empty,
+    [data-bs-theme='light'] [data-proceso-conductor-form] .form-select.field-empty {
+      background-color: #fffbeb;
+      border-color: rgba(251, 191, 36, 0.2);
+    }
+
+    :root:not([data-bs-theme='dark']) [data-proceso-conductor-form] .form-control.field-empty:focus,
+    :root:not([data-bs-theme='dark']) [data-proceso-conductor-form] .form-select.field-empty:focus,
+    [data-bs-theme='light'] [data-proceso-conductor-form] .form-control.field-empty:focus,
+    [data-bs-theme='light'] [data-proceso-conductor-form] .form-select.field-empty:focus {
+      background-color: #fef3c7;
+      border-color: rgba(251, 191, 36, 0.4);
+      box-shadow: 0 0 0 0.2rem rgba(251, 191, 36, 0.1);
+    }
+
+    /* Campos vacíos en formulario de proceso - Modo oscuro */
+    [data-bs-theme='dark'] [data-proceso-conductor-form] .form-control.field-empty,
+    [data-bs-theme='dark'] [data-proceso-conductor-form] .form-select.field-empty {
+      background-color: rgba(102, 209, 209, 0.08);
+      border-color: rgba(102, 209, 209, 0.25);
+    }
+
+    [data-bs-theme='dark'] [data-proceso-conductor-form] .form-control.field-empty:focus,
+    [data-bs-theme='dark'] [data-proceso-conductor-form] .form-select.field-empty:focus {
+      background-color: rgba(102, 209, 209, 0.12);
+      border-color: rgba(102, 209, 209, 0.4);
+      box-shadow: 0 0 0 0.2rem rgba(102, 209, 209, 0.12);
+    }
+
+    /* Campos Select2 vacíos en formulario de proceso - Modo claro */
+    :root:not([data-bs-theme='dark']) [data-proceso-conductor-form] .select2-container.field-empty .select2-selection,
+    [data-bs-theme='light'] [data-proceso-conductor-form] .select2-container.field-empty .select2-selection {
+      background-color: #fffbeb !important;
+      border-color: rgba(251, 191, 36, 0.2) !important;
+    }
+
+    :root:not([data-bs-theme='dark']) [data-proceso-conductor-form] .select2-container.field-empty.select2-container--focus .select2-selection,
+    :root:not([data-bs-theme='dark']) [data-proceso-conductor-form] .select2-container.field-empty.select2-container--open .select2-selection,
+    [data-bs-theme='light'] [data-proceso-conductor-form] .select2-container.field-empty.select2-container--focus .select2-selection,
+    [data-bs-theme='light'] [data-proceso-conductor-form] .select2-container.field-empty.select2-container--open .select2-selection {
+      background-color: #fef3c7 !important;
+      border-color: rgba(251, 191, 36, 0.4) !important;
+      box-shadow: 0 0 0 0.2rem rgba(251, 191, 36, 0.1) !important;
+    }
+
+    /* Campos Select2 vacíos en formulario de proceso - Modo oscuro */
+    [data-bs-theme='dark'] [data-proceso-conductor-form] .select2-container.field-empty .select2-selection {
+      background-color: rgba(102, 209, 209, 0.08) !important;
+      border-color: rgba(102, 209, 209, 0.25) !important;
+    }
+
+    [data-bs-theme='dark'] [data-proceso-conductor-form] .select2-container.field-empty.select2-container--focus .select2-selection,
+    [data-bs-theme='dark'] [data-proceso-conductor-form] .select2-container.field-empty.select2-container--open .select2-selection {
+      background-color: rgba(102, 209, 209, 0.12) !important;
+      border-color: rgba(102, 209, 209, 0.4) !important;
+      box-shadow: 0 0 0 0.2rem rgba(102, 209, 209, 0.12) !important;
+    }
+
 .proceso-split-panel--top {
   border: 0;
   background-color: rgba(var(--bs-body-bg-rgb, 255, 255, 255), 0.65);
@@ -2684,6 +2745,43 @@ License: You must have a valid license to legally use this template for your pro
         });
       };
 
+      // Función para actualizar el estado visual de campos vacíos
+      const updateEmptyFieldsHighlight = () => {
+        if (!procesoForm) return;
+
+        // Obtener todos los inputs y selects del formulario
+        const fields = procesoForm.querySelectorAll('.form-control, .form-select');
+
+        fields.forEach(field => {
+          // Ignorar campos readonly (como edad que se calcula automáticamente)
+          if (field.hasAttribute('readonly')) {
+            return;
+          }
+
+          const isEmpty = !field.value || field.value.trim() === '';
+
+          // Para campos con Select2, necesitamos trabajar con el contenedor de Select2
+          if (field.classList.contains('select2-hidden-accessible')) {
+            // El select original está oculto, buscar el contenedor de Select2
+            const select2Container = field.parentElement.querySelector('.select2-container');
+            if (select2Container) {
+              if (isEmpty) {
+                select2Container.classList.add('field-empty');
+              } else {
+                select2Container.classList.remove('field-empty');
+              }
+            }
+          } else {
+            // Para campos normales
+            if (isEmpty) {
+              field.classList.add('field-empty');
+            } else {
+              field.classList.remove('field-empty');
+            }
+          }
+        });
+      };
+
       const loadHistoricoFromFileMaker = async (conductorId = null, procesoId = null) => {
         try {
           console.log('📚 Cargando histórico desde FileMaker');
@@ -3726,14 +3824,23 @@ License: You must have a valid license to legally use this template for your pro
         // Escuchar cambios en todos los campos del formulario
         if (procesoForm) {
           // Detectar cambios en inputs y textareas
-          procesoForm.addEventListener('input', checkFormChanges);
+          procesoForm.addEventListener('input', (e) => {
+            checkFormChanges(e);
+            updateEmptyFieldsHighlight();
+          });
 
           // Detectar cambios en selects (incluyendo Select2)
-          procesoForm.addEventListener('change', checkFormChanges);
+          procesoForm.addEventListener('change', (e) => {
+            checkFormChanges(e);
+            updateEmptyFieldsHighlight();
+          });
 
           // Para Select2, también escuchar el evento específico
           if (window.jQuery) {
-            window.jQuery(procesoForm).find('select').on('select2:select select2:unselect', checkFormChanges);
+            window.jQuery(procesoForm).find('select').on('select2:select select2:unselect', () => {
+              checkFormChanges();
+              updateEmptyFieldsHighlight();
+            });
           }
 
           // Verificar el estado inicial cuando se carguen los datos
@@ -6730,6 +6837,9 @@ License: You must have a valid license to legally use this template for your pro
         });
 
         console.log(`✅ Formulario procesado: ${fieldsFound} campos encontrados, ${fieldsFilled} campos rellenados`);
+
+        // Actualizar resaltado de campos vacíos
+        updateEmptyFieldsHighlight();
 
         // Verificar el estado del botón publicar después de cargar los datos
         if (typeof window.checkFormChangesAfterLoad === 'function') {
