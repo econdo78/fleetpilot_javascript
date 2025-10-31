@@ -3393,6 +3393,54 @@ License: You must have a valid license to legally use this template for your pro
         return hasPublishedData;
       };
 
+      // Función auxiliar para verificar si TODOS los campos de una página están publicados
+      // Necesario para mostrar el tick verde (✓) solo cuando la página está 100% publicada
+      const areAllPageFieldsPublished = (pageNumber) => {
+        // Obtener los nombres de campos de esta página
+        const pageFieldNames = WIZARD_PAGE_FIELDS[pageNumber] || [];
+
+        if (pageFieldNames.length === 0) {
+          return false;
+        }
+
+        // Si no hay registros de histórico, ningún campo está publicado
+        if (!procesoLogDataCache || procesoLogDataCache.length === 0) {
+          return false;
+        }
+
+        // Recolectar todos los campos publicados de todos los registros del histórico
+        const allPublishedFields = new Set();
+
+        procesoLogDataCache.forEach(record => {
+          let datos = {};
+
+          if (record.datos) {
+            try {
+              if (typeof record.datos === 'string') {
+                datos = JSON.parse(record.datos);
+              } else if (typeof record.datos === 'object') {
+                datos = record.datos;
+              }
+            } catch (error) {
+              return; // Continuar con el siguiente registro
+            }
+          }
+
+          // Añadir los campos de este registro al set
+          Object.keys(datos).forEach(fieldName => {
+            allPublishedFields.add(fieldName);
+          });
+        });
+
+        // Verificar si TODOS los campos de la página están en el set de campos publicados
+        const allFieldsPublished = pageFieldNames.every(fieldName => {
+          return allPublishedFields.has(fieldName);
+        });
+
+        console.log(`${allFieldsPublished ? '✅✅' : '⚠️'} Página ${pageNumber}: ${allFieldsPublished ? 'TODOS LOS CAMPOS PUBLICADOS' : 'FALTAN CAMPOS POR PUBLICAR'} (${allPublishedFields.size} campos únicos en histórico)`);
+        return allFieldsPublished;
+      };
+
       // Función para calcular y actualizar el progreso de cada página del wizard
       const updateWizardProgress = () => {
         const wizardPages = document.querySelectorAll('[data-wizard-page]');
@@ -3454,8 +3502,11 @@ License: You must have a valid license to legally use this template for your pro
           // Actualizar la variable CSS --progress
           button.style.setProperty('--progress', `${percentage}%`);
 
-          // Verificar si la página está publicada (datos coinciden con backend)
+          // Verificar si la página está publicada (al menos un campo publicado)
           const pageIsPublished = isPagePublished(pageNumber);
+
+          // Verificar si TODOS los campos de la página están publicados (para el tick verde)
+          const allFieldsPublished = areAllPageFieldsPublished(pageNumber);
 
           // Determinar si todos los campos requeridos están completos
           const allRequiredComplete = requiredFields === 0 || completedRequiredFields === requiredFields;
@@ -3466,8 +3517,8 @@ License: You must have a valid license to legally use this template for your pro
           // Limpiar todas las clases de estado antes de aplicar el nuevo estado
           button.classList.remove('completed', 'published', 'just-completed');
 
-          if (percentage === 100 && pageIsPublished) {
-            // Estado 1: Verde con ✓ (100% completado Y publicado)
+          if (percentage === 100 && allFieldsPublished) {
+            // Estado 1: Verde con ✓ (100% completado Y TODOS los campos publicados)
             button.classList.add('completed');
 
             // Si acaba de completarse, añadir animación
@@ -3488,6 +3539,7 @@ License: You must have a valid license to legally use this template for your pro
           console.log(`Botón página ${pageNumber}:`, {
             percentage,
             pageIsPublished,
+            allFieldsPublished,
             allRequiredComplete,
             classes: button.className,
             isActive: button.classList.contains('active')
