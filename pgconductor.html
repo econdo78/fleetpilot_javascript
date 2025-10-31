@@ -2646,6 +2646,14 @@ License: You must have a valid license to legally use this template for your pro
       // WIZARD / ASISTENTE DE FORMULARIO
       // ========================================
       let currentWizardStep = 1;
+      let currentWizardPage = 1;
+
+      const WIZARD_PAGE_FIELDS = {
+        1: ['nombre', 'apellido1', 'apellido2', 'tipoDocumentoIdentidad', 'nDocumentoIdentidad', 'fechaNacimiento', 'edad', 'nAfiliacionSS', 'nacionalidad', 'nivelFormativoTrabajador'],
+        2: ['telefono1', 'telefono2', 'correoPersonal', 'correoPlataforma', 'telefonoBoltCompleto'],
+        3: ['tipoVia', 'nombreVia', 'numero', 'pisoYLetra', 'cp', 'localidad', 'provincia'],
+        4: ['fechaFirma']
+      };
 
       function initializeWizard() {
         const wizardButtons = document.querySelectorAll('[data-wizard-step]');
@@ -2671,13 +2679,15 @@ License: You must have a valid license to legally use this template for your pro
       }
 
       function showWizardPage(step, direction = 'forward') {
+        const numericStep = typeof step === 'number' ? step : parseInt(step, 10) || 1;
+        currentWizardPage = numericStep;
         const pages = document.querySelectorAll('[data-wizard-page]');
         const buttons = document.querySelectorAll('[data-wizard-step]');
 
         // Actualizar botones
         buttons.forEach(button => {
           const buttonStep = parseInt(button.getAttribute('data-wizard-step'));
-          if (buttonStep === step) {
+          if (buttonStep === numericStep) {
             button.classList.add('active');
           } else {
             button.classList.remove('active');
@@ -2688,7 +2698,7 @@ License: You must have a valid license to legally use this template for your pro
         pages.forEach(page => {
           const pageStep = parseInt(page.getAttribute('data-wizard-page'));
 
-          if (pageStep === step) {
+          if (pageStep === numericStep) {
             // Mostrar la página nueva con animación
             page.classList.remove('slide-in-left', 'slide-in-right');
             page.classList.add('active');
@@ -4392,23 +4402,34 @@ License: You must have a valid license to legally use this template for your pro
             console.log('🔢 RecordId de FileMaker:', currentConductorRecordId);
             console.log('💾 Datos originales (para comparación):', originalConductorData);
 
+            const currentPageFields = WIZARD_PAGE_FIELDS[currentWizardPage] || [];
+            console.log('📄 Página actual:', currentWizardPage);
+            console.log('📋 Campos página actual:', currentPageFields);
+
+            const pageFormData = {};
+            currentPageFields.forEach(fieldName => {
+              if (Object.prototype.hasOwnProperty.call(formData, fieldName)) {
+                pageFormData[fieldName] = formData[fieldName];
+              }
+            });
+            console.log('📄 Datos página actual:', pageFormData);
+
             // Deshabilitar el botón durante el proceso
             const originalButtonText = publicarConfirmarButton.innerHTML;
             publicarConfirmarButton.disabled = true;
             publicarConfirmarButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Publicando...';
 
             try {
-              // Limpiar campos vacíos del formData (enviar solo campos con valores)
+              // Limpiar campos vacíos solo de la página actual (enviar solo campos con valores)
               const cleanedFormData = {};
-              Object.entries(formData).forEach(([key, value]) => {
-                // Solo incluir campos que tienen valor
+              Object.entries(pageFormData).forEach(([key, value]) => {
                 if (value !== null && value !== undefined && value !== '') {
                   cleanedFormData[key] = value;
                 }
               });
 
               console.log('🧹 Campos con valores (limpiados):', cleanedFormData);
-              console.log(`📊 Total: ${Object.keys(cleanedFormData).length} de ${Object.keys(formData).length} campos`);
+              console.log(`📊 Total: ${Object.keys(cleanedFormData).length} de ${currentPageFields.length} campos de la página`);
 
               // Preparar los datos para FileMaker (convertir fechas, etc.)
               console.log('🔧 Preparando datos para FileMaker...');
