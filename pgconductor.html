@@ -2667,16 +2667,76 @@ License: You must have a valid license to legally use this template for your pro
             <p class="text-secondary small mb-4">
               Gestiona las operaciones del conductor <strong data-clientes-actions-name>seleccionado</strong>.
             </p>
-            <div class="treeview" data-clientes-treeview data-treeview-role="procesos">
-              <div class="treeview-header text-secondary">Procesos disponibles</div>
-              <div class="treeview-search mb-2">
-                <span class="treeview-search-icon">
-                  <i class="text-secondary" data-lucide="search"></i>
-                </span>
-                <input type="search" class="form-control form-control-sm" placeholder="Buscar proceso…" aria-label="Buscar proceso" data-treeview-search>
-              </div>
-              <div class="treeview-body" data-treeview-body>
-                <div class="treeview-status" data-treeview-status>Cargando menú…</div>
+            <div class="treeview" data-proceso-treeview>
+              <div class="treeview-header text-secondary">Estado de publicación</div>
+              <div class="treeview-body mt-3">
+                <ul class="treeview-list" role="tree">
+                  <!-- Nodo raíz: Datos del conductor -->
+                  <li class="treeview-item" role="treeitem" aria-expanded="true" data-tree-item data-default-expanded="true">
+                    <div class="treeview-node">
+                      <button class="treeview-toggle" type="button" data-tree-toggle aria-label="Alternar Datos del conductor"></button>
+                      <span class="treeview-icon">
+                        <i data-lucide="folder"></i>
+                      </span>
+                      <span class="treeview-label">Datos del conductor</span>
+                    </div>
+                    <!-- Nodos hijos (páginas del wizard) -->
+                    <ul class="treeview-list" role="group">
+                      <!-- Página 1: Datos personales -->
+                      <li class="treeview-item treeview-item--leaf" role="treeitem" data-tree-item data-tree-collapsed="true" data-page-node="1">
+                        <div class="treeview-node treeview-node--leaf">
+                          <span class="treeview-toggle treeview-toggle--placeholder" aria-hidden="true"></span>
+                          <span class="treeview-icon" data-page-icon="1">
+                            <!-- Icono dinámico según estado -->
+                            <svg viewBox="0 0 20 20" width="20" height="20">
+                              <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                          </span>
+                          <span class="treeview-label">Datos personales</span>
+                        </div>
+                      </li>
+                      <!-- Página 2: Datos de contacto -->
+                      <li class="treeview-item treeview-item--leaf" role="treeitem" data-tree-item data-tree-collapsed="true" data-page-node="2">
+                        <div class="treeview-node treeview-node--leaf">
+                          <span class="treeview-toggle treeview-toggle--placeholder" aria-hidden="true"></span>
+                          <span class="treeview-icon" data-page-icon="2">
+                            <!-- Icono dinámico según estado -->
+                            <svg viewBox="0 0 20 20" width="20" height="20">
+                              <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                          </span>
+                          <span class="treeview-label">Datos de contacto</span>
+                        </div>
+                      </li>
+                      <!-- Página 3: Dirección -->
+                      <li class="treeview-item treeview-item--leaf" role="treeitem" data-tree-item data-tree-collapsed="true" data-page-node="3">
+                        <div class="treeview-node treeview-node--leaf">
+                          <span class="treeview-toggle treeview-toggle--placeholder" aria-hidden="true"></span>
+                          <span class="treeview-icon" data-page-icon="3">
+                            <!-- Icono dinámico según estado -->
+                            <svg viewBox="0 0 20 20" width="20" height="20">
+                              <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                          </span>
+                          <span class="treeview-label">Dirección</span>
+                        </div>
+                      </li>
+                      <!-- Página 4: Otros datos -->
+                      <li class="treeview-item treeview-item--leaf" role="treeitem" data-tree-item data-tree-collapsed="true" data-page-node="4">
+                        <div class="treeview-node treeview-node--leaf">
+                          <span class="treeview-toggle treeview-toggle--placeholder" aria-hidden="true"></span>
+                          <span class="treeview-icon" data-page-icon="4">
+                            <!-- Icono dinámico según estado -->
+                            <svg viewBox="0 0 20 20" width="20" height="20">
+                              <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                          </span>
+                          <span class="treeview-label">Otros datos</span>
+                        </div>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
@@ -2836,11 +2896,105 @@ License: You must have a valid license to legally use this template for your pro
       setTimeout(() => {
         if (typeof updateWizardProgress === 'function') {
           updateWizardProgress();
+          updateProcessTreeView();
         }
       }, 500);
 
       // ========================================
       // FIN WIZARD
+      // ========================================
+
+      // ========================================
+      // OFFCANVAS - TREEVIEW DE ESTADOS
+      // ========================================
+
+      // Función para inicializar el TreeView de estados del proceso
+      const initProcessTreeView = () => {
+        const container = document.querySelector('[data-proceso-treeview]');
+        if (!container) return;
+
+        const treeRoot = container.querySelector('.treeview-list[role="tree"]');
+        if (!treeRoot) return;
+
+        // Función para establecer el estado expandido/colapsado de un item
+        const setTreeItemState = (item, expanded) => {
+          if (!item) return;
+
+          const childList = item.querySelector(':scope > .treeview-list');
+          const toggle = item.querySelector(':scope > .treeview-node [data-tree-toggle]');
+
+          item.setAttribute('aria-expanded', String(expanded));
+          item.classList.toggle('is-collapsed', !expanded);
+
+          if (toggle) {
+            toggle.setAttribute('aria-expanded', String(expanded));
+          }
+
+          if (childList) {
+            if (expanded) {
+              childList.removeAttribute('hidden');
+            } else {
+              childList.setAttribute('hidden', '');
+            }
+          }
+
+          item.dataset.treeCollapsed = expanded ? 'false' : 'true';
+        };
+
+        // Inicializar estados de los items
+        const items = treeRoot.querySelectorAll('[data-tree-item]');
+        items.forEach((item) => {
+          const defaultExpanded = item.dataset.defaultExpanded === 'true';
+          const collapsed = item.dataset.treeCollapsed === 'true' || item.getAttribute('aria-expanded') === 'false';
+          setTreeItemState(item, defaultExpanded || !collapsed);
+        });
+
+        // Manejar clicks en los toggles
+        treeRoot.addEventListener('click', (event) => {
+          const toggle = event.target.closest('[data-tree-toggle]');
+          if (!toggle || !treeRoot.contains(toggle)) return;
+
+          event.preventDefault();
+          const item = toggle.closest('[data-tree-item]');
+          if (!item) return;
+
+          const expanded = item.getAttribute('aria-expanded') === 'true';
+          setTreeItemState(item, !expanded);
+        });
+
+        // Manejar teclas Enter y Espacio en los toggles
+        treeRoot.addEventListener('keydown', (event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+
+          const toggle = event.target.closest('[data-tree-toggle]');
+          if (!toggle || !treeRoot.contains(toggle)) return;
+
+          event.preventDefault();
+          toggle.click();
+        });
+      };
+
+      // Inicializar el TreeView
+      initProcessTreeView();
+
+      // Cuando se abre el offcanvas, actualizar los iconos de Lucide y el TreeView
+      const offcanvasElement = document.getElementById('clientesActionsOffcanvas');
+      if (offcanvasElement) {
+        offcanvasElement.addEventListener('shown.bs.offcanvas', function () {
+          // Reiniciar iconos de Lucide (para el icono de carpeta)
+          if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+          }
+
+          // Actualizar el TreeView con los estados actuales
+          if (typeof updateProcessTreeView === 'function') {
+            updateProcessTreeView();
+          }
+        });
+      }
+
+      // ========================================
+      // FIN OFFCANVAS
       // ========================================
 
       const COUNTRIES = [
@@ -3537,6 +3691,109 @@ License: You must have a valid license to legally use this template for your pro
             isActive: button.classList.contains('active')
           });
         });
+      };
+
+      // Función para actualizar los iconos del TreeView del offcanvas según el estado de cada página
+      const updateProcessTreeView = () => {
+        // Para cada página del wizard (1-4)
+        for (let pageNumber = 1; pageNumber <= 4; pageNumber++) {
+          const iconContainer = document.querySelector(`[data-page-icon="${pageNumber}"]`);
+
+          if (!iconContainer) {
+            console.warn(`No se encontró el contenedor de icono para la página ${pageNumber}`);
+            continue;
+          }
+
+          // Obtener los mismos datos que updateWizardProgress calcula
+          const wizardPage = document.querySelector(`[data-wizard-page="${pageNumber}"]`);
+
+          if (!wizardPage) {
+            console.warn(`No se encontró la página del wizard ${pageNumber}`);
+            continue;
+          }
+
+          // Obtener todos los campos de esta página
+          const fields = wizardPage.querySelectorAll('.form-control, .form-select');
+
+          let totalFields = 0;
+          let completedFields = 0;
+          let requiredFields = 0;
+          let completedRequiredFields = 0;
+
+          fields.forEach(field => {
+            // Ignorar campos sin id y sin nombre
+            if (!field.id && !field.name) return;
+
+            // Ignorar campos readonly
+            if (field.hasAttribute('readonly')) return;
+
+            // Ignorar campos ocultos
+            const fieldContainer = field.closest('.col-12, .col-lg-6');
+            if (fieldContainer && fieldContainer.classList.contains('d-none')) return;
+
+            const isRequired = field.hasAttribute('required');
+
+            totalFields++;
+            if (isRequired) requiredFields++;
+
+            const hasValue = field.value && field.value.trim() !== '';
+            const isValid = field.checkValidity ? field.checkValidity() : true;
+
+            if (hasValue && isValid) {
+              completedFields++;
+              if (isRequired) completedRequiredFields++;
+            }
+          });
+
+          // Calcular porcentaje
+          const percentage = totalFields > 0 ? Math.round((completedFields / totalFields) * 100) : 0;
+
+          // Verificar estados de publicación
+          const pageIsPublished = isPagePublished(pageNumber);
+          const allFieldsPublished = areAllPageFieldsPublished(pageNumber);
+          const allRequiredComplete = requiredFields === 0 || completedRequiredFields === requiredFields;
+
+          // Determinar qué icono mostrar según los 3 estados
+          let iconSVG = '';
+
+          if (percentage === 100 && allFieldsPublished) {
+            // Estado 1: Completamente publicado - Círculo verde con tick blanco
+            iconSVG = `<svg viewBox="0 0 20 20" width="24" height="24">
+              <circle cx="10" cy="10" r="10" fill="#05a34a" stroke="none"/>
+              <polyline points="5,10 8.5,13.5 15,7" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>`;
+          } else if (allRequiredComplete && pageIsPublished && percentage < 100) {
+            // Estado 2: Publicado parcialmente - Mitad izquierda rellena de verde con borde verde
+            iconSVG = `<svg viewBox="0 0 20 20" width="24" height="24">
+              <defs>
+                <clipPath id="half-left-${pageNumber}">
+                  <rect x="0" y="0" width="10" height="20"/>
+                </clipPath>
+              </defs>
+              <!-- Círculo con borde completo en verde -->
+              <circle cx="10" cy="10" r="9.5" fill="none" stroke="#05a34a" stroke-width="1"/>
+              <!-- Mitad izquierda rellena de verde -->
+              <circle cx="10" cy="10" r="9.5" fill="#05a34a" stroke="none" clip-path="url(#half-left-${pageNumber})"/>
+            </svg>`;
+          } else {
+            // Estado 3: No publicado - Esfera rellena del color primario más claro
+            iconSVG = `<svg viewBox="0 0 20 20" width="24" height="24">
+              <circle cx="10" cy="10" r="10" fill="var(--bs-primary)" fill-opacity="0.3" stroke="none"/>
+            </svg>`;
+          }
+
+          // Actualizar el icono
+          iconContainer.innerHTML = iconSVG;
+
+          console.log(`TreeView icono página ${pageNumber}:`, {
+            percentage,
+            pageIsPublished,
+            allFieldsPublished,
+            allRequiredComplete,
+            estado: percentage === 100 && allFieldsPublished ? 'Completamente publicado' :
+                    (allRequiredComplete && pageIsPublished && percentage < 100 ? 'Publicado parcialmente' : 'No publicado')
+          });
+        }
       };
 
       const loadHistoricoFromFileMaker = async (conductorId = null, procesoId = null) => {
@@ -4585,6 +4842,7 @@ License: You must have a valid license to legally use this template for your pro
             checkFormChanges(e);
             updateEmptyFieldsHighlight();
             updateWizardProgress();
+            updateProcessTreeView();
           });
 
           // Detectar cambios en selects (incluyendo Select2)
@@ -4592,6 +4850,7 @@ License: You must have a valid license to legally use this template for your pro
             checkFormChanges(e);
             updateEmptyFieldsHighlight();
             updateWizardProgress();
+            updateProcessTreeView();
           });
 
           // Para Select2, también escuchar el evento específico
@@ -4600,6 +4859,7 @@ License: You must have a valid license to legally use this template for your pro
               checkFormChanges();
               updateEmptyFieldsHighlight();
               updateWizardProgress();
+              updateProcessTreeView();
             });
           }
 
@@ -4782,6 +5042,12 @@ License: You must have a valid license to legally use this template for your pro
                   console.log('🔄 Recargando tabla de histórico...');
                   await initProcesoLogTable(null, currentConductorId, currentProcesoId);
                   console.log('✅ Tabla de histórico actualizada');
+
+                  // Actualizar TreeView del offcanvas después de publicar
+                  setTimeout(() => {
+                    updateProcessTreeView();
+                    console.log('✅ TreeView actualizado después de publicación');
+                  }, 200);
                 }
               }
 
@@ -7655,6 +7921,7 @@ License: You must have a valid license to legally use this template for your pro
         setTimeout(() => {
           console.log('🔄 Actualizando progreso del wizard tras inicialización de campos...');
           updateWizardProgress();
+          updateProcessTreeView();
         }, 100);
 
         // Verificar el estado del botón publicar después de cargar los datos
@@ -8169,6 +8436,7 @@ License: You must have a valid license to legally use this template for your pro
               if (typeof updateWizardProgress === 'function') {
                 console.log('🔄 Actualizando progreso del wizard después de inicializar Flatpickr de fecha nacimiento');
                 updateWizardProgress();
+                updateProcessTreeView();
               }
             }
           });
@@ -8230,6 +8498,7 @@ License: You must have a valid license to legally use this template for your pro
               if (typeof updateWizardProgress === 'function') {
                 console.log('🔄 Actualizando progreso del wizard después de inicializar Flatpickr de fecha firma');
                 updateWizardProgress();
+                updateProcessTreeView();
               }
             }
           });
@@ -8321,6 +8590,7 @@ License: You must have a valid license to legally use this template for your pro
               if (typeof updateWizardProgress === 'function') {
                 console.log('🔄 Actualizando progreso del wizard después de inicializar Select2 de teléfono Bolt');
                 updateWizardProgress();
+                updateProcessTreeView();
               }
             }, 50);
           }
