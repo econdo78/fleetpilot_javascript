@@ -476,68 +476,9 @@ License: You must have a valid license to legally use this template for your pro
       overflow: auto;
     }
 
-    /* Campos vacíos en formulario de proceso - Modo claro */
-    /* Usando color Primary de FleetPilot (#6571ff) con opacidad sutil */
-    :root:not([data-bs-theme='dark']) [data-proceso-conductor-form] .form-control.field-empty,
-    :root:not([data-bs-theme='dark']) [data-proceso-conductor-form] .form-select.field-empty,
-    [data-bs-theme='light'] [data-proceso-conductor-form] .form-control.field-empty,
-    [data-bs-theme='light'] [data-proceso-conductor-form] .form-select.field-empty {
-      background-color: rgba(101, 113, 255, 0.06);
-      border-color: rgba(101, 113, 255, 0.3);
-    }
-
-    :root:not([data-bs-theme='dark']) [data-proceso-conductor-form] .form-control.field-empty:focus,
-    :root:not([data-bs-theme='dark']) [data-proceso-conductor-form] .form-select.field-empty:focus,
-    [data-bs-theme='light'] [data-proceso-conductor-form] .form-control.field-empty:focus,
-    [data-bs-theme='light'] [data-proceso-conductor-form] .form-select.field-empty:focus {
-      background-color: rgba(101, 113, 255, 0.1);
-      border-color: rgba(101, 113, 255, 0.45);
-      box-shadow: 0 0 0 0.2rem rgba(101, 113, 255, 0.12);
-    }
-
-    /* Campos vacíos en formulario de proceso - Modo oscuro */
-    /* Usando color Info (#66d1d1) con mayor opacidad para visibilidad en fondo oscuro */
-    [data-bs-theme='dark'] [data-proceso-conductor-form] .form-control.field-empty,
-    [data-bs-theme='dark'] [data-proceso-conductor-form] .form-select.field-empty {
-      background-color: rgba(102, 209, 209, 0.06);
-      border-color: rgba(102, 209, 209, 0.22);
-    }
-
-    [data-bs-theme='dark'] [data-proceso-conductor-form] .form-control.field-empty:focus,
-    [data-bs-theme='dark'] [data-proceso-conductor-form] .form-select.field-empty:focus {
-      background-color: rgba(102, 209, 209, 0.1);
-      border-color: rgba(102, 209, 209, 0.35);
-      box-shadow: 0 0 0 0.2rem rgba(102, 209, 209, 0.12);
-    }
-
-    /* Campos Select2 vacíos en formulario de proceso - Modo claro */
-    :root:not([data-bs-theme='dark']) [data-proceso-conductor-form] .select2-container.field-empty .select2-selection,
-    [data-bs-theme='light'] [data-proceso-conductor-form] .select2-container.field-empty .select2-selection {
-      background-color: rgba(101, 113, 255, 0.06) !important;
-      border-color: rgba(101, 113, 255, 0.3) !important;
-    }
-
-    :root:not([data-bs-theme='dark']) [data-proceso-conductor-form] .select2-container.field-empty.select2-container--focus .select2-selection,
-    :root:not([data-bs-theme='dark']) [data-proceso-conductor-form] .select2-container.field-empty.select2-container--open .select2-selection,
-    [data-bs-theme='light'] [data-proceso-conductor-form] .select2-container.field-empty.select2-container--focus .select2-selection,
-    [data-bs-theme='light'] [data-proceso-conductor-form] .select2-container.field-empty.select2-container--open .select2-selection {
-      background-color: rgba(101, 113, 255, 0.1) !important;
-      border-color: rgba(101, 113, 255, 0.45) !important;
-      box-shadow: 0 0 0 0.2rem rgba(101, 113, 255, 0.12) !important;
-    }
-
-    /* Campos Select2 vacíos en formulario de proceso - Modo oscuro */
-    [data-bs-theme='dark'] [data-proceso-conductor-form] .select2-container.field-empty .select2-selection {
-      background-color: rgba(102, 209, 209, 0.06) !important;
-      border-color: rgba(102, 209, 209, 0.22) !important;
-    }
-
-    [data-bs-theme='dark'] [data-proceso-conductor-form] .select2-container.field-empty.select2-container--focus .select2-selection,
-    [data-bs-theme='dark'] [data-proceso-conductor-form] .select2-container.field-empty.select2-container--open .select2-selection {
-      background-color: rgba(102, 209, 209, 0.1) !important;
-      border-color: rgba(102, 209, 209, 0.35) !important;
-      box-shadow: 0 0 0 0.2rem rgba(102, 209, 209, 0.12) !important;
-    }
+    /* Campos vacíos - Estilos eliminados */
+    /* Ya no es necesario resaltar campos vacíos porque el fondo gris de la card */
+    /* ya hace que los campos blancos destaquen suficientemente */
 
 .proceso-split-panel--top {
   border: 0;
@@ -1489,6 +1430,26 @@ License: You must have a valid license to legally use this template for your pro
       display: none;
       animation-duration: 0.3s;
       animation-fill-mode: both;
+      /* Estilo de card como el panel de detalle */
+      border: 1px solid var(--bs-border-color);
+      border-radius: var(--bs-border-radius-lg, 0.5rem);
+      padding: 1.5rem;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    /* Modo claro - mismo fondo que detail-card */
+    :root:not([data-bs-theme='dark']) .wizard-page,
+    [data-bs-theme='light'] .wizard-page {
+      background-color: #f7f8fa;
+      border: 1px solid rgba(17, 24, 39, 0.08);
+    }
+
+    /* Modo oscuro - mismo fondo que detail-card */
+    [data-bs-theme='dark'] .wizard-page {
+      background-color: var(--bs-card-bg);
+      border: 1px solid var(--bs-border-color);
+      box-shadow: var(--bs-box-shadow);
     }
 
     .wizard-page.active {
