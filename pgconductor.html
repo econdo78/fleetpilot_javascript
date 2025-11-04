@@ -835,6 +835,7 @@ License: You must have a valid license to legally use this template for your pro
       padding: 0.375rem 0.5rem;
       color: var(--bs-body-color);
       transition: background-color 0.2s ease, color 0.2s ease;
+      cursor: pointer;
     }
 
     .treeview-icon {
@@ -909,6 +910,14 @@ License: You must have a valid license to legally use this template for your pro
       font-weight: 400;
     }
 
+    .treeview-node--leaf {
+      cursor: pointer;
+    }
+
+    .treeview-node--leaf:hover {
+      background-color: rgba(var(--bs-primary-rgb), 0.1);
+    }
+
     .treeview-label {
       display: inline-flex;
       align-items: center;
@@ -920,10 +929,6 @@ License: You must have a valid license to legally use this template for your pro
       padding: 0;
       color: inherit;
       text-align: left;
-      cursor: default;
-    }
-
-    .treeview-label[data-tree-action="navigate"] {
       cursor: pointer;
     }
 
@@ -2971,6 +2976,37 @@ License: You must have a valid license to legally use this template for your pro
 
           event.preventDefault();
           toggle.click();
+        });
+
+        // Manejar clicks en los nodos hijos (páginas del wizard)
+        treeRoot.addEventListener('click', (event) => {
+          // Verificar si el click fue en un nodo hoja (página del wizard)
+          const treeNode = event.target.closest('.treeview-node--leaf');
+          if (!treeNode) return;
+
+          // Verificar que no sea un click en el toggle (placeholder)
+          const toggle = event.target.closest('.treeview-toggle');
+          if (toggle) return;
+
+          // Obtener el item del árbol
+          const treeItem = treeNode.closest('[data-page-node]');
+          if (!treeItem) return;
+
+          const pageNumber = parseInt(treeItem.getAttribute('data-page-node'));
+          if (isNaN(pageNumber)) return;
+
+          event.preventDefault();
+
+          // Cerrar el offcanvas
+          const offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('clientesActionsOffcanvas'));
+          if (offcanvas) {
+            offcanvas.hide();
+          }
+
+          // Navegar a la página correspondiente del wizard
+          if (typeof showWizardPage === 'function') {
+            showWizardPage(pageNumber);
+          }
         });
       };
 
