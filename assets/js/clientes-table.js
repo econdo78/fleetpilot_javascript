@@ -683,12 +683,8 @@
 
     $table.on('click.clientes-row', 'tbody tr', function handleRowClick() {
       const clickedKey = this.dataset.recordKey || null;
-      // Toggle: si hago clic en la misma fila, deseleccionar
-      if (selectedRecordKey === clickedKey) {
-        selectedRecordKey = null;
-      } else {
-        selectedRecordKey = clickedKey;
-      }
+      // Siempre seleccionar la fila clickeada, sin toggle
+      selectedRecordKey = clickedKey;
       applySelectionHighlight(tableNode);
       dispatchSelectionChange();
     });

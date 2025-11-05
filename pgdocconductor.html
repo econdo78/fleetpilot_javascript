@@ -1960,6 +1960,13 @@ License: You must have a valid license to legally use this template for your pro
               <span class="link-title">Todos los vehículos</span>
             </a>
           </li>
+          <li class="nav-item nav-category">Configuración</li>
+          <li class="nav-item">
+            <a href="ajustes.html" class="nav-link">
+              <i class="link-icon" data-lucide="settings"></i>
+              <span class="link-title">Ajustes</span>
+            </a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -2988,8 +2995,42 @@ License: You must have a valid license to legally use this template for your pro
       // GOOGLE CLOUD VISION API - OCR DNI
       // ========================================
 
-      // 🔑 CONFIGURA TU API KEY AQUÍ
-      const GOOGLE_VISION_API_KEY = ''; // ⚠️ PEGA TU API KEY AQUÍ
+      // 🔑 API KEY se carga dinámicamente desde el backend (preferencias)
+      let GOOGLE_VISION_API_KEY = null;
+
+      /**
+       * Carga la API Key de Google Vision desde el backend
+       */
+      async function loadGoogleVisionApiKey() {
+        try {
+          const layoutName = 'preferencias';
+          const encodedLayout = window.ApiClient.encodePathSegment(layoutName);
+          const response = await window.ApiClient.get(`layouts/${encodedLayout}/records?_limit=1`);
+
+          if (!response.ok) {
+            console.error('❌ Error al cargar preferencias para Google Vision API Key');
+            return;
+          }
+
+          const data = await response.json();
+
+          if (data.response?.data && data.response.data.length > 0) {
+            const preferencia = data.response.data[0];
+            const apiKey = preferencia.fieldData?.apiGoogleVision || '';
+
+            if (apiKey) {
+              GOOGLE_VISION_API_KEY = apiKey;
+              console.log('✅ Google Vision API Key cargada desde backend');
+            } else {
+              console.warn('⚠️ API Key de Google Vision no configurada en preferencias');
+            }
+          } else {
+            console.warn('⚠️ No se encontraron preferencias en el sistema');
+          }
+        } catch (error) {
+          console.error('❌ Error cargando Google Vision API Key:', error);
+        }
+      }
 
       /**
        * Procesa imagen del DNI con Google Cloud Vision API
@@ -3006,7 +3047,7 @@ License: You must have a valid license to legally use this template for your pro
         }
 
         // Verificar que la API Key esté configurada
-        if (GOOGLE_VISION_API_KEY === 'YOUR_API_KEY_HERE' || GOOGLE_VISION_API_KEY === '') {
+        if (!GOOGLE_VISION_API_KEY || GOOGLE_VISION_API_KEY === '') {
           console.warn('⚠️ Google Vision API Key no configurada');
 
           // Mostrar mensaje de advertencia en lugar de procesar
@@ -3014,9 +3055,9 @@ License: You must have a valid license to legally use this template for your pro
           const contentDiv = resultsContainer.querySelector('[data-ocr-content]');
           if (contentDiv) {
             contentDiv.innerHTML = `
-              <div class="alert alert-secondary mb-0 small" role="alert">
+              <div class="alert alert-warning mb-0 small" role="alert">
                 <i class="mdi mdi-information-outline me-1"></i>
-                No está establecida la API de Google Vision y no se hará reconocimiento del texto. La API key se establece en la constante GOOGLE_VISION_API_KEY.
+                No está establecida la API Key de Google Vision. Por favor, configúrala en <a href="ajustes.html" class="alert-link">Ajustes</a>.
               </div>
             `;
           }
@@ -3328,7 +3369,7 @@ License: You must have a valid license to legally use this template for your pro
        * Inicializa los mensajes de advertencia si no está configurada la API key
        */
       function initializeOCRWarnings() {
-        if (GOOGLE_VISION_API_KEY === 'YOUR_API_KEY_HERE' || GOOGLE_VISION_API_KEY === '') {
+        if (!GOOGLE_VISION_API_KEY || GOOGLE_VISION_API_KEY === '') {
           // Mostrar mensaje en ambas zonas (anverso y reverso)
           ['doc-anverso', 'doc-reverso'].forEach(zoneType => {
             const resultsContainer = document.querySelector(`[data-ocr-results="${zoneType}"]`);
@@ -3337,9 +3378,9 @@ License: You must have a valid license to legally use this template for your pro
               const contentDiv = resultsContainer.querySelector('[data-ocr-content]');
               if (contentDiv) {
                 contentDiv.innerHTML = `
-                  <div class="alert alert-secondary mb-0 small" role="alert">
+                  <div class="alert alert-warning mb-0 small" role="alert">
                     <i class="mdi mdi-information-outline me-1"></i>
-                    No está establecida la API de Google Vision y no se hará reconocimiento del texto. La API key se establece en la constante GOOGLE_VISION_API_KEY.
+                    No está establecida la API Key de Google Vision. Por favor, configúrala en <a href="ajustes.html" class="alert-link">Ajustes</a>.
                   </div>
                 `;
               }
@@ -3348,8 +3389,10 @@ License: You must have a valid license to legally use this template for your pro
         }
       }
 
-      // Inicializar advertencias de OCR al cargar la página
-      initializeOCRWarnings();
+      // Cargar API Key y luego inicializar advertencias
+      loadGoogleVisionApiKey().then(() => {
+        initializeOCRWarnings();
+      });
 
       // ========================================
       // GOOGLE DRIVE - SUBIR ARCHIVOS
