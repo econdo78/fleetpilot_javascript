@@ -604,6 +604,15 @@ License: You must have a valid license to legally use this template for your pro
       background-color: #e9ecef;
     }
 
+    /* Estilos para campos readonly/disabled en el panel izquierdo (formularios editables) */
+    :root:not([data-bs-theme='dark']) .form-control[readonly],
+    :root:not([data-bs-theme='dark']) .form-select[disabled],
+    [data-bs-theme='light'] .form-control[readonly],
+    [data-bs-theme='light'] .form-select[disabled] {
+      background-color: #e9ecef;
+      cursor: not-allowed;
+    }
+
     [data-clientes-detail-empty] {
       background-color: var(--bs-card-bg);
       border-radius: inherit;
@@ -1290,35 +1299,27 @@ License: You must have a valid license to legally use this template for your pro
                                     <h5 class="card-title mb-0">DATOS BÁSICOS</h5>
                                   </div>
                                   <div class="card-body">
-                                    <form>
+                                    <form data-form-section="datos-basicos">
                                       <div class="detail-grid">
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nombre</label>
-                                          <input type="text" class="form-control" value="">
+                                          <input type="text" class="form-control" name="nombre" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">1º Apellido</label>
-                                          <input type="text" class="form-control" value="">
+                                          <input type="text" class="form-control" name="apellido1" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">2º Apellido</label>
-                                          <input type="text" class="form-control" value="">
-                                        </div>
-                                        <div class="detail-grid-item">
-                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nombre completo</label>
-                                          <input type="text" class="form-control" value="" readonly>
+                                          <input type="text" class="form-control" name="apellido2" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">F. Nacimiento</label>
-                                          <input type="date" class="form-control" value="">
-                                        </div>
-                                        <div class="detail-grid-item">
-                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Edad</label>
-                                          <input type="text" class="form-control" value="" readonly>
+                                          <input type="date" class="form-control" name="fechaNacimiento" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Tipo documento</label>
-                                          <select class="form-select">
+                                          <select class="form-select" name="tipoDocumentoIdentidad">
                                             <option value="" selected disabled>Selecciona un tipo</option>
                                             <option value="DNI">DNI</option>
                                             <option value="NIE">NIE</option>
@@ -1327,15 +1328,15 @@ License: You must have a valid license to legally use this template for your pro
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nº Documento</label>
-                                          <input type="text" class="form-control" value="">
+                                          <input type="text" class="form-control" name="ndocumentoidentidad" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nacionalidad</label>
-                                          <input type="text" class="form-control" value="">
+                                          <input type="text" class="form-control" name="nacionalidad" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nivel formativo</label>
-                                          <select class="form-select">
+                                          <select class="form-select" name="nivelFormativoTrabajador">
                                             <option value="" selected>Selecciona un nivel</option>
                                             <option value="Sin estudios">Sin estudios</option>
                                             <option value="Educación primaria">Educación primaria</option>
@@ -1364,15 +1365,11 @@ License: You must have a valid license to legally use this template for your pro
                                     <h5 class="card-title mb-0">DIRECCIÓN</h5>
                                   </div>
                                   <div class="card-body">
-                                    <form>
+                                    <form data-form-section="direccion">
                                       <div class="detail-grid">
                                         <div class="detail-grid-item">
-                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Dirección completa</label>
-                                          <input type="text" class="form-control" value="" readonly>
-                                        </div>
-                                        <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Tipo vía</label>
-                                          <select class="form-select">
+                                          <select class="form-select" name="tipoVia">
                                             <option value="" selected>Selecciona tipo</option>
                                             <option value="Calle">Calle</option>
                                             <option value="Avenida">Avenida</option>
@@ -1384,35 +1381,31 @@ License: You must have a valid license to legally use this template for your pro
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nombre vía</label>
-                                          <input type="text" class="form-control" value="">
+                                          <input type="text" class="form-control" name="nombreVia" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Número</label>
-                                          <input type="text" class="form-control" value="">
+                                          <input type="text" class="form-control" name="numero" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Piso y letra</label>
-                                          <input type="text" class="form-control" value="">
+                                          <input type="text" class="form-control" name="pisoYLetra" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Código postal</label>
-                                          <input type="text" class="form-control" value="">
-                                        </div>
-                                        <div class="detail-grid-item">
-                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Código localidad</label>
-                                          <input type="text" class="form-control" value="">
+                                          <input type="text" class="form-control" name="cp" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Localidad</label>
-                                          <input type="text" class="form-control" value="">
+                                          <input type="text" class="form-control" name="localidad" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Provincia</label>
-                                          <input type="text" class="form-control" value="">
+                                          <input type="text" class="form-control" name="provincia" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">País</label>
-                                          <input type="text" class="form-control" value="">
+                                          <input type="text" class="form-control" name="paisNacimiento" value="">
                                         </div>
                                       </div>
                                       <div class="d-flex justify-content-end mt-4">
@@ -1434,27 +1427,27 @@ License: You must have a valid license to legally use this template for your pro
                                     <h5 class="card-title mb-0">DATOS DE CONTACTO</h5>
                                   </div>
                                   <div class="card-body">
-                                    <form>
+                                    <form data-form-section="contacto">
                                       <div class="detail-grid">
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Teléfono 1</label>
-                                          <input type="tel" class="form-control" value="">
+                                          <input type="tel" class="form-control" name="telefono1" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Teléfono 2</label>
-                                          <input type="tel" class="form-control" value="">
+                                          <input type="tel" class="form-control" name="telefono2" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Teléfono Bolt</label>
-                                          <input type="tel" class="form-control" value="">
+                                          <input type="tel" class="form-control" name="telefonoBoltCompleto" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Correo personal</label>
-                                          <input type="email" class="form-control" value="">
+                                          <input type="email" class="form-control" name="correoPersonal" value="">
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Correo plataforma</label>
-                                          <input type="email" class="form-control" value="">
+                                          <input type="email" class="form-control" name="correoPlataforma" value="">
                                         </div>
                                       </div>
                                       <div class="d-flex justify-content-end mt-4">
@@ -1636,6 +1629,52 @@ License: You must have a valid license to legally use this template for your pro
           </div>
         </div>
 
+        <!-- Modal de confirmación para publicar -->
+        <div class="modal fade" id="publicarConfirmModal" tabindex="-1" aria-labelledby="publicarConfirmModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0">
+              <div class="modal-header bg-warning text-dark border-0">
+                <h5 class="modal-title fw-semibold" id="publicarConfirmModalLabel">
+                  <i class="me-2" data-lucide="alert-triangle"></i>
+                  Atención, Vas a publicar un registro
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+              <div class="modal-body pb-4">
+                <p class="mb-0">
+                  Esto hará que los datos se actualicen en el sistema, además esta acción no se puede deshacer, ¿estás seguro?
+                </p>
+              </div>
+              <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-warning" data-publicar-confirmar>Confirmar publicación</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Toast para notificaciones de publicación -->
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+          <div id="publicarSuccessToast" class="toast text-bg-success border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+            <div class="d-flex align-items-center">
+              <div class="toast-body">
+                <i class="me-2" data-lucide="check-circle"></i>
+                <span id="publicarSuccessMessage">Datos actualizados exitosamente</span>
+              </div>
+              <button type="button" class="btn-close btn-close-white ms-2 me-1" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+            </div>
+          </div>
+          <div id="publicarErrorToast" class="toast text-bg-danger border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+            <div class="d-flex align-items-center">
+              <div class="toast-body">
+                <i class="me-2" data-lucide="alert-circle"></i>
+                <span id="publicarErrorMessage">Error al publicar</span>
+              </div>
+              <button type="button" class="btn-close btn-close-white ms-2 me-1" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+            </div>
+          </div>
+        </div>
+
         <div class="modal fade" id="clientesColumnsModal" tabindex="-1" aria-labelledby="clientesColumnsModalLabel" aria-hidden="true" data-clientes-columns-modal>
           <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
@@ -1761,6 +1800,411 @@ License: You must have a valid license to legally use this template for your pro
           // Reinicializar los iconos de Lucide
           if (window.lucide) {
             window.lucide.createIcons();
+          }
+        });
+      }
+
+      // ============================================
+      // FUNCIONALIDAD PUBLICAR
+      // ============================================
+
+      // Definir estructura de campos por formulario
+      const FORM_FIELDS = {
+        'datos-basicos': [
+          'nombre', 'apellido1', 'apellido2',
+          'fechaNacimiento', 'tipoDocumentoIdentidad',
+          'ndocumentoidentidad', 'nacionalidad', 'nivelFormativoTrabajador'
+        ],
+        'direccion': [
+          'tipoVia', 'nombreVia', 'numero',
+          'pisoYLetra', 'cp', 'localidad',
+          'provincia', 'paisNacimiento'
+        ],
+        'contacto': [
+          'telefono1', 'telefono2', 'telefonoBoltCompleto',
+          'correoPersonal', 'correoPlataforma'
+        ]
+      };
+
+      // Variable para almacenar los datos originales del conductor
+      let originalConductorData = null;
+      let currentConductorRecordId = null;
+      let currentConductorId = null;
+      let currentFormSection = null; // Para rastrear qué formulario se está publicando
+
+      // Función para poblar los formularios con los datos del conductor
+      const populateEditableForms = (fieldData) => {
+        if (!fieldData) {
+          console.warn('⚠️ No hay datos para poblar los formularios');
+          return;
+        }
+
+        console.log('📝 Poblando formularios con datos del conductor:', fieldData);
+
+        // Iterar sobre todos los formularios editables
+        document.querySelectorAll('form[data-form-section]').forEach(form => {
+          const section = form.dataset.formSection;
+          console.log(`  📋 Poblando formulario: ${section}`);
+
+          // Iterar sobre todos los campos del formulario
+          form.querySelectorAll('[name]').forEach(field => {
+            const fieldName = field.name;
+            let fieldValue = fieldData[fieldName];
+
+            // Si el campo tiene un valor en los datos
+            if (fieldValue !== null && fieldValue !== undefined) {
+              // Convertir fechas de FileMaker (MM/DD/YYYY) a formato HTML5 (YYYY-MM-DD)
+              if (field.type === 'date' && fieldValue) {
+                if (fieldValue.includes('/')) {
+                  const [month, day, year] = fieldValue.split('/');
+                  fieldValue = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                }
+              }
+
+              field.value = fieldValue;
+              console.log(`    ✓ ${fieldName}: ${fieldValue}`);
+            }
+          });
+        });
+
+        console.log('✅ Formularios poblados exitosamente');
+      };
+
+      // Función para preparar datos para FileMaker (convertir fechas, etc.)
+      const prepareDataForFileMaker = (formData) => {
+        const prepared = {};
+        Object.entries(formData).forEach(([key, value]) => {
+          // Convertir fechas al formato FileMaker (MM/DD/YYYY)
+          if ((key === 'fechaNacimiento' || key === 'fechaFirma') && value) {
+            // Si el valor ya está en formato MM/DD/YYYY, dejarlo como está
+            // Si está en formato YYYY-MM-DD, convertirlo
+            if (value.includes('-')) {
+              const [year, month, day] = value.split('-');
+              prepared[key] = `${month}/${day}/${year}`;
+            } else {
+              prepared[key] = value;
+            }
+          } else {
+            prepared[key] = value;
+          }
+        });
+        return prepared;
+      };
+
+      // Función para detectar campos modificados
+      const getModifiedFields = (originalData, newData) => {
+        const modified = {};
+        Object.entries(newData).forEach(([key, value]) => {
+          const originalValue = originalData?.[key];
+          // Comparar valores considerando null, undefined y string vacío como equivalentes
+          const normalizedOriginal = (originalValue === null || originalValue === undefined) ? '' : String(originalValue);
+          const normalizedNew = (value === null || value === undefined) ? '' : String(value);
+
+          if (normalizedOriginal !== normalizedNew) {
+            modified[key] = value;
+          }
+        });
+        return modified;
+      };
+
+      // Función para generar resumen legible de cambios
+      const generateModificationSummary = (modifiedFields) => {
+        if (!modifiedFields || Object.keys(modifiedFields).length === 0) {
+          return 'Sin cambios';
+        }
+
+        const fieldNames = Object.keys(modifiedFields);
+        const sectionName = currentFormSection === 'datos-basicos' ? 'Datos básicos' :
+                           currentFormSection === 'direccion' ? 'Dirección' :
+                           currentFormSection === 'contacto' ? 'Datos de contacto' : 'Datos';
+
+        return `${sectionName} actualizados: ${fieldNames.join(', ')}`;
+      };
+
+      // Event listeners para los botones "Publicar"
+      const publishButtons = document.querySelectorAll('[data-form-section] button[type="submit"]');
+      publishButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+          event.preventDefault();
+
+          // Obtener el formulario padre y su sección
+          const form = button.closest('form[data-form-section]');
+          if (!form) {
+            console.error('No se encontró el formulario padre');
+            return;
+          }
+
+          currentFormSection = form.getAttribute('data-form-section');
+          console.log('📝 Botón publicar clickeado para sección:', currentFormSection);
+
+          // Mostrar modal de confirmación
+          const publicarModal = new bootstrap.Modal(document.getElementById('publicarConfirmModal'));
+          publicarModal.show();
+        });
+      });
+
+      // Manejar confirmación de publicación
+      const publicarConfirmarButton = document.querySelector('[data-publicar-confirmar]');
+      if (publicarConfirmarButton) {
+        publicarConfirmarButton.addEventListener('click', async (event) => {
+          event.preventDefault();
+
+          // Verificar que tenemos el recordId del conductor
+          if (!currentConductorRecordId) {
+            console.error('No se puede publicar: falta el recordId del conductor');
+
+            // Mostrar toast de error
+            const errorToast = document.getElementById('publicarErrorToast');
+            const errorMessage = document.getElementById('publicarErrorMessage');
+            if (errorToast && errorMessage) {
+              errorMessage.textContent = 'Error: No se puede identificar el conductor a actualizar.';
+              const toast = new bootstrap.Toast(errorToast);
+              toast.show();
+            }
+            return;
+          }
+
+          if (!currentFormSection) {
+            console.error('No se puede publicar: falta la sección del formulario');
+            return;
+          }
+
+          // Obtener el formulario específico
+          const form = document.querySelector(`form[data-form-section="${currentFormSection}"]`);
+          if (!form) {
+            console.error('No se encontró el formulario para la sección:', currentFormSection);
+            return;
+          }
+
+          // Capturar datos del formulario
+          const formData = Object.fromEntries(new FormData(form).entries());
+          console.log('📋 Datos del formulario capturados:', formData);
+          console.log('🆔 UUID del conductor:', currentConductorId);
+          console.log('🔢 RecordId de FileMaker:', currentConductorRecordId);
+
+          // Obtener campos de la sección actual
+          const sectionFields = FORM_FIELDS[currentFormSection] || [];
+          console.log('📄 Sección actual:', currentFormSection);
+          console.log('📋 Campos de la sección:', sectionFields);
+
+          // Filtrar solo los campos de esta sección Y que sean editables (no readonly/disabled)
+          const sectionFormData = {};
+          sectionFields.forEach(fieldName => {
+            if (Object.prototype.hasOwnProperty.call(formData, fieldName)) {
+              // Buscar el elemento input/select para verificar si es editable
+              const fieldElement = form.querySelector(`[name="${fieldName}"]`);
+              const isReadOnly = fieldElement?.hasAttribute('readonly') || fieldElement?.readOnly;
+              const isDisabled = fieldElement?.hasAttribute('disabled') || fieldElement?.disabled;
+
+              if (!isReadOnly && !isDisabled) {
+                sectionFormData[fieldName] = formData[fieldName];
+                console.log(`  ✓ ${fieldName}: editable, incluido`);
+              } else {
+                console.log(`  ⊘ ${fieldName}: readonly/disabled, excluido`);
+              }
+            }
+          });
+          console.log('📄 Datos editables de la sección:', sectionFormData);
+
+          // Deshabilitar el botón durante el proceso
+          const originalButtonText = publicarConfirmarButton.innerHTML;
+          publicarConfirmarButton.disabled = true;
+          publicarConfirmarButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Publicando...';
+
+          try {
+            // Preparar datos (convertir null/undefined a string vacío)
+            const cleanedFormData = {};
+            Object.entries(sectionFormData).forEach(([key, value]) => {
+              cleanedFormData[key] = (value === null || value === undefined) ? '' : value;
+            });
+
+            console.log('🧹 Datos preparados para enviar:', cleanedFormData);
+            console.log(`📊 Total: ${Object.keys(cleanedFormData).length} campos`);
+
+            // Preparar los datos para FileMaker (convertir fechas, etc.)
+            console.log('🔧 Preparando datos para FileMaker...');
+            const preparedFormData = prepareDataForFileMaker(cleanedFormData);
+
+            // Preparar el payload para actualizar el conductor
+            const updatePayload = {
+              fieldData: preparedFormData
+            };
+
+            console.log('📤 Enviando actualización al layout conductor.pdbconductor');
+            console.log('📦 Payload completo:', JSON.stringify(updatePayload, null, 2));
+
+            // Realizar la petición PATCH al backend
+            const layoutName = 'conductor.pdbconductor';
+            const encodedLayout = window.ApiClient.encodePathSegment(layoutName);
+            const response = await window.ApiClient.patch(
+              `layouts/${encodedLayout}/records/${encodeURIComponent(currentConductorRecordId)}`,
+              updatePayload
+            );
+
+            console.log('📥 Respuesta del servidor, status:', response.status);
+
+            if (!response.ok) {
+              let errorDetails = '';
+              try {
+                const errorJson = await response.json();
+                console.error('❌ Error JSON del servidor:', errorJson);
+                errorDetails = errorJson?.messages?.[0]?.message || JSON.stringify(errorJson);
+              } catch {
+                const errorText = await response.text().catch(() => '');
+                console.error('❌ Error texto del servidor:', errorText);
+                errorDetails = errorText;
+              }
+              throw new Error(`Error del servidor: ${response.status} - ${errorDetails}`);
+            }
+
+            const responseData = await response.json();
+            console.log('✅ Conductor actualizado exitosamente:', responseData);
+
+            // Crear registro histórico solo con los campos modificados
+            console.log('📝 Creando registro en histórico');
+            console.log('🔍 Detectando campos modificados...');
+
+            // Obtener solo los campos que han cambiado
+            const modifiedFields = getModifiedFields(originalConductorData, preparedFormData);
+            const modifiedFieldsCount = Object.keys(modifiedFields).length;
+            const totalFieldsCount = Object.keys(preparedFormData).length;
+
+            console.log(`📊 Campos modificados: ${modifiedFieldsCount} de ${totalFieldsCount} campos totales`);
+
+            // Generar resumen legible de los cambios
+            const resumen = generateModificationSummary(modifiedFields);
+            console.log('📝 Resumen generado:', resumen);
+
+            const historicoDatos = JSON.stringify(modifiedFields);
+            const historicoPayload = {
+              fieldData: {
+                accion: 'MODIFICACION',
+                datos: historicoDatos,
+                resumen: resumen,
+                idEntidad: currentConductorId
+              }
+            };
+
+            // NO incluir idProceso (no aplica en fichaConductor)
+            console.log('📦 Payload del histórico:', JSON.stringify(historicoPayload, null, 2));
+
+            const historicoResponse = await window.ApiClient.post(
+              'layouts/historico/records',
+              historicoPayload
+            );
+
+            console.log('📥 Respuesta de histórico, status:', historicoResponse.status);
+
+            if (!historicoResponse.ok) {
+              const errorText = await historicoResponse.text().catch(() => '');
+              console.warn('Advertencia: No se pudo crear el registro histórico:', errorText);
+              // No lanzamos error aquí, solo advertencia
+            } else {
+              const historicoData = await historicoResponse.json();
+              console.log('✅ Registro histórico creado exitosamente:', historicoData);
+            }
+
+            // Cerrar la modal
+            const publicarModal = bootstrap.Modal.getInstance(document.getElementById('publicarConfirmModal'));
+            if (publicarModal) {
+              publicarModal.hide();
+            }
+
+            // Recargar los datos del conductor para actualizar la vista
+            console.log('🔄 Recargando datos del conductor para actualizar la vista...');
+            try {
+              const layout = 'conductor.pdbconductor';
+              const reloadResponse = await window.ApiClient.get(
+                `layouts/${window.ApiClient.encodePathSegment(layout)}/records/${encodeURIComponent(currentConductorRecordId)}`
+              );
+
+              if (reloadResponse.ok) {
+                const reloadData = await reloadResponse.json();
+                const updatedRecord = reloadData?.response?.data?.[0];
+
+                if (updatedRecord) {
+                  console.log('✅ Datos recargados exitosamente:', updatedRecord);
+
+                  const updatedFieldData = updatedRecord?.fieldData;
+                  if (updatedFieldData) {
+                    // Actualizar solo el formulario que se publicó
+                    const currentForm = document.querySelector(`form[data-form-section="${currentFormSection}"]`);
+                    if (currentForm) {
+                      sectionFields.forEach(fieldName => {
+                        const input = currentForm.querySelector(`[name="${fieldName}"]`);
+                        if (input && updatedFieldData[fieldName] !== undefined) {
+                          let fieldValue = updatedFieldData[fieldName] || '';
+
+                          // Convertir fechas de FileMaker (MM/DD/YYYY) a formato HTML5 (YYYY-MM-DD)
+                          if (input.type === 'date' && fieldValue && fieldValue.includes('/')) {
+                            const [month, day, year] = fieldValue.split('/');
+                            fieldValue = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                          }
+
+                          input.value = fieldValue;
+                        }
+                      });
+                      console.log('✅ Formulario actualizado:', currentFormSection);
+                    }
+
+                    // Actualizar datos originales para futuras comparaciones
+                    originalConductorData = { ...originalConductorData, ...updatedFieldData };
+                  }
+
+                  // Actualizar el panel de detalle (derecho) si existe la función
+                  if (typeof renderDetail === 'function') {
+                    console.log('🔄 Actualizando panel de detalle');
+                    setTimeout(() => {
+                      renderDetail(updatedRecord);
+                      console.log('✅ Panel de detalle actualizado');
+
+                      // Reiniciar iconos de Lucide
+                      if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                      }
+                    }, 200);
+                  }
+                }
+              } else {
+                console.warn('⚠️ No se pudieron recargar los datos actualizados');
+              }
+            } catch (reloadError) {
+              console.warn('⚠️ Error al recargar datos:', reloadError);
+              // No mostramos error al usuario, ya que la publicación fue exitosa
+            }
+
+            // Mostrar toast de éxito
+            const successToast = document.getElementById('publicarSuccessToast');
+            if (successToast) {
+              const toast = new bootstrap.Toast(successToast);
+              toast.show();
+              setTimeout(() => {
+                if (typeof lucide !== 'undefined') {
+                  lucide.createIcons();
+                }
+              }, 100);
+            }
+
+          } catch (error) {
+            console.error('❌ Error al publicar conductor:', error);
+
+            // Mostrar toast de error
+            const errorToast = document.getElementById('publicarErrorToast');
+            const errorMessage = document.getElementById('publicarErrorMessage');
+            if (errorToast && errorMessage) {
+              errorMessage.textContent = `Error al publicar: ${error.message}`;
+              const toast = new bootstrap.Toast(errorToast);
+              toast.show();
+              setTimeout(() => {
+                if (typeof lucide !== 'undefined') {
+                  lucide.createIcons();
+                }
+              }, 100);
+            }
+          } finally {
+            // Restaurar el botón
+            publicarConfirmarButton.disabled = false;
+            publicarConfirmarButton.innerHTML = originalButtonText;
           }
         });
       }
@@ -5776,8 +6220,17 @@ License: You must have a valid license to legally use this template for your pro
               // No necesitamos reformatearlo, solo usarlo tal cual
               console.log('📦 Record que se pasa a renderDetail:', record);
 
-              // Actualizar el título de la página con el nombre del conductor
+              // Guardar recordId y UUID del conductor para usarlos en publicación
               const fieldData = record.fieldData || {};
+              currentConductorRecordId = record.recordId;
+              currentConductorId = fieldData.idconductor;
+              originalConductorData = { ...fieldData }; // Guardar datos originales para detectar cambios
+
+              console.log('💾 Variables globales inicializadas:');
+              console.log('  - currentConductorRecordId:', currentConductorRecordId);
+              console.log('  - currentConductorId:', currentConductorId);
+
+              // Actualizar el título de la página con el nombre del conductor
               console.log('🔍 Buscando campos nombre y apellidos en fieldData:', fieldData);
               const nombre = fieldData.nombre || '';
               const apellido1 = fieldData.apellido1 || '';
@@ -5804,6 +6257,9 @@ License: You must have a valid license to legally use this template for your pro
               // Renderizar el detalle del conductor
               console.log('🎨 Llamando a renderDetail con:', { record, fieldOrder });
               renderDetail(record, fieldOrder);
+
+              // Poblar los formularios editables con los datos del conductor
+              populateEditableForms(fieldData);
 
               console.log('✅ Panel de detalle renderizado correctamente');
             } else {
