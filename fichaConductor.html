@@ -572,17 +572,36 @@ License: You must have a valid license to legally use this template for your pro
     }
 
     :root:not([data-bs-theme='dark']) .detail-grid-item .form-control,
-    [data-bs-theme='light'] .detail-grid-item .form-control {
+    :root:not([data-bs-theme='dark']) .detail-grid-item .form-select,
+    [data-bs-theme='light'] .detail-grid-item .form-control,
+    [data-bs-theme='light'] .detail-grid-item .form-select {
       background-color: #ffffff;
       color: inherit;
       border-color: rgba(15, 23, 42, 0.12);
     }
 
     :root:not([data-bs-theme='dark']) .detail-grid-item .form-control:focus,
-    [data-bs-theme='light'] .detail-grid-item .form-control:focus {
+    :root:not([data-bs-theme='dark']) .detail-grid-item .form-select:focus,
+    [data-bs-theme='light'] .detail-grid-item .form-control:focus,
+    [data-bs-theme='light'] .detail-grid-item .form-select:focus {
       background-color: #f7f9fc;
       border-color: rgba(99, 102, 241, 0.35);
       box-shadow: 0 0 0 0.15rem rgba(99, 102, 241, 0.08);
+    }
+
+    /* Estilos específicos para el panel de detalles (solo lectura) */
+    :root:not([data-bs-theme='dark']) [data-resizable-bottom] .detail-grid-item .form-control,
+    :root:not([data-bs-theme='dark']) [data-resizable-bottom] .detail-grid-item .form-select,
+    [data-bs-theme='light'] [data-resizable-bottom] .detail-grid-item .form-control,
+    [data-bs-theme='light'] [data-resizable-bottom] .detail-grid-item .form-select {
+      background-color: #e9ecef;
+    }
+
+    :root:not([data-bs-theme='dark']) [data-resizable-bottom] .detail-grid-item .form-control:focus,
+    :root:not([data-bs-theme='dark']) [data-resizable-bottom] .detail-grid-item .form-select:focus,
+    [data-bs-theme='light'] [data-resizable-bottom] .detail-grid-item .form-control:focus,
+    [data-bs-theme='light'] [data-resizable-bottom] .detail-grid-item .form-select:focus {
+      background-color: #e9ecef;
     }
 
     [data-clientes-detail-empty] {
@@ -1186,6 +1205,9 @@ License: You must have a valid license to legally use this template for your pro
               </div>
               <div class="ms-auto d-flex align-items-center gap-2 flex-wrap">
                 <div class="alert alert-info mb-0 d-none py-2 px-3" role="status" data-clientes-status></div>
+                <button type="button" class="btn btn-outline-primary" id="toggleDetailPanel" title="Mostrar/Ocultar panel de detalles">
+                  <i data-lucide="panel-right" style="width: 18px; height: 18px;"></i>
+                </button>
               </div>
             </div>
 
@@ -1209,12 +1231,12 @@ License: You must have a valid license to legally use this template for your pro
                     </ul>
 
                     <!-- Contenido de las pestañas -->
-                    <div class="tab-content flex-grow-1" id="leftPanelTabContent">
+                    <div class="tab-content flex-grow-1 d-flex flex-column" id="leftPanelTabContent" style="min-height: 0; overflow: hidden;">
                       <!-- Pestaña: Datos del conductor -->
-                      <div class="tab-pane fade show active h-100" id="datos-conductor-panel" role="tabpanel" aria-labelledby="datos-conductor-tab">
-                        <div class="row g-0 h-100">
+                      <div class="tab-pane fade show active h-100 d-flex flex-column" id="datos-conductor-panel" role="tabpanel" aria-labelledby="datos-conductor-tab" style="min-height: 0; overflow: hidden;">
+                        <div class="d-flex h-100" style="flex-direction: row; gap: 1.5rem; min-height: 0; overflow: hidden; flex: 1 1 auto;">
                           <!-- Menú de navegación lateral -->
-                          <div class="col-md-3 border-end pe-3">
+                          <div class="detail-category-tools" style="flex: 0 0 190px; max-width: 220px; border-left: 0; border-right: 1px solid var(--bs-border-color); padding-left: 0; padding-right: 1rem; margin-right: 0.5rem; margin-left: 0;">
                             <div class="detail-category-nav-heading text-secondary text-uppercase small fw-semibold mb-3">
                               Secciones
                             </div>
@@ -1255,12 +1277,196 @@ License: You must have a valid license to legally use this template for your pro
                           </div>
 
                           <!-- Área de contenido -->
-                          <div class="col-md-9">
-                            <div class="tab-content p-3 h-100" id="conductorNavContent">
+                          <div style="flex: 1 1 auto; min-height: 0; min-width: 0; overflow: hidden; display: flex; flex-direction: column;">
+                            <div class="tab-content h-100 d-flex flex-column" id="conductorNavContent" style="min-height: 0; overflow: hidden;">
                               <!-- Sección: Datos -->
-                              <div class="tab-pane fade show active" id="nav-datos" role="tabpanel" aria-labelledby="nav-datos-tab">
-                                <h5 class="mb-3">Datos</h5>
-                                <p class="text-secondary">Contenido de la sección Datos del conductor.</p>
+                              <div class="tab-pane fade show active h-100 d-flex flex-column" id="nav-datos" role="tabpanel" aria-labelledby="nav-datos-tab" style="min-height: 0; overflow: hidden;">
+                                <div style="flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 1rem 1rem 1rem 0;">
+                                <div class="detail-card card shadow-sm">
+                                  <div class="card-header">
+                                    <div class="bg-primary bg-opacity-10 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                      <i data-lucide="user" class="text-primary" style="width: 20px; height: 20px;"></i>
+                                    </div>
+                                    <h5 class="card-title mb-0">DATOS BÁSICOS</h5>
+                                  </div>
+                                  <div class="card-body">
+                                    <form>
+                                      <div class="detail-grid">
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nombre</label>
+                                          <input type="text" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">1º Apellido</label>
+                                          <input type="text" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">2º Apellido</label>
+                                          <input type="text" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nombre completo</label>
+                                          <input type="text" class="form-control" value="" readonly>
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">F. Nacimiento</label>
+                                          <input type="date" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Edad</label>
+                                          <input type="text" class="form-control" value="" readonly>
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Tipo documento</label>
+                                          <select class="form-select">
+                                            <option value="" selected disabled>Selecciona un tipo</option>
+                                            <option value="DNI">DNI</option>
+                                            <option value="NIE">NIE</option>
+                                            <option value="Pasaporte">Pasaporte</option>
+                                          </select>
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nº Documento</label>
+                                          <input type="text" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nacionalidad</label>
+                                          <input type="text" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nivel formativo</label>
+                                          <select class="form-select">
+                                            <option value="" selected>Selecciona un nivel</option>
+                                            <option value="Sin estudios">Sin estudios</option>
+                                            <option value="Educación primaria">Educación primaria</option>
+                                            <option value="Educación secundaria">Educación secundaria</option>
+                                            <option value="Formación profesional">Formación profesional</option>
+                                            <option value="Educación superior">Educación superior</option>
+                                          </select>
+                                        </div>
+                                      </div>
+                                      <div class="d-flex justify-content-end mt-4">
+                                        <button type="submit" class="btn btn-warning">
+                                          <i data-lucide="send" class="me-2" style="width: 16px; height: 16px;"></i>
+                                          Publicar
+                                        </button>
+                                      </div>
+                                    </form>
+                                  </div>
+                                </div>
+
+                                <!-- Tarjeta: Dirección -->
+                                <div class="detail-card card shadow-sm mt-3">
+                                  <div class="card-header">
+                                    <div class="bg-primary bg-opacity-10 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                      <i data-lucide="home" class="text-primary" style="width: 20px; height: 20px;"></i>
+                                    </div>
+                                    <h5 class="card-title mb-0">DIRECCIÓN</h5>
+                                  </div>
+                                  <div class="card-body">
+                                    <form>
+                                      <div class="detail-grid">
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Dirección completa</label>
+                                          <input type="text" class="form-control" value="" readonly>
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Tipo vía</label>
+                                          <select class="form-select">
+                                            <option value="" selected>Selecciona tipo</option>
+                                            <option value="Calle">Calle</option>
+                                            <option value="Avenida">Avenida</option>
+                                            <option value="Plaza">Plaza</option>
+                                            <option value="Paseo">Paseo</option>
+                                            <option value="Carretera">Carretera</option>
+                                            <option value="Camino">Camino</option>
+                                          </select>
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nombre vía</label>
+                                          <input type="text" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Número</label>
+                                          <input type="text" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Piso y letra</label>
+                                          <input type="text" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Código postal</label>
+                                          <input type="text" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Código localidad</label>
+                                          <input type="text" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Localidad</label>
+                                          <input type="text" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Provincia</label>
+                                          <input type="text" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">País</label>
+                                          <input type="text" class="form-control" value="">
+                                        </div>
+                                      </div>
+                                      <div class="d-flex justify-content-end mt-4">
+                                        <button type="submit" class="btn btn-warning">
+                                          <i data-lucide="send" class="me-2" style="width: 16px; height: 16px;"></i>
+                                          Publicar
+                                        </button>
+                                      </div>
+                                    </form>
+                                  </div>
+                                </div>
+
+                                <!-- Tarjeta: Datos de contacto -->
+                                <div class="detail-card card shadow-sm mt-3">
+                                  <div class="card-header">
+                                    <div class="bg-primary bg-opacity-10 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                      <i data-lucide="phone" class="text-primary" style="width: 20px; height: 20px;"></i>
+                                    </div>
+                                    <h5 class="card-title mb-0">DATOS DE CONTACTO</h5>
+                                  </div>
+                                  <div class="card-body">
+                                    <form>
+                                      <div class="detail-grid">
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Teléfono 1</label>
+                                          <input type="tel" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Teléfono 2</label>
+                                          <input type="tel" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Teléfono Bolt</label>
+                                          <input type="tel" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Correo personal</label>
+                                          <input type="email" class="form-control" value="">
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Correo plataforma</label>
+                                          <input type="email" class="form-control" value="">
+                                        </div>
+                                      </div>
+                                      <div class="d-flex justify-content-end mt-4">
+                                        <button type="submit" class="btn btn-warning">
+                                          <i data-lucide="send" class="me-2" style="width: 16px; height: 16px;"></i>
+                                          Publicar
+                                        </button>
+                                      </div>
+                                    </form>
+                                  </div>
+                                </div>
+                                </div>
                               </div>
 
                               <!-- Sección: Documentación -->
@@ -1526,6 +1732,39 @@ License: You must have a valid license to legally use this template for your pro
         }
         window.console.warn(...args);
       };
+
+      // Toggle del panel de detalles
+      const toggleButton = document.getElementById('toggleDetailPanel');
+      const detailPanel = document.querySelector('[data-resizable-bottom]');
+      const resizableHandle = document.querySelector('[data-resizable-handle]');
+
+      if (toggleButton && detailPanel && resizableHandle) {
+        let isPanelVisible = true;
+
+        toggleButton.addEventListener('click', function() {
+          isPanelVisible = !isPanelVisible;
+
+          if (isPanelVisible) {
+            detailPanel.classList.remove('d-none');
+            resizableHandle.classList.remove('d-none');
+            toggleButton.querySelector('i').setAttribute('data-lucide', 'panel-right');
+            toggleButton.classList.remove('btn-primary');
+            toggleButton.classList.add('btn-outline-primary');
+          } else {
+            detailPanel.classList.add('d-none');
+            resizableHandle.classList.add('d-none');
+            toggleButton.querySelector('i').setAttribute('data-lucide', 'panel-right-close');
+            toggleButton.classList.remove('btn-outline-primary');
+            toggleButton.classList.add('btn-primary');
+          }
+
+          // Reinicializar los iconos de Lucide
+          if (window.lucide) {
+            window.lucide.createIcons();
+          }
+        });
+      }
+
       const conductorModal = document.getElementById('nuevoConductorModal');
       debugLog('🚀 Inicializando modal de conductor...');
       debugLog('📊 window.ClientesTable al inicializar:', window.ClientesTable);
@@ -4767,20 +5006,22 @@ License: You must have a valid license to legally use this template for your pro
           };
           if (deleteToolbarButton) {
             setToolbarDeleteButtonState(payload);
-          } else if (detailActions) {
-            const deleteButton = document.createElement('button');
-            deleteButton.type = 'button';
-            deleteButton.className = 'btn btn-outline-danger btn-sm';
-            deleteButton.setAttribute('aria-label', 'Eliminar conductor');
-            deleteButton.innerHTML = '<i data-lucide="trash-2"></i>';
-            deleteButton.addEventListener('click', () => {
-              openDeleteConfirm(payload);
-            });
-            detailActions.innerHTML = '';
-            detailActions.classList.remove('d-none');
-            detailActions.appendChild(deleteButton);
-            requestAnimationFrame(() => window.lucide?.createIcons?.());
           }
+          // Botón de eliminar deshabilitado
+          // else if (detailActions) {
+          //   const deleteButton = document.createElement('button');
+          //   deleteButton.type = 'button';
+          //   deleteButton.className = 'btn btn-outline-danger btn-sm';
+          //   deleteButton.setAttribute('aria-label', 'Eliminar conductor');
+          //   deleteButton.innerHTML = '<i data-lucide="trash-2"></i>';
+          //   deleteButton.addEventListener('click', () => {
+          //     openDeleteConfirm(payload);
+          //   });
+          //   detailActions.innerHTML = '';
+          //   detailActions.classList.remove('d-none');
+          //   detailActions.appendChild(deleteButton);
+          //   requestAnimationFrame(() => window.lucide?.createIcons?.());
+          // }
         }
 
         const normalizedToActual = new Map();
