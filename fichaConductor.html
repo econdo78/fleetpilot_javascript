@@ -2291,10 +2291,73 @@ License: You must have a valid license to legally use this template for your pro
             return;
           }
 
+          // ===== VALIDACIÓN DE CAMPOS REQUERIDOS =====
+          // Limpiar validaciones previas
+          const allInputs = form.querySelectorAll('input, select, textarea');
+          allInputs.forEach(input => {
+            input.classList.remove('is-invalid');
+            if (input.classList.contains('form-select')) {
+              const select2Container = input.parentElement.querySelector('.select2-container');
+              if (select2Container) {
+                select2Container.classList.remove('is-invalid');
+              }
+            }
+          });
+
+          // Validar campos requeridos
+          const requiredFields = form.querySelectorAll('[required]');
+          let hasErrors = false;
+          const invalidFields = [];
+
+          requiredFields.forEach(field => {
+            const value = field.value ? field.value.trim() : '';
+
+            if (!value) {
+              hasErrors = true;
+              invalidFields.push(field);
+              field.classList.add('is-invalid');
+
+              if (field.tagName === 'SELECT' && field.classList.contains('form-select')) {
+                const select2Container = field.parentElement.querySelector('.select2-container');
+                if (select2Container) {
+                  select2Container.classList.add('is-invalid');
+                }
+              }
+            } else {
+              // Validación adicional para campos de documento
+              if (field.name === 'ndocumentoidentidad') {
+                const tipoDocumento = form.querySelector('[name="tipoDocumentoIdentidad"]')?.value;
+                if (tipoDocumento && !window.validarDocumentoPorTipo(value, tipoDocumento)) {
+                  hasErrors = true;
+                  invalidFields.push(field);
+                  field.classList.add('is-invalid');
+                }
+              }
+            }
+          });
+
+          // Si hay errores, NO abrir el modal
+          if (hasErrors) {
+            // Aplicar animación de sacudida al botón
+            button.classList.add('shake');
+            setTimeout(() => {
+              button.classList.remove('shake');
+            }, 500);
+
+            // Hacer scroll al primer campo inválido
+            if (invalidFields.length > 0) {
+              invalidFields[0].focus();
+              invalidFields[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            return; // Detener aquí, no abrir el modal
+          }
+          // ===== FIN VALIDACIÓN =====
+
           currentFormSection = form.getAttribute('data-form-section');
           console.log('📝 Botón publicar clickeado para sección:', currentFormSection);
 
-          // Mostrar modal de confirmación
+          // Mostrar modal de confirmación solo si pasó la validación
           const publicarModal = new bootstrap.Modal(document.getElementById('publicarConfirmModal'));
           publicarModal.show();
         });
@@ -7656,8 +7719,8 @@ License: You must have a valid license to legally use this template for your pro
           });
         });
 
-        // Función auxiliar para validar documento según tipo
-        function validarDocumentoPorTipo(documento, tipo) {
+        // Función auxiliar para validar documento según tipo (expuesta globalmente)
+        window.validarDocumentoPorTipo = function(documento, tipo) {
           switch (tipo) {
             case 'DNI':
               return /^[0-9]{8}[A-Z]$/i.test(documento) && validarLetraDNI(documento);
@@ -7668,7 +7731,7 @@ License: You must have a valid license to legally use this template for your pro
             default:
               return true;
           }
-        }
+        };
 
         function validarLetraDNI(dni) {
           const letras = 'TRWAGMYFPDXBNJZSQVHLCKE';
