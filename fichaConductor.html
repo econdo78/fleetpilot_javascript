@@ -294,6 +294,25 @@ License: You must have a valid license to legally use this template for your pro
       padding: 1rem;
     }
 
+    /* Centrar el contenido de los tab-panes vacíos */
+    #clientes-detail-historicos,
+    #clientes-detail-documentacion {
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Ocultar el mensaje de "Selecciona un conductor" cuando hay tabs activos */
+    [data-clientes-detail-tabs-wrapper]:not(.d-none) ~ [data-clientes-detail-empty] {
+      display: none !important;
+    }
+
+    /* Asegurar que los tab-panes inactivos no ocupen espacio */
+    [data-clientes-detail-container] .tab-pane:not(.show) {
+      display: none !important;
+      height: 0 !important;
+      min-height: 0 !important;
+    }
+
     /* Bordes visibles para los paneles del menú lateral */
     #nav-datos,
     #nav-documentacion,
