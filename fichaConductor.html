@@ -570,6 +570,32 @@ License: You must have a valid license to legally use this template for your pro
       box-shadow: var(--bs-box-shadow);
     }
 
+    /* Estilo más oscuro solo para las cards del panel inferior DERECHO (panel de detalles) */
+    [data-resizable-bottom] .detail-card.card {
+      background-color: #e5e7eb !important;
+      border: 1px solid rgba(17, 24, 39, 0.12) !important;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12) !important;
+    }
+
+    /* Modo oscuro para las cards del panel inferior DERECHO */
+    [data-bs-theme='dark'] [data-resizable-bottom] .detail-card.card,
+    html[data-bs-theme='dark'] [data-resizable-bottom] .detail-card.card,
+    body[data-bs-theme='dark'] [data-resizable-bottom] .detail-card.card {
+      background-color: #1f2937 !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Asegurar que el card-body y card-header también tengan el fondo en modo oscuro */
+    [data-bs-theme='dark'] [data-resizable-bottom] .detail-card .card-header,
+    [data-bs-theme='dark'] [data-resizable-bottom] .detail-card .card-body,
+    html[data-bs-theme='dark'] [data-resizable-bottom] .detail-card .card-header,
+    html[data-bs-theme='dark'] [data-resizable-bottom] .detail-card .card-body,
+    body[data-bs-theme='dark'] [data-resizable-bottom] .detail-card .card-header,
+    body[data-bs-theme='dark'] [data-resizable-bottom] .detail-card .card-body {
+      background-color: #1f2937 !important;
+    }
+
     .detail-card .card-header {
       border-bottom: 0;
       padding: 1rem 1rem 0;
