@@ -289,6 +289,39 @@ License: You must have a valid license to legally use this template for your pro
       flex-direction: column;
       flex: 1 1 auto;
       min-height: 0;
+      border: 1px solid #dee2e6;
+      border-radius: 0.375rem;
+      padding: 1rem;
+    }
+
+    /* Bordes visibles para los paneles del menú lateral */
+    #nav-datos,
+    #nav-documentacion,
+    #nav-asignaciones,
+    #nav-baja {
+      border: none !important;
+      border-radius: 0.5rem !important;
+      padding: 1.5rem !important;
+    }
+
+    /* Asegurar que los paneles inactivos se oculten completamente */
+    #nav-datos.fade:not(.show),
+    #nav-documentacion.fade:not(.show),
+    #nav-asignaciones.fade:not(.show),
+    #nav-baja.fade:not(.show) {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+
+    /* Asegurar que el panel activo se muestre */
+    #nav-datos.fade.show,
+    #nav-documentacion.fade.show,
+    #nav-asignaciones.fade.show,
+    #nav-baja.fade.show {
+      display: flex !important;
+      opacity: 1 !important;
+      visibility: visible !important;
     }
 
     [data-clientes-detail-layout] {
@@ -1532,10 +1565,9 @@ License: You must have a valid license to legally use this template for your pro
 
                               <!-- Sección: Documentación -->
                               <div class="tab-pane fade" id="nav-documentacion" role="tabpanel" aria-labelledby="nav-documentacion-tab">
-                                <h5 class="mb-3">Documentación del Conductor</h5>
 
                                 <!-- Tarjeta: DNI / Documento de Identidad -->
-                                <div class="detail-card card shadow-sm">
+                                <div class="detail-card card shadow-sm" style="width: 100%;">
                                   <div class="card-header">
                                     <div class="bg-primary bg-opacity-10 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                                       <i data-lucide="credit-card" class="text-primary" style="width: 20px; height: 20px;"></i>
