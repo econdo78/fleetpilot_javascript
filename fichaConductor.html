@@ -1789,24 +1789,24 @@ License: You must have a valid license to legally use this template for your pro
                                         <div class="mt-3 p-3 border rounded" data-ocr-results="doc-reverso" style="display: none;">
                                           <div class="d-flex align-items-center mb-2">
                                             <i data-lucide="check-circle" class="text-success me-2" style="width: 20px; height: 20px;"></i>
-                                            <strong class="text-success">Datos extraídos del DNI</strong>
+                                            <strong class="text-success">Datos de dirección extraídos del DNI</strong>
                                             <div class="spinner-border spinner-border-sm ms-auto text-success" role="status" data-ocr-loading style="display: none;">
                                               <span class="visually-hidden">Procesando con Google Vision...</span>
                                             </div>
                                           </div>
                                           <div class="small" data-ocr-content>
-                                            <div class="row g-3">
-                                              <div class="col-12">
-                                                <div><strong>Domicilio:</strong></div>
-                                                <div class="mt-1" data-ocr-domicilio>-</div>
+                                            <div class="mb-3">
+                                              <div><strong>Domicilio:</strong></div>
+                                              <div class="mt-1 p-2 bg-light rounded" data-ocr-domicilio style="font-size: 0.95rem;">-</div>
+                                            </div>
+                                            <div class="row g-2">
+                                              <div class="col-md-6">
+                                                <div><strong>Localidad:</strong></div>
+                                                <div class="mt-1 p-2 bg-light rounded" data-ocr-localidad style="font-size: 0.95rem;">-</div>
                                               </div>
                                               <div class="col-md-6">
-                                                <div><strong>Lugar de nacimiento:</strong></div>
-                                                <div class="mt-1" data-ocr-lugar-nacimiento>-</div>
-                                              </div>
-                                              <div class="col-md-6">
-                                                <div><strong>Hijo/a de:</strong></div>
-                                                <div class="mt-1" data-ocr-padres>-</div>
+                                                <div><strong>Provincia:</strong></div>
+                                                <div class="mt-1 p-2 bg-light rounded" data-ocr-provincia style="font-size: 0.95rem;">-</div>
                                               </div>
                                             </div>
                                           </div>
@@ -1816,9 +1816,9 @@ License: You must have a valid license to legally use this template for your pro
 
                                     <!-- Botón de publicar documentos -->
                                     <div class="d-flex justify-content-end mt-4">
-                                      <button type="submit" class="btn btn-primary" id="publicarDocumentosBtn">
+                                      <button type="button" class="btn btn-primary" id="publicarDocumentosBtn">
                                         <i data-lucide="send" class="me-2" style="width: 16px; height: 16px;"></i>
-                                        Publicar
+                                        Publicar documentos
                                       </button>
                                     </div>
                                   </div>
@@ -1993,18 +1993,18 @@ License: You must have a valid license to legally use this template for your pro
               <div class="modal-header bg-warning text-dark border-0">
                 <h5 class="modal-title fw-semibold" id="publicarConfirmModalLabel">
                   <i class="me-2" data-lucide="alert-triangle"></i>
-                  Atención, Vas a publicar un registro
+                  Atención, Vas a publicar documentos
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
               </div>
               <div class="modal-body pb-4">
                 <p class="mb-0">
-                  Esto hará que los datos se actualicen en el sistema, además esta acción no se puede deshacer, ¿estás seguro?
+                  Los documentos seleccionados se subirán a Google Drive y se vinculará su ID al registro del conductor. Esta acción no se puede deshacer, ¿estás seguro?
                 </p>
               </div>
               <div class="modal-footer border-0 pt-0">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" data-publicar-confirmar>Confirmar publicación</button>
+                <button type="button" class="btn btn-warning" data-publicar-confirmar>Confirmar publicación</button>
               </div>
             </div>
           </div>
@@ -6637,12 +6637,12 @@ License: You must have a valid license to legally use this template for your pro
               // Guardar recordId y UUID del conductor para usarlos en publicación
               const fieldData = record.fieldData || {};
               currentConductorRecordId = record.recordId;
-              currentConductorId = fieldData.idconductor;
+              currentConductorId = fieldData.id; // UUID del conductor
               originalConductorData = { ...fieldData }; // Guardar datos originales para detectar cambios
 
               console.log('💾 Variables globales inicializadas:');
               console.log('  - currentConductorRecordId:', currentConductorRecordId);
-              console.log('  - currentConductorId:', currentConductorId);
+              console.log('  - currentConductorId (UUID):', currentConductorId);
 
               // Actualizar el título de la página con el nombre del conductor
               console.log('🔍 Buscando campos nombre y apellidos en fieldData:', fieldData);
@@ -6907,7 +6907,10 @@ License: You must have a valid license to legally use this template for your pro
                   features: [{
                     type: 'DOCUMENT_TEXT_DETECTION',
                     maxResults: 1
-                  }]
+                  }],
+                  imageContext: {
+                    languageHints: ['es', 'en']
+                  }
                 }]
               })
             }
@@ -6923,7 +6926,11 @@ License: You must have a valid license to legally use this template for your pro
 
           if (data.responses && data.responses[0].fullTextAnnotation) {
             const extractedText = data.responses[0].fullTextAnnotation.text;
-            console.log('📝 Texto extraído:', extractedText);
+            console.log('📝 Texto extraído completo:');
+            console.log('------- INICIO -------');
+            console.log(extractedText);
+            console.log('------- FIN -------');
+            console.log('📝 Texto con caracteres especiales visibles:', JSON.stringify(extractedText));
 
             // Parsear según si es anverso o reverso
             let dniData;
@@ -6938,7 +6945,17 @@ License: You must have a valid license to legally use this template for your pro
             displayDNIData(dniData, zoneType);
           } else {
             console.warn('⚠️ No se detectó texto en la imagen');
-            alert('No se pudo extraer texto del documento. Asegúrate de que la imagen sea clara.');
+            console.log('📋 Respuesta completa de Vision API:', JSON.stringify(data, null, 2));
+
+            const errorToast = document.getElementById('publicarErrorToast');
+            const errorMessage = document.getElementById('publicarErrorMessage');
+            if (errorMessage) {
+              errorMessage.textContent = 'No se pudo extraer texto del documento. Asegúrate de que la imagen sea clara y esté bien iluminada.';
+            }
+            if (errorToast) {
+              const toast = new bootstrap.Toast(errorToast);
+              toast.show();
+            }
           }
 
         } catch (error) {
@@ -6963,27 +6980,169 @@ License: You must have a valid license to legally use this template for your pro
           nacionalidad: null
         };
 
-        const cleanText = text.toUpperCase();
+        console.log('🔍 Analizando ANVERSO del DNI...');
+        console.log('📝 Texto completo:', text);
 
-        // Buscar DNI (8 dígitos + letra)
+        // Limpieza del texto
+        const cleanText = text
+          .replace(/[•●○◦]/g, '') // Eliminar bullets
+          .replace(/\s+/g, ' ')   // Normalizar espacios múltiples
+          .trim()
+          .toUpperCase();
+
+        console.log('🧹 Texto limpio:', cleanText);
+
+        // ==========================================
+        // BUSCAR DNI (8 dígitos + letra)
+        // ==========================================
         const dniMatch = cleanText.match(/\b(\d{8}[A-Z])\b/);
-        if (dniMatch) data.dni = dniMatch[1];
-
-        // Buscar fechas (DD/MM/YYYY o DD.MM.YYYY)
-        const fechasMatch = cleanText.match(/\b(\d{2}[\/\.]\d{2}[\/\.]\d{4})\b/g);
-        if (fechasMatch && fechasMatch.length >= 2) {
-          data.nacimiento = fechasMatch[0];
-          data.caducidad = fechasMatch[1];
+        if (dniMatch) {
+          data.dni = dniMatch[1];
+          console.log('✅ DNI encontrado:', data.dni);
         }
 
-        // Buscar sexo (M/F)
+        // ==========================================
+        // BUSCAR NOMBRE COMPLETO
+        // ==========================================
+        console.log('🔍 Buscando nombre completo...');
+
+        // ESTRATEGIA 1: Buscar palabras clave "APELLIDOS" y "NOMBRE"
+        const apellidosMatch = cleanText.match(/APELLIDOS[\s\n]+([A-ZÁÉÍÓÚÑ\s]+?)(?=NOMBRE|NACIONALIDAD|SEXO|EMISIÓN|VALIDEZ)/i);
+        const nombreMatch = cleanText.match(/NOMBRE[\s\n]+([A-ZÁÉÍÓÚÑ\s]+?)(?=SEXO|NACIONALIDAD|FECHA|EMISIÓN|VALIDEZ)/i);
+
+        if (apellidosMatch && nombreMatch) {
+          const apellidos = apellidosMatch[1].trim().replace(/\s+/g, ' ');
+          const nombre = nombreMatch[1].trim().replace(/\s+/g, ' ');
+          data.nombre = `${nombre} ${apellidos}`;
+          console.log('✅ Nombre encontrado (método 1 - palabras clave):', data.nombre);
+        }
+
+        // ESTRATEGIA 2: Buscar en líneas entre DNI y fechas
+        if (!data.nombre) {
+          const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+          let nombreLines = [];
+          let foundDNI = false;
+          let foundDate = false;
+
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim().toUpperCase();
+
+            if (/\d{7,8}[A-Z]/.test(line)) {
+              foundDNI = true;
+              continue;
+            }
+
+            if (/\d{2}[\s\/\.\-]\d{2}[\s\/\.\-]\d{4}/.test(line)) {
+              foundDate = true;
+              break;
+            }
+
+            if (foundDNI && !foundDate && /^[A-ZÁÉÍÓÚÑ\s]{3,}$/.test(line)) {
+              // Evitar palabras clave del DNI
+              if (!/^(APELLIDOS|NOMBRE|SEXO|NACIONALIDAD|EMISIÓN|VALIDEZ|NACIMIENTO|DNI|DOCUMENTO|IDENTIDAD|REINO|ESPAÑA|ESP)$/.test(line)) {
+                nombreLines.push(line);
+              }
+            }
+          }
+
+          if (nombreLines.length > 0) {
+            data.nombre = nombreLines.join(' ').trim().replace(/\s+/g, ' ');
+            console.log('✅ Nombre encontrado (método 2 - líneas entre DNI y fechas):', data.nombre);
+          }
+        }
+
+        // ==========================================
+        // BUSCAR FECHAS DE NACIMIENTO Y CADUCIDAD
+        // ==========================================
+        console.log('🔍 Buscando fechas de nacimiento y caducidad...');
+
+        // ESTRATEGIA 1: Buscar palabra clave "NACIMIENTO"
+        const nacimientoMatch = cleanText.match(/NACIMIENTO[\s\n]+(\d{2})[\s\/\.\-]+(\d{2})[\s\/\.\-]+(\d{4})/i);
+        if (nacimientoMatch) {
+          data.nacimiento = `${nacimientoMatch[1]}/${nacimientoMatch[2]}/${nacimientoMatch[3]}`;
+          console.log('✅ Fecha nacimiento encontrada (método 1 - palabra clave):', data.nacimiento);
+        }
+
+        // ESTRATEGIA 2: Buscar palabra clave "VALIDEZ" o "CADUCIDAD"
+        const caducidadMatch = cleanText.match(/(?:VALIDEZ|CADUCIDAD)[\s\n]+(\d{2})[\s\/\.\-]+(\d{2})[\s\/\.\-]+(\d{4})(?:[\s\n]+\d{2}[\s\/\.\-]+\d{2}[\s\/\.\-]+(\d{4}))?/i);
+        if (caducidadMatch) {
+          // Si hay dos fechas después de VALIDEZ, la segunda es caducidad
+          if (caducidadMatch[4]) {
+            data.caducidad = `${caducidadMatch[1]}/${caducidadMatch[2]}/${caducidadMatch[4]}`;
+            console.log('✅ Fecha caducidad encontrada (método 2a - segunda fecha tras VALIDEZ):', data.caducidad);
+          } else {
+            // Si solo hay una, es la caducidad
+            data.caducidad = `${caducidadMatch[1]}/${caducidadMatch[2]}/${caducidadMatch[3]}`;
+            console.log('✅ Fecha caducidad encontrada (método 2b - palabra clave):', data.caducidad);
+          }
+        }
+
+        // ESTRATEGIA 3: Buscar todas las fechas y ordenar por antigüedad
+        if (!data.nacimiento || !data.caducidad) {
+          // Regex que acepta espacios, puntos, barras o guiones
+          const todasLasFechas = cleanText.match(/\d{2}[\s\/\.\-]\d{2}[\s\/\.\-]\d{4}/g);
+          console.log('📅 Todas las fechas encontradas:', todasLasFechas);
+
+          if (todasLasFechas && todasLasFechas.length > 0) {
+            const fechasNormalizadas = todasLasFechas.map(f => {
+              // Normalizar: reemplazar espacios/puntos/guiones por /
+              return f.replace(/[\s\.\-]/g, '/');
+            });
+
+            // Extraer años y ordenar
+            const fechasConAnio = fechasNormalizadas.map(fecha => {
+              const partes = fecha.split('/');
+              return {
+                fecha: fecha,
+                anio: parseInt(partes[2])
+              };
+            }).filter(f => f.anio >= 1900 && f.anio <= 2050);
+
+            fechasConAnio.sort((a, b) => a.anio - b.anio);
+            console.log('📊 Fechas ordenadas por año:', fechasConAnio);
+
+            if (fechasConAnio.length >= 2) {
+              if (!data.nacimiento) {
+                data.nacimiento = fechasConAnio[0].fecha; // Más antigua
+                console.log('✅ Fecha nacimiento encontrada (método 3 - ordenamiento):', data.nacimiento);
+              }
+              if (!data.caducidad) {
+                data.caducidad = fechasConAnio[fechasConAnio.length - 1].fecha; // Más reciente
+                console.log('✅ Fecha caducidad encontrada (método 3 - ordenamiento):', data.caducidad);
+              }
+            }
+          }
+        }
+
+        // ESTRATEGIA 4: Buscar patrón específico del DNI español (dos fechas seguidas)
+        if (!data.nacimiento && !data.caducidad) {
+          const dniLineMatch = cleanText.match(/(\d{2}[\s\/\.\-]\d{2}[\s\/\.\-]\d{4})[\s\n]+(\d{2}[\s\/\.\-]\d{2}[\s\/\.\-]\d{4})/);
+          if (dniLineMatch) {
+            data.nacimiento = dniLineMatch[1].replace(/[\s\.\-]/g, '/');
+            data.caducidad = dniLineMatch[2].replace(/[\s\.\-]/g, '/');
+            console.log('✅ Fechas encontradas (método 4 - patrón DNI español):', data.nacimiento, data.caducidad);
+          }
+        }
+
+        // ==========================================
+        // BUSCAR SEXO (M/F)
+        // ==========================================
         const sexoMatch = cleanText.match(/\bSEXO[:\s]*([MF])\b/);
-        if (sexoMatch) data.sexo = sexoMatch[1];
+        if (sexoMatch) {
+          data.sexo = sexoMatch[1];
+          console.log('✅ Sexo encontrado:', data.sexo);
+        }
 
-        // Buscar nacionalidad
+        // ==========================================
+        // BUSCAR NACIONALIDAD
+        // ==========================================
         const nacionalidadMatch = cleanText.match(/\b(ESP|ESPAÑA|SPANISH)\b/);
-        if (nacionalidadMatch) data.nacionalidad = 'ESP';
+        if (nacionalidadMatch) {
+          data.nacionalidad = 'ESP';
+          console.log('✅ Nacionalidad encontrada:', data.nacionalidad);
+        }
 
+        console.log('✅ RESULTADO FINAL (ANVERSO):', data);
         return data;
       }
 
@@ -6993,30 +7152,150 @@ License: You must have a valid license to legally use this template for your pro
       function parseDNIReverso(text) {
         const data = {
           domicilio: null,
-          lugarNacimiento: null,
-          padres: null
+          localidad: null,
+          provincia: null
         };
 
-        const lines = text.split('\n');
+        console.log('🔍 Analizando REVERSO del DNI para extraer domicilio, localidad y provincia...');
+        console.log('📝 Texto completo:', text);
 
-        // Buscar domicilio (usualmente después de "DOMICILIO")
-        const domicilioIndex = lines.findIndex(line => line.toUpperCase().includes('DOMICILIO'));
-        if (domicilioIndex !== -1 && domicilioIndex + 1 < lines.length) {
-          data.domicilio = lines[domicilioIndex + 1].trim();
+        const cleanText = text
+          .replace(/[•●○◦]/g, '')
+          .replace(/[ \t]+/g, ' ')  // Preservar \n
+          .trim();
+
+        console.log('🧹 Texto limpio:', cleanText);
+
+        const lines = cleanText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+        console.log('📋 Líneas del texto:', lines);
+
+        // ==========================================
+        // ESTRATEGIA 1: Buscar "DOMICILIO" y capturar líneas siguientes
+        // ==========================================
+        let domicilioIndex = lines.findIndex(line =>
+          /^DOMICILIO$/i.test(line) || /^DOMICILIO[:\s]/i.test(line) || /^ADDRESS$/i.test(line)
+        );
+
+        if (domicilioIndex !== -1) {
+          console.log(`✅ Palabra "DOMICILIO" encontrada en línea ${domicilioIndex}`);
+          let capturedLines = 0;
+
+          for (let i = domicilioIndex + 1; i < lines.length && capturedLines < 3; i++) {
+            const line = lines[i].trim();
+
+            // Detener si encontramos otra sección claramente identificada
+            if (/^(LUGAR DE NACIMIENTO|HIJO|HIJA|PADRE|MADRE|EQUIPO)/i.test(line)) {
+              console.log(`🛑 Deteniendo en línea ${i} (nueva sección):`, line);
+              break;
+            }
+
+            if (line.length >= 3) {
+              console.log(`📋 Procesando línea ${i} (captura ${capturedLines + 1}/3):`, line);
+
+              // Primera línea: domicilio (calle con número y posiblemente código postal)
+              if (capturedLines === 0) {
+                data.domicilio = line;
+                console.log(`📍 Línea ${i} - DOMICILIO:`, line);
+                capturedLines++;
+              }
+              // Segunda línea: localidad
+              else if (capturedLines === 1) {
+                data.localidad = line;
+                console.log(`🏘️ Línea ${i} - LOCALIDAD:`, line);
+                capturedLines++;
+              }
+              // Tercera línea: provincia
+              else if (capturedLines === 2) {
+                data.provincia = line;
+                console.log(`🗺️ Línea ${i} - PROVINCIA:`, line);
+                capturedLines++;
+                break; // Ya tenemos las 3 líneas
+              }
+            }
+          }
+
+          if (capturedLines > 0) {
+            console.log(`✅ Capturadas ${capturedLines} líneas de dirección`);
+          } else {
+            console.warn('⚠️ No se capturaron líneas después de DOMICILIO');
+          }
         }
 
-        // Buscar lugar de nacimiento
-        const lugarIndex = lines.findIndex(line => line.toUpperCase().includes('LUGAR DE NACIMIENTO'));
-        if (lugarIndex !== -1 && lugarIndex + 1 < lines.length) {
-          data.lugarNacimiento = lines[lugarIndex + 1].trim();
+        // ==========================================
+        // ESTRATEGIA 2: Regex en misma línea
+        // ==========================================
+        if (!data.domicilio) {
+          const domicilioMatch = cleanText.match(/DOMICILIO[:\s]+([^\n]+)/i);
+          if (domicilioMatch) {
+            data.domicilio = domicilioMatch[1].trim();
+            console.log('✅ Domicilio encontrado (método 2 - regex misma línea):', data.domicilio);
+          }
         }
 
-        // Buscar padres (Hijo/a de)
-        const padresIndex = lines.findIndex(line => line.toUpperCase().includes('HIJO') || line.toUpperCase().includes('HIJA'));
-        if (padresIndex !== -1 && padresIndex + 1 < lines.length) {
-          data.padres = lines[padresIndex + 1].trim();
+        // ==========================================
+        // ESTRATEGIA 3: Buscar patrón de dirección (Tipo vía + CP)
+        // ==========================================
+        if (!data.domicilio) {
+          const patronDireccion = cleanText.match(/((?:CALLE|AVENIDA|PLAZA|PASEO|C\/|AV\.|CL\.)[^\n]+\d{5})/i);
+          if (patronDireccion) {
+            data.domicilio = patronDireccion[1].trim();
+            console.log('✅ Domicilio encontrado (método 3 - patrón dirección):', data.domicilio);
+          }
         }
 
+        // ==========================================
+        // ESTRATEGIA 4: Buscar línea con código postal (5 dígitos)
+        // ==========================================
+        if (!data.domicilio) {
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            if (/\b\d{5}\b/.test(line) && !/DNI|DOCUMENTO|IDENTIDAD|FECHA|\d{8}/i.test(line)) {
+              const domicilioLines = [];
+
+              // Incluir línea anterior si existe y no es un encabezado
+              if (i > 0 && lines[i-1].length > 3 && !/DOMICILIO|LUGAR|NACIMIENTO/i.test(lines[i-1])) {
+                domicilioLines.push(lines[i-1]);
+                console.log(`📍 Línea ${i-1} agregada (anterior a CP):`, lines[i-1]);
+              }
+
+              domicilioLines.push(line);
+              console.log(`📍 Línea ${i} agregada (contiene CP):`, line);
+
+              data.domicilio = domicilioLines.join(', ');
+              console.log('✅ Domicilio encontrado (método 4 - código postal):', data.domicilio);
+              break;
+            }
+          }
+        }
+
+        // ==========================================
+        // Limpiar datos finales
+        // ==========================================
+        if (data.domicilio) {
+          data.domicilio = data.domicilio
+            .replace(/^(DOMICILIO|ADDRESS)[:\s]*/i, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+          console.log('✅ DOMICILIO FINAL:', data.domicilio);
+        } else {
+          console.warn('⚠️ No se pudo detectar el domicilio');
+        }
+
+        if (data.localidad) {
+          data.localidad = data.localidad.replace(/\s+/g, ' ').trim();
+          console.log('✅ LOCALIDAD FINAL:', data.localidad);
+        } else {
+          console.warn('⚠️ No se pudo detectar la localidad');
+        }
+
+        if (data.provincia) {
+          data.provincia = data.provincia.replace(/\s+/g, ' ').trim();
+          console.log('✅ PROVINCIA FINAL:', data.provincia);
+        } else {
+          console.warn('⚠️ No se pudo detectar la provincia');
+        }
+
+        console.log('✅ RESULTADO FINAL (REVERSO):', data);
         return data;
       }
 
@@ -7041,12 +7320,12 @@ License: You must have a valid license to legally use this template for your pro
           if (caducidadEl) caducidadEl.textContent = data.caducidad || '-';
         } else if (zoneType === 'doc-reverso') {
           const domicilioEl = resultsContainer.querySelector('[data-ocr-domicilio]');
-          const lugarNacimientoEl = resultsContainer.querySelector('[data-ocr-lugar-nacimiento]');
-          const padresEl = resultsContainer.querySelector('[data-ocr-padres]');
+          const localidadEl = resultsContainer.querySelector('[data-ocr-localidad]');
+          const provinciaEl = resultsContainer.querySelector('[data-ocr-provincia]');
 
           if (domicilioEl) domicilioEl.textContent = data.domicilio || '-';
-          if (lugarNacimientoEl) lugarNacimientoEl.textContent = data.lugarNacimiento || '-';
-          if (padresEl) padresEl.textContent = data.padres || '-';
+          if (localidadEl) localidadEl.textContent = data.localidad || '-';
+          if (provinciaEl) provinciaEl.textContent = data.provincia || '-';
         }
 
         resultsContainer.style.display = 'block';
@@ -7173,11 +7452,23 @@ License: You must have a valid license to legally use this template for your pro
 
       if (publicarDocumentosBtn) {
         publicarDocumentosBtn.addEventListener('click', async () => {
-          console.log('🚀 Iniciando publicación de documentos...');
+          console.log('🚀 Validando documentos para publicar...');
+          console.log('📋 Estado de variables:');
+          console.log('  - currentConductorRecordId:', currentConductorRecordId);
+          console.log('  - currentConductorId:', currentConductorId);
 
           // Verificar que hay conductor cargado
           if (!currentConductorRecordId || !currentConductorId) {
-            alert('Error: No se ha identificado el conductor. Por favor, recarga la página.');
+            console.error('❌ Falta información del conductor');
+            const errorToast = document.getElementById('publicarErrorToast');
+            const errorMessage = document.getElementById('publicarErrorMessage');
+            if (errorMessage) {
+              errorMessage.textContent = 'No se ha identificado el conductor. Por favor, recarga la página.';
+            }
+            if (errorToast) {
+              const toast = new bootstrap.Toast(errorToast);
+              toast.show();
+            }
             return;
           }
 
@@ -7198,22 +7489,79 @@ License: You must have a valid license to legally use this template for your pro
           });
 
           if (documentsToUpload.length === 0) {
-            alert('No hay documentos para publicar. Por favor, selecciona al menos un documento.');
+            const errorToast = document.getElementById('publicarErrorToast');
+            const errorMessage = document.getElementById('publicarErrorMessage');
+            if (errorMessage) {
+              errorMessage.textContent = 'No hay documentos para publicar. Por favor, selecciona al menos un documento.';
+            }
+            if (errorToast) {
+              const toast = new bootstrap.Toast(errorToast);
+              toast.show();
+            }
             return;
           }
 
-          // Confirmar acción
-          const confirmMessage = `¿Deseas publicar ${documentsToUpload.length} documento(s)?\n\n` +
-            documentsToUpload.map(doc => `- ${doc.type}`).join('\n');
+          console.log(`✅ ${documentsToUpload.length} documento(s) listo(s) para publicar`);
 
-          if (!confirm(confirmMessage)) {
+          // Mostrar modal de confirmación
+          const publicarModal = new bootstrap.Modal(document.getElementById('publicarConfirmModal'));
+          publicarModal.show();
+        });
+      }
+
+      // Event listener del botón confirmar en el modal
+      const publicarConfirmarBtn = document.querySelector('[data-publicar-confirmar]');
+
+      if (publicarConfirmarBtn) {
+        publicarConfirmarBtn.addEventListener('click', async () => {
+          console.log('✅ Confirmación recibida, iniciando subida...');
+
+          // Verificar que hay conductor cargado
+          if (!currentConductorRecordId || !currentConductorId) {
+            const errorToast = document.getElementById('publicarErrorToast');
+            const errorMessage = document.getElementById('publicarErrorMessage');
+            if (errorMessage) {
+              errorMessage.textContent = 'No se ha identificado el conductor.';
+            }
+            if (errorToast) {
+              const toast = new bootstrap.Toast(errorToast);
+              toast.show();
+            }
+            return;
+          }
+
+          // Obtener todas las zonas de upload
+          const uploadZones = document.querySelectorAll('.document-upload-zone');
+          const documentsToUpload = [];
+
+          uploadZones.forEach(zone => {
+            if (zone.uploadedFile) {
+              const documentType = zone.getAttribute('data-upload-zone');
+              documentsToUpload.push({
+                file: zone.uploadedFile,
+                type: documentType,
+                zone: zone
+              });
+            }
+          });
+
+          if (documentsToUpload.length === 0) {
+            const errorToast = document.getElementById('publicarErrorToast');
+            const errorMessage = document.getElementById('publicarErrorMessage');
+            if (errorMessage) {
+              errorMessage.textContent = 'No hay documentos para publicar.';
+            }
+            if (errorToast) {
+              const toast = new bootstrap.Toast(errorToast);
+              toast.show();
+            }
             return;
           }
 
           // Deshabilitar botón durante el proceso
-          const originalButtonHTML = publicarDocumentosBtn.innerHTML;
-          publicarDocumentosBtn.disabled = true;
-          publicarDocumentosBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Publicando...';
+          const originalButtonHTML = publicarConfirmarBtn.innerHTML;
+          publicarConfirmarBtn.disabled = true;
+          publicarConfirmarBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Publicando...';
 
           try {
             const uploadResults = [];
@@ -7222,7 +7570,7 @@ License: You must have a valid license to legally use this template for your pro
             for (const doc of documentsToUpload) {
               console.log(`📤 Subiendo ${doc.type}...`);
 
-              publicarDocumentosBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Subiendo ${doc.type}...`;
+              publicarConfirmarBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Subiendo ${doc.type}...`;
 
               const result = await uploadToGoogleDrive(doc.file, doc.type);
               uploadResults.push({
@@ -7241,54 +7589,94 @@ License: You must have a valid license to legally use this template for your pro
             const successCount = uploadResults.filter(r => r.result.success).length;
             const failCount = uploadResults.filter(r => !r.result.success).length;
 
-            if (successCount > 0) {
-              // Crear registro histórico
-              console.log('📝 Creando registro en histórico');
-
-              const documentosInfo = uploadResults
-                .filter(r => r.result.success)
-                .map(r => `${r.type}: ${r.result.fileId}`)
-                .join(', ');
-
-              const resumen = `Documentos subidos: ${documentosInfo}`;
-
-              const historicoPayload = {
-                fieldData: {
-                  accion: 'SUBIDA_DOCUMENTOS',
-                  datos: JSON.stringify(uploadResults.filter(r => r.result.success).map(r => ({
-                    tipo: r.type,
-                    fileId: r.result.fileId,
-                    fileName: r.result.fileName,
-                    webViewLink: r.result.webViewLink
-                  }))),
-                  resumen: resumen,
-                  idEntidad: currentConductorId
+            // Preparar datos para actualizar en FileMaker
+            const fieldData = {};
+            uploadResults.forEach(upload => {
+              if (upload.result.success) {
+                const docType = upload.type;
+                if (docType === 'doc-anverso') {
+                  fieldData.idDriveDNIAnverso = upload.result.fileId;
+                  fieldData.urlDriveDNIAnverso = upload.result.webViewLink;
+                } else if (docType === 'doc-reverso') {
+                  fieldData.idDriveDNIReverso = upload.result.fileId;
+                  fieldData.urlDriveDNIReverso = upload.result.webViewLink;
                 }
-              };
+              }
+            });
 
-              const encodedLayout = window.ApiClient.encodePathSegment('historico');
-              await window.ApiClient.post(`layouts/${encodedLayout}/records`, historicoPayload);
-              console.log('✅ Registro histórico creado');
+            // Actualizar registro en FileMaker si hay datos
+            if (Object.keys(fieldData).length > 0) {
+              console.log('💾 Actualizando FileMaker con IDs de Drive:', fieldData);
+              const updatePayload = { fieldData: fieldData };
+              const layoutName = 'conductor.fichaconductor';
+              const encodedLayout = window.ApiClient.encodePathSegment(layoutName);
+              const response = await window.ApiClient.patch(
+                `layouts/${encodedLayout}/records/${encodeURIComponent(currentConductorRecordId)}`,
+                updatePayload
+              );
+              if (response.ok) {
+                console.log('✅ FileMaker actualizado');
+              } else {
+                console.error('❌ Error al actualizar FileMaker:', response.status);
+              }
             }
 
-            // Mostrar resultados
+            // Cerrar modal
+            const publicarModal = bootstrap.Modal.getInstance(document.getElementById('publicarConfirmModal'));
+            if (publicarModal) publicarModal.hide();
+
+            // Mostrar resultados con toasts
+            const successToast = document.getElementById('publicarSuccessToast');
+            const successMessage = document.getElementById('publicarSuccessMessage');
+            const errorToast = document.getElementById('publicarErrorToast');
+            const errorMessage = document.getElementById('publicarErrorMessage');
+
             if (failCount === 0) {
-              alert(`✅ ${successCount} documento(s) publicado(s) exitosamente en Google Drive.`);
+              // Todo exitoso
+              if (successMessage) {
+                successMessage.textContent = `${successCount} documento(s) publicado(s) exitosamente en Google Drive`;
+              }
+              if (successToast) {
+                const toast = new bootstrap.Toast(successToast);
+                toast.show();
+              }
             } else if (successCount === 0) {
-              alert(`❌ Error: No se pudo publicar ningún documento.\n\nVerifica tu conexión y que el token de Google Drive esté actualizado.`);
+              // Todo falló
+              if (errorMessage) {
+                errorMessage.textContent = 'No se pudo publicar ningún documento. Verifica tu conexión y token de Google Drive.';
+              }
+              if (errorToast) {
+                const toast = new bootstrap.Toast(errorToast);
+                toast.show();
+              }
             } else {
-              alert(`⚠️ Publicación parcial:\n✅ ${successCount} documento(s) exitoso(s)\n❌ ${failCount} documento(s) con error`);
+              // Publicación parcial (algunos exitosos, algunos fallidos)
+              if (errorMessage) {
+                errorMessage.textContent = `Publicación parcial: ${successCount} exitoso(s), ${failCount} con error`;
+              }
+              if (errorToast) {
+                const toast = new bootstrap.Toast(errorToast);
+                toast.show();
+              }
             }
 
           } catch (error) {
             console.error('❌ Error al publicar documentos:', error);
-            alert(`Error al publicar documentos: ${error.message}`);
+
+            // Mostrar toast de error
+            const errorToast = document.getElementById('publicarErrorToast');
+            const errorMessage = document.getElementById('publicarErrorMessage');
+            if (errorMessage) {
+              errorMessage.textContent = `Error: ${error.message}`;
+            }
+            if (errorToast) {
+              const toast = new bootstrap.Toast(errorToast);
+              toast.show();
+            }
           } finally {
             // Restaurar botón
-            publicarDocumentosBtn.disabled = false;
-            publicarDocumentosBtn.innerHTML = originalButtonHTML;
-
-            // Reinicializar iconos de Lucide
+            publicarConfirmarBtn.disabled = false;
+            publicarConfirmarBtn.innerHTML = originalButtonHTML;
             if (typeof lucide !== 'undefined') {
               lucide.createIcons();
             }
