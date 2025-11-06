@@ -577,9 +577,7 @@ License: You must have a valid license to legally use this template for your pro
     }
 
     :root:not([data-bs-theme='dark']) .detail-card .card-header,
-    :root:not([data-bs-theme='dark']) .detail-card .card-body,
-    [data-bs-theme='light'] .detail-card .card-header,
-    [data-bs-theme='light'] .detail-card .card-body {
+    [data-bs-theme='light'] .detail-card .card-header {
       background-color: transparent;
     }
 
@@ -1712,17 +1710,17 @@ License: You must have a valid license to legally use this template for your pro
                               </div>
 
                               <!-- Sección: Documentación -->
-                              <div class="tab-pane fade" id="nav-documentacion" role="tabpanel" aria-labelledby="nav-documentacion-tab">
+                              <div class="tab-pane fade" id="nav-documentacion" role="tabpanel" aria-labelledby="nav-documentacion-tab" style="max-height: calc(100vh - 250px); overflow-y: auto;">
 
                                 <!-- Tarjeta: DNI / Documento de Identidad -->
-                                <div class="detail-card card shadow-sm" style="width: 100%;">
+                                <div class="detail-card card shadow-sm" style="width: 100%; display: flex; flex-direction: column;">
                                   <div class="card-header">
                                     <div class="bg-primary bg-opacity-10 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                                       <i data-lucide="credit-card" class="text-primary" style="width: 20px; height: 20px;"></i>
                                     </div>
                                     <h5 class="card-title mb-0">DOCUMENTO DE IDENTIDAD (DNI/NIE)</h5>
                                   </div>
-                                  <div class="card-body">
+                                  <div class="card-body" style="flex: 1; display: flex; flex-direction: column;">
                                     <div class="row g-4">
                                       <!-- Anverso del DNI -->
                                       <div class="col-md-6">
@@ -1837,8 +1835,18 @@ License: You must have a valid license to legally use this template for your pro
                                       </div>
                                     </div>
 
+                                    <!-- Opción de actualización automática de datos -->
+                                    <div class="mt-4 p-3 border rounded" style="background-color: rgba(255, 255, 255, 0.5);">
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="actualizarDatosOCR" checked>
+                                        <label class="form-check-label" for="actualizarDatosOCR">
+                                          Actualizar los datos no completados de la ficha del conductor con los obtenidos en el escaneo del documento
+                                        </label>
+                                      </div>
+                                    </div>
+
                                     <!-- Botón de publicar documentos -->
-                                    <div class="d-flex justify-content-end mt-4">
+                                    <div class="d-flex justify-content-end mt-3 mb-2">
                                       <button type="button" class="btn btn-primary" id="publicarDocumentosBtn">
                                         <i data-lucide="send" class="me-2" style="width: 16px; height: 16px;"></i>
                                         Publicar documentos
