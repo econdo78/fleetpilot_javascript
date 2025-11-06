@@ -1184,6 +1184,33 @@ License: You must have a valid license to legally use this template for your pro
       transform: translateY(-50%);
       height: auto;
     }
+
+    /* Animación de sacudida para botón Publicar */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+      20%, 40%, 60%, 80% { transform: translateX(10px); }
+    }
+
+    .shake {
+      animation: shake 0.5s;
+    }
+
+    /* Estilos para campos inválidos */
+    .form-control.is-invalid,
+    .form-select.is-invalid {
+      border-color: #dc3545 !important;
+      padding-right: calc(1.5em + 0.75rem);
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right calc(0.375em + 0.1875rem) center;
+      background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+
+    /* Para Select2, aplicar borde rojo al contenedor */
+    .select2-container--default.is-invalid .select2-selection--single {
+      border-color: #dc3545 !important;
+    }
   </style>
 
   <link rel="shortcut icon" href="./assets/images/favicon.png" />
@@ -1499,12 +1526,12 @@ License: You must have a valid license to legally use this template for your pro
                                     <form data-form-section="datos-basicos">
                                       <div class="detail-grid">
                                         <div class="detail-grid-item">
-                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nombre</label>
-                                          <input type="text" class="form-control" name="nombre" value="">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nombre <span class="text-danger">*</span></label>
+                                          <input type="text" class="form-control" name="nombre" value="" required>
                                         </div>
                                         <div class="detail-grid-item">
-                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">1º Apellido</label>
-                                          <input type="text" class="form-control" name="apellido1" value="">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">1º Apellido <span class="text-danger">*</span></label>
+                                          <input type="text" class="form-control" name="apellido1" value="" required>
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">2º Apellido</label>
@@ -1515,8 +1542,8 @@ License: You must have a valid license to legally use this template for your pro
                                           <input type="date" class="form-control" name="fechaNacimiento" value="">
                                         </div>
                                         <div class="detail-grid-item">
-                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Tipo documento</label>
-                                          <select class="form-select" name="tipoDocumentoIdentidad" data-tipo-documento data-placeholder="Selecciona un tipo">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Tipo documento <span class="text-danger">*</span></label>
+                                          <select class="form-select" name="tipoDocumentoIdentidad" data-tipo-documento data-placeholder="Selecciona un tipo" required>
                                             <option value="">Selecciona un tipo</option>
                                             <option value="DNI">DNI</option>
                                             <option value="NIE">NIE</option>
@@ -1524,8 +1551,8 @@ License: You must have a valid license to legally use this template for your pro
                                           </select>
                                         </div>
                                         <div class="detail-grid-item">
-                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nº Documento</label>
-                                          <input type="text" class="form-control" name="ndocumentoidentidad" value="">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nº Documento <span class="text-danger">*</span></label>
+                                          <input type="text" class="form-control" name="ndocumentoidentidad" value="" required>
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nacionalidad</label>
@@ -7541,6 +7568,155 @@ License: You must have a valid license to legally use this template for your pro
 
       // Inicializar validación de documentos
       setupDocumentValidation();
+
+      // ============================================
+      // VALIDACIÓN DE CAMPOS REQUERIDOS AL PUBLICAR
+      // ============================================
+
+      const setupFormValidation = () => {
+        // Obtener todos los formularios con data-form-section
+        const forms = document.querySelectorAll('form[data-form-section]');
+
+        forms.forEach(form => {
+          form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Limpiar validaciones previas
+            const allInputs = form.querySelectorAll('input, select, textarea');
+            allInputs.forEach(input => {
+              input.classList.remove('is-invalid');
+              // Si es un Select2, también limpiar el contenedor
+              if (input.classList.contains('form-select')) {
+                const select2Container = input.parentElement.querySelector('.select2-container');
+                if (select2Container) {
+                  select2Container.classList.remove('is-invalid');
+                }
+              }
+            });
+
+            // Obtener campos requeridos
+            const requiredFields = form.querySelectorAll('[required]');
+            let hasErrors = false;
+            const invalidFields = [];
+
+            // Validar cada campo requerido
+            requiredFields.forEach(field => {
+              const value = field.value ? field.value.trim() : '';
+
+              if (!value) {
+                hasErrors = true;
+                invalidFields.push(field);
+                field.classList.add('is-invalid');
+
+                // Si es un select con Select2, marcar también el contenedor
+                if (field.tagName === 'SELECT' && field.classList.contains('form-select')) {
+                  const select2Container = field.parentElement.querySelector('.select2-container');
+                  if (select2Container) {
+                    select2Container.classList.add('is-invalid');
+                  }
+                }
+              } else {
+                // Validación adicional para campos de documento
+                if (field.name === 'ndocumentoidentidad') {
+                  const tipoDocumento = form.querySelector('[name="tipoDocumentoIdentidad"]')?.value;
+
+                  if (tipoDocumento && !validarDocumentoPorTipo(value, tipoDocumento)) {
+                    hasErrors = true;
+                    invalidFields.push(field);
+                    field.classList.add('is-invalid');
+                  }
+                }
+              }
+            });
+
+            // Si hay errores, mostrar feedback
+            if (hasErrors) {
+              // Aplicar animación de sacudida al botón
+              const submitButton = form.querySelector('button[type="submit"]');
+              if (submitButton) {
+                submitButton.classList.add('shake');
+                setTimeout(() => {
+                  submitButton.classList.remove('shake');
+                }, 500);
+              }
+
+              // Hacer scroll al primer campo inválido
+              if (invalidFields.length > 0) {
+                invalidFields[0].focus();
+                invalidFields[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+
+              return false;
+            }
+
+            // Si todo está correcto, continuar con el envío
+            console.log('✅ Formulario válido, enviando datos...');
+            // Aquí iría la lógica de envío al servidor
+            // form.submit() o llamada AJAX
+          });
+        });
+
+        // Función auxiliar para validar documento según tipo
+        function validarDocumentoPorTipo(documento, tipo) {
+          switch (tipo) {
+            case 'DNI':
+              return /^[0-9]{8}[A-Z]$/i.test(documento) && validarLetraDNI(documento);
+            case 'NIE':
+              return /^[XYZ][0-9]{7}[A-Z]$/i.test(documento) && validarLetraNIE(documento);
+            case 'Pasaporte':
+              return /^[A-Z0-9]{6,9}$/i.test(documento);
+            default:
+              return true;
+          }
+        }
+
+        function validarLetraDNI(dni) {
+          const letras = 'TRWAGMYFPDXBNJZSQVHLCKE';
+          const numero = parseInt(dni.substring(0, 8), 10);
+          const letraCalculada = letras[numero % 23];
+          const letraProporcionada = dni.substring(8, 9).toUpperCase();
+          return letraCalculada === letraProporcionada;
+        }
+
+        function validarLetraNIE(nie) {
+          let nieNumerico = nie.toUpperCase();
+          nieNumerico = nieNumerico.replace('X', '0').replace('Y', '1').replace('Z', '2');
+          const letras = 'TRWAGMYFPDXBNJZSQVHLCKE';
+          const numero = parseInt(nieNumerico.substring(0, 8), 10);
+          const letraCalculada = letras[numero % 23];
+          const letraProporcionada = nie.substring(8, 9).toUpperCase();
+          return letraCalculada === letraProporcionada;
+        }
+
+        // Limpiar clase is-invalid cuando el usuario empieza a escribir
+        const allFormInputs = document.querySelectorAll('form[data-form-section] input, form[data-form-section] select, form[data-form-section] textarea');
+        allFormInputs.forEach(input => {
+          input.addEventListener('input', function() {
+            this.classList.remove('is-invalid');
+            // Si es Select2, también limpiar el contenedor
+            if (this.tagName === 'SELECT') {
+              const select2Container = this.parentElement.querySelector('.select2-container');
+              if (select2Container) {
+                select2Container.classList.remove('is-invalid');
+              }
+            }
+          });
+
+          // Para selects, también escuchar el evento change
+          if (input.tagName === 'SELECT') {
+            input.addEventListener('change', function() {
+              this.classList.remove('is-invalid');
+              const select2Container = this.parentElement.querySelector('.select2-container');
+              if (select2Container) {
+                select2Container.classList.remove('is-invalid');
+              }
+            });
+          }
+        });
+      };
+
+      // Inicializar validación de formularios
+      setupFormValidation();
     });
   </script>
 
