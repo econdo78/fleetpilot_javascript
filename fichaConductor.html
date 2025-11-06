@@ -324,6 +324,28 @@ License: You must have a valid license to legally use this template for your pro
       visibility: visible !important;
     }
 
+    /* Estilo personalizado para botones Publicar */
+    .btn-primary {
+      background-color: #e0e7ff !important;
+      border-color: #c7d2fe !important;
+      color: #6366f1 !important;
+      font-weight: 500 !important;
+    }
+
+    .btn-primary:hover {
+      background-color: #c7d2fe !important;
+      border-color: #a5b4fc !important;
+      color: #4f46e5 !important;
+    }
+
+    .btn-primary:active,
+    .btn-primary:focus {
+      background-color: #c7d2fe !important;
+      border-color: #a5b4fc !important;
+      color: #4f46e5 !important;
+      box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25) !important;
+    }
+
     [data-clientes-detail-layout] {
       display: flex;
       flex-direction: column;
@@ -1691,9 +1713,9 @@ License: You must have a valid license to legally use this template for your pro
 
                                     <!-- Botón de publicar documentos -->
                                     <div class="d-flex justify-content-end mt-4">
-                                      <button type="button" class="btn btn-primary" id="publicarDocumentosBtn">
+                                      <button type="submit" class="btn btn-primary" id="publicarDocumentosBtn">
                                         <i data-lucide="send" class="me-2" style="width: 16px; height: 16px;"></i>
-                                        Publicar documentos
+                                        Publicar
                                       </button>
                                     </div>
                                   </div>
