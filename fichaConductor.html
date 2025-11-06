@@ -1211,6 +1211,26 @@ License: You must have a valid license to legally use this template for your pro
     .select2-container--default.is-invalid .select2-selection--single {
       border-color: #dc3545 !important;
     }
+
+    /* Estilos para la tabla de histórico */
+    #procesoLogTable thead th {
+      cursor: pointer;
+    }
+    #procesoLogTable tbody tr,
+    #procesoLogTable tbody tr > * {
+      cursor: pointer !important;
+    }
+
+    /* Ocultar barra de desplazamiento horizontal de la tabla de histórico */
+    #procesoLogTable {
+      overflow-x: auto;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE y Edge */
+    }
+
+    #procesoLogTable::-webkit-scrollbar {
+      display: none; /* Chrome, Safari y Opera */
+    }
   </style>
 
   <link rel="shortcut icon" href="./assets/images/favicon.png" />
@@ -1438,6 +1458,9 @@ License: You must have a valid license to legally use this template for your pro
               </div>
               <div class="ms-auto d-flex align-items-center gap-2 flex-wrap">
                 <div class="alert alert-info mb-0 d-none py-2 px-3" role="status" data-clientes-status></div>
+                <button type="button" class="btn btn-outline-secondary" id="showHistoricoBtn" title="Ver histórico de publicaciones">
+                  <i data-lucide="history" style="width: 18px; height: 18px;"></i>
+                </button>
                 <button type="button" class="btn btn-outline-primary" id="toggleDetailPanel" title="Mostrar/Ocultar panel de detalles">
                   <i data-lucide="panel-right" style="width: 18px; height: 18px;"></i>
                 </button>
@@ -1913,6 +1936,76 @@ License: You must have a valid license to legally use this template for your pro
         </div>
       </div>
 
+        <!-- Modal para tabla de histórico -->
+        <div class="modal fade" id="historicoTableModal" tabindex="-1" aria-labelledby="historicoTableModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0">
+              <div class="modal-header bg-secondary text-white border-0">
+                <div class="d-flex align-items-center gap-2 flex-grow-1">
+                  <h5 class="modal-title text-white mb-0 flex-grow-1" id="historicoTableModalLabel" style="cursor: move; user-select: none;">
+                    <i class="me-2" data-lucide="history"></i>
+                    Histórico de publicaciones
+                  </h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+              <div class="modal-body pb-4">
+                <div class="table-responsive">
+                  <table id="procesoLogTable" class="table table-hover align-middle mb-0">
+                    <thead></thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal para ver datos del histórico -->
+        <div class="modal fade" id="historicoDatosModal" tabindex="-1" aria-labelledby="historicoDatosModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+            <div class="modal-content border-0">
+              <div class="modal-header bg-secondary text-white border-0">
+                <div class="d-flex align-items-center gap-2 flex-grow-1">
+                  <button type="button" class="btn btn-sm" id="historicoPinButton" title="Fijar modal" style="border: none; padding: 0.25rem 0.5rem; background: none; color: white;">
+                    <i data-lucide="pin" style="width: 18px; height: 18px;"></i>
+                  </button>
+                  <h5 class="modal-title text-white mb-0 flex-grow-1" id="historicoDatosModalLabel" style="cursor: move; user-select: none;">
+                    <i class="me-2" data-lucide="file-text"></i>
+                    Datos del registro histórico
+                  </h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+              <div class="modal-body pb-4">
+                <form id="historicoDatosForm">
+                  <div id="historicoDatosContainer" class="row g-3">
+                    <!-- Los campos se generarán dinámicamente aquí -->
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              </div>
+              <!-- Toast para feedback de copiado -->
+              <div class="toast-container position-absolute bottom-0 start-50 translate-middle-x p-3" style="z-index: 1060;">
+                <div id="historicoCopyToast" class="toast text-bg-success border-0 shadow-sm" role="status" aria-live="polite" aria-atomic="true" data-bs-delay="1500">
+                  <div class="d-flex align-items-center">
+                    <div class="toast-body">
+                      <i class="me-2" data-lucide="check-circle"></i>
+                      Copiado al portapapeles
+                    </div>
+                    <button type="button" class="btn-close btn-close-white ms-2 me-1" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="modal fade" id="nuevoConductorModal" tabindex="-1" aria-labelledby="nuevoConductorModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
           <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0">
@@ -2129,7 +2222,643 @@ License: You must have a valid license to legally use this template for your pro
         window.console.warn(...args);
       };
 
+      // ============================================
+      // VARIABLES PARA HISTÓRICO
+      // ============================================
+      let procesoLogDataCache = [];
+
+      // ============================================
+      // FUNCIONES PARA HISTÓRICO
+      // ============================================
+
+      const loadHistoricoFromFileMaker = async (conductorId = null, procesoId = null) => {
+        try {
+          console.log('📚 Cargando histórico desde FileMaker');
+          console.log('  - Filtrar por conductorId:', conductorId || 'Sin filtro');
+          console.log('  - Filtrar por procesoId:', procesoId || 'Sin filtro (incluye vacíos)');
+
+          let url = 'layouts/historico/records';
+
+          // Si hay conductorId, usar _find para filtrar
+          if (conductorId) {
+            url = 'layouts/historico/_find';
+          }
+
+          // Construir el query de filtrado
+          // Si hay procesoId, necesitamos: (idEntidad = conductorId) AND (idProceso = procesoId OR idProceso está vacío)
+          // Esto se hace con dos queries en el array: el primero con idProceso = procesoId, el segundo con idProceso vacío (omit=false)
+          let query = [];
+
+          if (conductorId && procesoId) {
+            // Query 1: idEntidad = conductorId AND idProceso = procesoId
+            query.push({
+              idEntidad: conductorId,
+              idProceso: procesoId
+            });
+            // Query 2: idEntidad = conductorId AND idProceso = "" (vacío)
+            query.push({
+              idEntidad: conductorId,
+              idProceso: '='  // El operador "=" sin valor busca campos vacíos en FileMaker
+            });
+          } else if (conductorId) {
+            // Solo filtrar por conductorId
+            query.push({
+              idEntidad: conductorId
+            });
+          }
+
+          const response = conductorId
+            ? await window.ApiClient.post(url, {
+                query: query
+              })
+            : await window.ApiClient.get(url);
+
+          if (!response.ok) {
+            console.error('Error al cargar histórico desde FileMaker:', response.status, response.statusText);
+            return [];
+          }
+
+          const data = await response.json();
+
+          // FileMaker Data API devuelve los registros en response.data
+          const records = data.response?.data || data.data || [];
+
+          console.log(`  ✅ ${records.length} registros de histórico encontrados`);
+
+          // Transformar los registros de FileMaker al formato necesario
+          const transformedRecords = records.map(record => {
+            // fieldData contiene los campos del layout
+            const fieldData = record.fieldData || {};
+            return fieldData;
+          });
+
+          procesoLogDataCache = transformedRecords;
+          return transformedRecords;
+        } catch (error) {
+          console.error('Error al cargar histórico desde FileMaker:', error);
+          return [];
+        }
+      };
+
+      const showHistoricoDatosModal = (datosJson) => {
+        try {
+          console.log('📋 Mostrando modal con datos (raw):', datosJson);
+          console.log('📋 Tipo de datos:', typeof datosJson);
+
+          // Parsear el JSON
+          let datos = {};
+          if (typeof datosJson === 'string') {
+            console.log('  → Parseando string JSON...');
+            datos = JSON.parse(datosJson);
+          } else if (typeof datosJson === 'object') {
+            console.log('  → Ya es un objeto, usando directamente');
+            datos = datosJson;
+          }
+
+          console.log('✅ Datos parseados:', datos);
+          console.log('📊 Número de campos:', Object.keys(datos).length);
+          console.log('🔑 Campos:', Object.keys(datos));
+
+          const container = document.getElementById('historicoDatosContainer');
+          if (!container) {
+            console.error('No se encontró el contenedor del modal');
+            return;
+          }
+
+          // Limpiar el contenedor
+          container.innerHTML = '';
+
+          // Mapeo de nombres de campo más legibles
+          const fieldLabels = {
+            nombre: 'Nombre',
+            apellido1: 'Primer apellido',
+            apellido2: 'Segundo apellido',
+            tipoDocumentoIdentidad: 'Tipo de documento',
+            nDocumentoIdentidad: 'Número de documento',
+            fechaNacimiento: 'Fecha de nacimiento',
+            edad: 'Edad',
+            nAfiliacionSS: 'Nº Afiliación S.S.',
+            telefono1: 'Teléfono 1',
+            telefono2: 'Teléfono 2',
+            correoPersonal: 'Correo personal',
+            correoPlataforma: 'Correo plataforma',
+            telefonoBoltCompleto: 'Teléfono Bolt',
+            tipoVia: 'Tipo de vía',
+            nombreVia: 'Nombre de vía',
+            numero: 'Número',
+            pisoYLetra: 'Piso y letra',
+            cp: 'Código postal',
+            localidad: 'Localidad',
+            provincia: 'Provincia',
+            fechaFirma: 'Fecha de firma',
+            estado: 'Estado'
+          };
+
+          // Generar campos dinámicamente
+          Object.entries(datos).forEach(([key, value]) => {
+            if (value === null || value === undefined) return;
+
+            const label = fieldLabels[key] || key;
+            const displayValue = value === '' ? '(vacío)' : value;
+
+            const fieldHtml = `
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">${label}</label>
+                <input type="text" class="form-control historico-field-copy" value="${displayValue}" readonly title="Doble clic para copiar" style="cursor: pointer;">
+              </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', fieldHtml);
+          });
+
+          // Agregar evento de doble clic a todos los campos
+          container.querySelectorAll('.historico-field-copy').forEach(field => {
+            field.addEventListener('dblclick', async function() {
+              const value = this.value;
+
+              try {
+                // Copiar al portapapeles
+                await navigator.clipboard.writeText(value);
+
+                // Feedback visual: seleccionar el texto
+                this.select();
+
+                // Feedback visual: cambiar color temporalmente
+                const originalBg = this.style.backgroundColor;
+                this.style.backgroundColor = '#d1e7dd'; // Verde claro
+
+                // Mostrar toast
+                const toastElement = document.getElementById('historicoCopyToast');
+                if (toastElement) {
+                  const toast = bootstrap.Toast.getOrCreateInstance(toastElement);
+                  toast.show();
+
+                  // Actualizar iconos de Lucide
+                  window.lucide?.createIcons?.();
+                }
+
+                console.log('✓ Copiado al portapapeles:', value);
+
+                // Restaurar color después de 300ms
+                setTimeout(() => {
+                  this.style.backgroundColor = originalBg;
+                  this.blur(); // Quitar el foco
+                }, 300);
+
+              } catch (error) {
+                console.error('Error al copiar al portapapeles:', error);
+
+                // Fallback: seleccionar el texto manualmente
+                this.select();
+                try {
+                  document.execCommand('copy');
+
+                  // Mostrar toast también en fallback
+                  const toastElement = document.getElementById('historicoCopyToast');
+                  if (toastElement) {
+                    const toast = bootstrap.Toast.getOrCreateInstance(toastElement);
+                    toast.show();
+
+                    window.lucide?.createIcons?.();
+                  }
+
+                  console.log('✓ Copiado al portapapeles (fallback):', value);
+                } catch (fallbackError) {
+                  console.error('Error en fallback:', fallbackError);
+                }
+              }
+            });
+          });
+
+          // Mostrar el modal
+          const modalElement = document.getElementById('historicoDatosModal');
+          const modal = new bootstrap.Modal(modalElement);
+
+          // Resetear posición al centro cuando se abre
+          const resetModalPosition = () => {
+            const dialog = modalElement.querySelector('.modal-dialog');
+            if (dialog) {
+              dialog.style.transform = '';
+              dialog.style.transition = '';
+            }
+          };
+
+          // Resetear al abrir
+          modalElement.addEventListener('shown.bs.modal', resetModalPosition, { once: true });
+
+          // Resetear también al cerrar (para la próxima vez)
+          modalElement.addEventListener('hidden.bs.modal', resetModalPosition, { once: true });
+
+          modal.show();
+
+          // Inicializar drag si aún no está inicializado
+          if (!modalElement.dataset.dragInitialized) {
+            modalElement.dataset.dragInitialized = 'true';
+            initDraggableModal();
+          }
+
+          // Actualizar los iconos de Lucide
+          window.lucide?.createIcons?.();
+
+        } catch (error) {
+          console.error('Error al mostrar modal de datos:', error);
+        }
+      };
+
+      const initProcesoLogTable = async (data = null, conductorId = null, procesoId = null) => {
+        if (!window.jQuery?.fn?.DataTable) {
+          return;
+        }
+        const $table = window.jQuery('#procesoLogTable');
+        if (!$table.length) {
+          return;
+        }
+
+        // Si no se proporciona data, cargar desde FileMaker con filtro opcional
+        if (!data) {
+          const idConductorToFilter = conductorId || currentConductorId;
+          const idProcesoToFilter = procesoId || null; // En fichaConductor no hay procesoId
+          data = await loadHistoricoFromFileMaker(idConductorToFilter, idProcesoToFilter);
+        }
+
+        // Definir columnas de forma estática basadas en el layout 'historico' de FileMaker
+        // Excluimos: idProceso, idEntidad, datos, modificadoEl, modificadoPor
+        const columns = [
+          { data: 'creadoEl', title: 'Creado el', defaultContent: '' },
+          { data: 'creadoPor', title: 'Creado por', defaultContent: '' },
+          { data: 'accion', title: 'Acción', defaultContent: '' },
+          {
+            data: 'datos',
+            title: 'Datos',
+            orderable: false,
+            render: function(data, type, row) {
+              return '<button type="button" class="btn btn-secondary btn-sm btn-ver-datos">Ver datos</button>';
+            }
+          },
+          {
+            data: 'resumen',
+            title: 'Resumen',
+            defaultContent: '—',
+            render: function(data, type, row) {
+              if (type === 'display') {
+                return data || '—';
+              }
+              return data;
+            }
+          }
+        ];
+
+        if ($table.hasClass('dataTable')) {
+          const instance = $table.DataTable();
+          instance.destroy();
+          $table.empty();
+        }
+
+        const instance = $table.DataTable({
+          data: data,
+          columns: columns,
+          dom: 't',
+          paging: false,
+          searching: false,
+          info: false,
+          ordering: true,
+          order: [[0, 'desc']], // Ordenar por la primera columna (creadoEl) de forma descendente
+          autoWidth: false,
+          language: {
+            emptyTable: 'No hay registros disponibles.',
+            zeroRecords: 'No hay registros que coincidan con la búsqueda.'
+          }
+        });
+
+        // Agregar evento click a los botones "Ver datos"
+        $table.on('click', '.btn-ver-datos', function(e) {
+          e.stopPropagation(); // Evitar que se propague al tr
+          const row = instance.row($(this).closest('tr'));
+          if (row && row.data()) {
+            const rowData = row.data();
+            console.log('Click en Ver datos, fila:', rowData);
+            showHistoricoDatosModal(rowData.datos);
+          }
+        });
+      };
+
+      const initPinnableModal = () => {
+        const modalElement = document.getElementById('historicoDatosModal');
+        const pinButton = document.getElementById('historicoPinButton');
+
+        if (!modalElement || !pinButton) return;
+
+        let isPinned = false;
+
+        pinButton.addEventListener('click', () => {
+          isPinned = !isPinned;
+
+          if (isPinned) {
+            // Fijar el modal
+            console.log('📌 Modal fijado');
+
+            // Quitar el backdrop
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+              backdrop.style.display = 'none';
+            }
+
+            // Cambiar el modal para que no sea bloqueante
+            modalElement.style.pointerEvents = 'none'; // El modal no bloquea
+            const modalContent = modalElement.querySelector('.modal-content');
+            if (modalContent) {
+              modalContent.style.pointerEvents = 'all'; // Pero el contenido sí es clickeable
+
+              // Agregar borde y sombra más pronunciada para que destaque
+              modalContent.style.boxShadow = '0 0 0 3px rgba(108, 117, 125, 0.5), 0 1rem 3rem rgba(0, 0, 0, 0.5)';
+              modalContent.style.border = '2px solid rgba(108, 117, 125, 0.8)';
+            }
+
+            // Cambiar z-index para que esté visible pero no bloquee
+            modalElement.style.zIndex = '1050';
+
+            // Cambiar icono a pin "off" (para indicar que está fijado)
+            const icon = pinButton.querySelector('i');
+            if (icon) {
+              icon.setAttribute('data-lucide', 'pin-off');
+              window.lucide?.createIcons?.();
+            }
+
+            // Cambiar título del botón
+            pinButton.setAttribute('title', 'Desfijar modal');
+
+            // Cambiar estilo del botón para indicar que está activo
+            pinButton.classList.add('active');
+            pinButton.style.opacity = '0.7';
+
+          } else {
+            // Desfijar el modal
+            console.log('📍 Modal desfijado');
+
+            // Restaurar el backdrop
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+              backdrop.style.display = 'block';
+            }
+
+            // Restaurar comportamiento bloqueante
+            modalElement.style.pointerEvents = '';
+            const modalContent = modalElement.querySelector('.modal-content');
+            if (modalContent) {
+              modalContent.style.pointerEvents = '';
+
+              // Restaurar borde y sombra originales
+              modalContent.style.boxShadow = '';
+              modalContent.style.border = '';
+            }
+
+            // Restaurar z-index
+            modalElement.style.zIndex = '';
+
+            // Cambiar icono a pin normal
+            const icon = pinButton.querySelector('i');
+            if (icon) {
+              icon.setAttribute('data-lucide', 'pin');
+              window.lucide?.createIcons?.();
+            }
+
+            // Restaurar título del botón
+            pinButton.setAttribute('title', 'Fijar modal');
+
+            // Quitar estilo activo
+            pinButton.classList.remove('active');
+            pinButton.style.opacity = '';
+          }
+        });
+
+        // Resetear el estado del pin cuando se cierra el modal
+        modalElement.addEventListener('hidden.bs.modal', () => {
+          if (isPinned) {
+            // Si estaba fijado, resetear
+            isPinned = false;
+
+            // Restaurar icono
+            const icon = pinButton.querySelector('i');
+            if (icon) {
+              icon.setAttribute('data-lucide', 'pin');
+              window.lucide?.createIcons?.();
+            }
+
+            // Restaurar título y estilo
+            pinButton.setAttribute('title', 'Fijar modal');
+            pinButton.classList.remove('active');
+            pinButton.style.opacity = '';
+
+            // Limpiar estilos del modal
+            modalElement.style.pointerEvents = '';
+            modalElement.style.zIndex = '';
+            const modalContent = modalElement.querySelector('.modal-content');
+            if (modalContent) {
+              modalContent.style.pointerEvents = '';
+              modalContent.style.boxShadow = '';
+              modalContent.style.border = '';
+            }
+          }
+        });
+      };
+
+      const initDraggableModal = () => {
+        const modalElement = document.getElementById('historicoDatosModal');
+        if (!modalElement) {
+          console.warn('⚠️ No se encontró el modal historicoDatosModal');
+          return;
+        }
+
+        const modalDialog = modalElement.querySelector('.modal-dialog');
+        const modalTitle = modalElement.querySelector('#historicoDatosModalLabel');
+
+        if (!modalDialog || !modalTitle) {
+          console.warn('⚠️ No se encontró modalDialog o modalTitle');
+          return;
+        }
+
+        console.log('✅ initDraggableModal: elementos encontrados');
+
+        let isDragging = false;
+        let currentX = 0;
+        let currentY = 0;
+        let initialX = 0;
+        let initialY = 0;
+
+        const onMouseMove = (e) => {
+          if (!isDragging) return;
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Calcular nueva posición
+          currentX = e.clientX - initialX;
+          currentY = e.clientY - initialY;
+
+          // Aplicar transformación
+          modalDialog.style.transform = `translate(${currentX}px, ${currentY}px)`;
+        };
+
+        const onMouseUp = () => {
+          if (isDragging) {
+            console.log('🖱️ Drag end');
+            isDragging = false;
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+          }
+        };
+
+        const onMouseDown = (e) => {
+          console.log('🖱️ Drag start');
+          isDragging = true;
+
+          // Obtener la posición actual del modal
+          const transform = window.getComputedStyle(modalDialog).transform;
+          if (transform && transform !== 'none') {
+            const matrix = transform.match(/matrix.*\((.+)\)/);
+            if (matrix) {
+              const values = matrix[1].split(', ');
+              currentX = parseFloat(values[4]) || 0;
+              currentY = parseFloat(values[5]) || 0;
+            }
+          } else {
+            currentX = 0;
+            currentY = 0;
+          }
+
+          // Obtener posición inicial del mouse
+          initialX = e.clientX - currentX;
+          initialY = e.clientY - currentY;
+
+          modalDialog.style.transition = 'none';
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Agregar listeners al documento
+          document.addEventListener('mousemove', onMouseMove);
+          document.addEventListener('mouseup', onMouseUp);
+        };
+
+        // Resetear cuando el modal se cierra
+        modalElement.addEventListener('hidden.bs.modal', () => {
+          console.log('🔄 Reset drag state');
+          currentX = 0;
+          currentY = 0;
+          initialX = 0;
+          initialY = 0;
+          isDragging = false;
+          modalDialog.style.transform = '';
+          modalDialog.style.transition = '';
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+        });
+
+        // Event listener en el título
+        modalTitle.addEventListener('mousedown', onMouseDown);
+        console.log('✅ Event listener agregado al título');
+      };
+
+      const initDraggableTableModal = () => {
+        const modalElement = document.getElementById('historicoTableModal');
+        if (!modalElement) {
+          console.warn('⚠️ No se encontró el modal historicoTableModal');
+          return;
+        }
+
+        const modalDialog = modalElement.querySelector('.modal-dialog');
+        const modalTitle = modalElement.querySelector('#historicoTableModalLabel');
+
+        if (!modalDialog || !modalTitle) {
+          console.warn('⚠️ No se encontró modalDialog o modalTitle para tabla histórico');
+          return;
+        }
+
+        console.log('✅ initDraggableTableModal: elementos encontrados');
+
+        let isDragging = false;
+        let currentX = 0;
+        let currentY = 0;
+        let initialX = 0;
+        let initialY = 0;
+
+        const onMouseMove = (e) => {
+          if (!isDragging) return;
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Calcular nueva posición
+          currentX = e.clientX - initialX;
+          currentY = e.clientY - initialY;
+
+          // Aplicar transformación
+          modalDialog.style.transform = `translate(${currentX}px, ${currentY}px)`;
+        };
+
+        const onMouseUp = () => {
+          if (isDragging) {
+            console.log('🖱️ Drag end (tabla histórico)');
+            isDragging = false;
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+          }
+        };
+
+        const onMouseDown = (e) => {
+          console.log('🖱️ Drag start (tabla histórico)');
+          isDragging = true;
+
+          // Obtener la posición actual del modal
+          const transform = window.getComputedStyle(modalDialog).transform;
+          if (transform && transform !== 'none') {
+            const matrix = transform.match(/matrix.*\((.+)\)/);
+            if (matrix) {
+              const values = matrix[1].split(', ');
+              currentX = parseFloat(values[4]) || 0;
+              currentY = parseFloat(values[5]) || 0;
+            }
+          } else {
+            currentX = 0;
+            currentY = 0;
+          }
+
+          // Obtener posición inicial del mouse
+          initialX = e.clientX - currentX;
+          initialY = e.clientY - currentY;
+
+          modalDialog.style.transition = 'none';
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Agregar listeners al documento
+          document.addEventListener('mousemove', onMouseMove);
+          document.addEventListener('mouseup', onMouseUp);
+        };
+
+        // Resetear cuando el modal se cierra
+        modalElement.addEventListener('hidden.bs.modal', () => {
+          console.log('🔄 Reset drag state (tabla histórico)');
+          currentX = 0;
+          currentY = 0;
+          initialX = 0;
+          initialY = 0;
+          isDragging = false;
+          modalDialog.style.transform = '';
+          modalDialog.style.transition = '';
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+        });
+
+        // Event listener en el título
+        modalTitle.addEventListener('mousedown', onMouseDown);
+        console.log('✅ Event listener agregado al título de tabla histórico');
+      };
+
+      // ============================================
       // Toggle del panel de detalles
+      // ============================================
       const toggleButton = document.getElementById('toggleDetailPanel');
       const detailPanel = document.querySelector('[data-resizable-bottom]');
       const resizableHandle = document.querySelector('[data-resizable-handle]');
@@ -2157,6 +2886,40 @@ License: You must have a valid license to legally use this template for your pro
           // Reinicializar los iconos de Lucide
           if (window.lucide) {
             window.lucide.createIcons();
+          }
+        });
+      }
+
+      // ============================================
+      // BOTÓN DE HISTÓRICO
+      // ============================================
+      const showHistoricoBtn = document.getElementById('showHistoricoBtn');
+      if (showHistoricoBtn) {
+        showHistoricoBtn.addEventListener('click', async function() {
+          console.log('🔍 Abriendo modal de histórico...');
+
+          // Abrir el modal
+          const modalElement = document.getElementById('historicoTableModal');
+          if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+
+            // Cargar la tabla cuando el modal se muestre
+            modalElement.addEventListener('shown.bs.modal', async function() {
+              console.log('📊 Modal mostrado, inicializando tabla...');
+              await initProcesoLogTable(null, currentConductorId, null);
+
+              // Inicializar drag si aún no está inicializado
+              if (!modalElement.dataset.dragInitialized) {
+                modalElement.dataset.dragInitialized = 'true';
+                initDraggableTableModal();
+              }
+
+              // Actualizar iconos de Lucide
+              if (window.lucide) {
+                window.lucide.createIcons();
+              }
+            }, { once: true });
           }
         });
       }
@@ -8162,6 +8925,10 @@ License: You must have a valid license to legally use this template for your pro
 
       // Inicializar validación de formularios
       setupFormValidation();
+
+      // Inicializar funcionalidad de pin para el modal de histórico
+      // (el drag se inicializa la primera vez que se abre el modal)
+      initPinnableModal();
     });
   </script>
 
