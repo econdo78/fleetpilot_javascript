@@ -9,7 +9,18 @@
       "Bash(npm install:*)",
       "Bash(node scripts/convert-procesos-excel.js:*)",
       "Bash(node:*)",
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "Bash(/tmp/temp_conductor.html)",
+      "Bash(echo:*)",
+      "Bash(lsof:*)",
+      "Bash(kill:*)",
+      "Bash(pkill:*)",
+      "Bash(xargs kill -9)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(git checkout:*)",
+      "Bash(npx html-validate:*)"
     ],
     "deny": [],
     "ask": []

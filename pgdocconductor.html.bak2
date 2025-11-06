@@ -46,27 +46,6 @@ License: You must have a valid license to legally use this template for your pro
   <!-- End layout styles -->
 
   <style>
-    /* Estilo personalizado para botones primarios (Publicar, Publicar documentos, etc.) */
-    .btn-primary-custom {
-      background-color: #d4d4f0;
-      border-color: #d4d4f0;
-      color: var(--bs-primary);
-      font-weight: bold;
-    }
-
-    .btn-primary-custom:hover {
-      background-color: #c0c0e8;
-      border-color: #c0c0e8;
-      color: var(--bs-primary);
-    }
-
-    .btn-primary-custom:focus,
-    .btn-primary-custom:active {
-      background-color: #c0c0e8;
-      border-color: #c0c0e8;
-      color: var(--bs-primary);
-    }
-
     #clientesTable tbody tr {
       cursor: pointer;
     }
@@ -1436,6 +1415,74 @@ License: You must have a valid license to legally use this template for your pro
       border-radius: 2px;
     }
 
+    /* Estilos para zonas de carga de documentos */
+    .document-upload-zone {
+      border: 2px dashed #d1d5db;
+      border-radius: 0.5rem;
+      padding: 2rem 1rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      background-color: #f9fafb;
+      min-height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .document-upload-zone:hover {
+      border-color: #6571ff;
+      background-color: #f0f1ff;
+    }
+
+    .document-upload-zone.dragover {
+      border-color: #6571ff;
+      background-color: #e0e7ff;
+      border-style: solid;
+    }
+
+    .document-upload-content {
+      width: 100%;
+    }
+
+    .document-upload-preview {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .document-preview-image {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 0.375rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .document-remove-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+    }
+
+    /* Estilos modo oscuro para zonas de carga */
+    [data-bs-theme='dark'] .document-upload-zone {
+      background-color: #1f2937;
+      border-color: #4b5563;
+    }
+
+    [data-bs-theme='dark'] .document-upload-zone:hover {
+      border-color: #818cf8;
+      background-color: #2d3548;
+    }
+
+    [data-bs-theme='dark'] .document-upload-zone.dragover {
+      background-color: #374151;
+      border-color: #818cf8;
+    }
+
     /* Estilos del asistente de formulario */
     .wizard-container {
       display: flex;
@@ -1552,21 +1599,24 @@ License: You must have a valid license to legally use this template for your pro
     }
 
     .wizard-step-button {
-      min-width: 160px;
-      height: 44px;
-      border-radius: 22px;
+      min-width: 90px;
+      max-width: 110px;
+      height: 50px;
+      border-radius: 18px;
       border: 2px solid #6571ff;
       background: transparent;
       color: #6571ff;
-      font-size: 0.875rem;
+      font-size: 0.65rem;
       font-weight: 600;
       display: flex;
       align-items: center;
       justify-content: center;
+      text-align: center;
       cursor: pointer;
       transition: all 0.2s ease;
-      padding: 0.5rem 1.25rem;
-      white-space: nowrap;
+      padding: 0.375rem 0.5rem;
+      white-space: normal;
+      line-height: 1.3;
       position: relative;
       overflow: hidden;
       isolation: isolate;
@@ -1898,13 +1948,6 @@ License: You must have a valid license to legally use this template for your pro
               <span class="link-title">Todos los vehículos</span>
             </a>
           </li>
-          <li class="nav-item nav-category">Configuración</li>
-          <li class="nav-item">
-            <a href="ajustes.html" class="nav-link">
-              <i class="link-icon" data-lucide="settings"></i>
-              <span class="link-title">Ajustes</span>
-            </a>
-          </li>
         </ul>
       </div>
     </nav>
@@ -2127,327 +2170,126 @@ License: You must have a valid license to legally use this template for your pro
                         <div class="wizard-container">
                           <div class="wizard-content">
                             <form data-proceso-conductor-form>
-                              <!-- Página 1: Datos personales -->
+                              <!-- Página 1: Documento de identidad -->
                               <div class="wizard-page active" data-wizard-page="1">
                                 <div class="row g-3">
                                   <div class="col-12">
-                                    <h5 class="form-section-title">Datos personales</h5>
+                                    <h5 class="form-section-title">Documento de identidad</h5>
                                   </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoNombre" class="form-label">Nombre <span class="text-danger">*</span></label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="procesoNombre"
-                              name="nombre"
-                              data-field="nombre"
-                              autocomplete="given-name"
-                              required
-                              aria-required="true"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoApellido1" class="form-label">Primer apellido <span class="text-danger">*</span></label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="procesoApellido1"
-                              name="apellido1"
-                              data-field="apellido1"
-                              autocomplete="family-name"
-                              required
-                              aria-required="true"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoApellido2" class="form-label">Segundo apellido</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="procesoApellido2"
-                              name="apellido2"
-                              data-field="apellido2"
-                              autocomplete="additional-name"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoTipoDocumento" class="form-label">Tipo documento identidad <span class="text-danger">*</span></label>
-                            <select
-                              class="form-select"
-                              id="procesoTipoDocumento"
-                              name="tipoDocumentoIdentidad"
-                              data-field="tipoDocumentoIdentidad"
-                              required
-                              aria-required="true"
-                            >
-                              <option value="">Selecciona un tipo</option>
-                              <option value="DNI">DNI</option>
-                              <option value="NIE">NIE</option>
-                            </select>
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoDocumento" class="form-label">Número documento identidad <span class="text-danger">*</span></label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="procesoDocumento"
-                              name="nDocumentoIdentidad"
-                              data-field="nDocumentoIdentidad"
-                              autocomplete="off"
-                              placeholder="Ej: 12345678A"
-                              required
-                              aria-required="true"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoFechaNacimiento" class="form-label">Fecha de nacimiento</label>
-                            <input
-                              type="date"
-                              class="form-control"
-                              id="procesoFechaNacimiento"
-                              name="fechaNacimiento"
-                              data-field="fechaNacimiento"
-                              autocomplete="bday"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoEdad" class="form-label">Edad</label>
-                            <input
-                              type="number"
-                              class="form-control"
-                              id="procesoEdad"
-                              name="edad"
-                              data-field="edad"
-                              readonly
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoNAfiliacionSS" class="form-label">Nº Afiliación S.S.</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="procesoNAfiliacionSS"
-                              name="nAfiliacionSS"
-                              data-field="nAfiliacionSS"
-                              placeholder="Ej: 123456789012"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoNacionalidad" class="form-label">Nacionalidad</label>
-                            <select
-                              class="form-select"
-                              id="procesoNacionalidad"
-                              name="nacionalidad"
-                              data-field="nacionalidad"
-                              data-proceso-nacionalidad
-                              data-placeholder="Selecciona un país"
-                            >
-                              <option value="">Selecciona un país</option>
-                            </select>
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoNivelFormativo" class="form-label">Nivel formativo</label>
-                            <select
-                              class="form-select"
-                              id="procesoNivelFormativo"
-                              name="nivelFormativoTrabajador"
-                              data-field="nivelFormativoTrabajador"
-                            >
-                              <option value="">Selecciona un nivel</option>
-                              <option value="Sin estudios">Sin estudios</option>
-                              <option value="Estudios primarios">Estudios primarios</option>
-                              <option value="Educación secundaria obligatoria">Educación secundaria obligatoria</option>
-                              <option value="Bachillerato">Bachillerato</option>
-                              <option value="Formación profesional grado medio">Formación profesional grado medio</option>
-                              <option value="Formación profesional grado superior">Formación profesional grado superior</option>
-                              <option value="Estudios universitarios">Estudios universitarios</option>
-                              <option value="Estudios de posgrado">Estudios de posgrado</option>
-                            </select>
-                          </div>
+
+                                  <!-- Zona de carga: Anverso -->
+                                  <div class="col-12 col-md-6">
+                                    <label class="form-label fw-semibold">Anverso</label>
+                                    <div class="document-upload-zone" data-upload-zone="doc-anverso">
+                                      <input type="file" class="document-upload-input" id="docAnverso" accept="image/*,application/pdf" hidden>
+                                      <div class="document-upload-content">
+                                        <i class="mdi mdi-cloud-upload fs-1 text-muted"></i>
+                                        <p class="mb-1 fw-semibold">Arrastra el documento aquí</p>
+                                        <p class="text-muted small mb-2">o haz clic para seleccionar</p>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('docAnverso').click()">
+                                          Seleccionar archivo
+                                        </button>
+                                      </div>
+                                      <div class="document-upload-preview" style="display: none;">
+                                        <img class="document-preview-image" alt="Vista previa">
+                                        <button type="button" class="btn btn-sm btn-danger document-remove-btn">
+                                          <i class="mdi mdi-close"></i> Eliminar
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <!-- Información de Google Drive -->
+                                    <div class="mt-2 small" data-drive-info="doc-anverso" style="display: none;">
+                                      <div class="text-muted mb-1"><strong>ID Drive:</strong> <span data-drive-file-id></span></div>
+                                      <div class="text-muted"><strong>URL:</strong> <a href="#" target="_blank" data-drive-url class="text-decoration-none">Ver en Drive</a></div>
+                                    </div>
+                                  </div>
+
+                                  <!-- Zona de carga: Reverso -->
+                                  <div class="col-12 col-md-6">
+                                    <label class="form-label fw-semibold">Reverso</label>
+                                    <div class="document-upload-zone" data-upload-zone="doc-reverso">
+                                      <input type="file" class="document-upload-input" id="docReverso" accept="image/*,application/pdf" hidden>
+                                      <div class="document-upload-content">
+                                        <i class="mdi mdi-cloud-upload fs-1 text-muted"></i>
+                                        <p class="mb-1 fw-semibold">Arrastra el documento aquí</p>
+                                        <p class="text-muted small mb-2">o haz clic para seleccionar</p>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('docReverso').click()">
+                                          Seleccionar archivo
+                                        </button>
+                                      </div>
+                                      <div class="document-upload-preview" style="display: none;">
+                                        <img class="document-preview-image" alt="Vista previa">
+                                        <button type="button" class="btn btn-sm btn-danger document-remove-btn">
+                                          <i class="mdi mdi-close"></i> Eliminar
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <!-- Información de Google Drive -->
+                                    <div class="mt-2 small" data-drive-info="doc-reverso" style="display: none;">
+                                      <div class="text-muted mb-1"><strong>ID Drive:</strong> <span data-drive-file-id></span></div>
+                                      <div class="text-muted"><strong>URL:</strong> <a href="#" target="_blank" data-drive-url class="text-decoration-none">Ver en Drive</a></div>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
 
-                              <!-- Página 2: Datos de contacto -->
+                              <!-- Página 2: Permiso de circulación -->
                               <div class="wizard-page" data-wizard-page="2">
                                 <div class="row g-3">
                                   <div class="col-12">
-                                    <h5 class="form-section-title">Datos de contacto</h5>
+                                    <h5 class="form-section-title">Permiso de circulación</h5>
                                   </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoTelefono1" class="form-label">Teléfono 1</label>
-                            <input
-                              type="tel"
-                              class="form-control"
-                              id="procesoTelefono1"
-                              name="telefono1"
-                              data-field="telefono1"
-                              inputmode="tel"
-                              autocomplete="tel"
-                              placeholder="Ej: 612345678"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoTelefono2" class="form-label">Teléfono 2</label>
-                            <input
-                              type="tel"
-                              class="form-control"
-                              id="procesoTelefono2"
-                              name="telefono2"
-                              data-field="telefono2"
-                              inputmode="tel"
-                              autocomplete="tel"
-                              placeholder="Ej: 612345678"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoCorreoPersonal" class="form-label">Correo personal</label>
-                            <input
-                              type="email"
-                              class="form-control"
-                              id="procesoCorreoPersonal"
-                              name="correoPersonal"
-                              data-field="correoPersonal"
-                              autocomplete="email"
-                              placeholder="ejemplo@correo.com"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoCorreoPlataforma" class="form-label">Correo plataforma</label>
-                            <input
-                              type="email"
-                              class="form-control"
-                              id="procesoCorreoPlataforma"
-                              name="correoPlataforma"
-                              data-field="correoPlataforma"
-                              autocomplete="email"
-                              placeholder="ejemplo@plataforma.com"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoTelefonoBolt" class="form-label">Teléfono Bolt completo</label>
-                            <select
-                              class="form-select"
-                              id="procesoTelefonoBolt"
-                              name="telefonoBoltCompleto"
-                              data-field="telefonoBoltCompleto"
-                              data-bolt-phone-select
-                            >
-                              <option value="">Cargando datos...</option>
-                            </select>
-                          </div>
+                                  <!-- Campos eliminados intencionalmente -->
                                 </div>
                               </div>
 
-                              <!-- Página 3: Dirección -->
+                              <!-- Página 3: Certificado cuenta bancaria -->
                               <div class="wizard-page" data-wizard-page="3">
                                 <div class="row g-3">
                                   <div class="col-12">
-                                    <h5 class="form-section-title">Dirección</h5>
+                                    <h5 class="form-section-title">Certificado cuenta bancaria</h5>
                                   </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoTipoVia" class="form-label">Tipo vía</label>
-                            <select
-                              class="form-select"
-                              id="procesoTipoVia"
-                              name="tipoVia"
-                              data-field="tipoVia"
-                              data-tipo-via-select
-                            >
-                              <option value="">Selecciona un tipo de vía</option>
-                            </select>
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoNombreVia" class="form-label">Nombre vía</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="procesoNombreVia"
-                              name="nombreVia"
-                              data-field="nombreVia"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoNumero" class="form-label">Número</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="procesoNumero"
-                              name="numero"
-                              data-field="numero"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoPisoLetra" class="form-label">Piso y letra</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="procesoPisoLetra"
-                              name="pisoYLetra"
-                              data-field="pisoYLetra"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoCP" class="form-label">Código postal</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="procesoCP"
-                              name="cp"
-                              data-field="cp"
-                              inputmode="numeric"
-                              placeholder="Ej: 28001"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoLocalidad" class="form-label">Localidad</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="procesoLocalidad"
-                              name="localidad"
-                              data-field="localidad"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoProvincia" class="form-label">Provincia</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="procesoProvincia"
-                              name="provincia"
-                              data-field="provincia"
-                            >
-                          </div>
+                                  <!-- Campos eliminados intencionalmente -->
                                 </div>
                               </div>
 
-                              <!-- Página 4: Otros datos -->
+                              <!-- Página 4: Certificado puntos DGT -->
                               <div class="wizard-page" data-wizard-page="4">
                                 <div class="row g-3">
                                   <div class="col-12">
-                                    <h5 class="form-section-title">Otros datos</h5>
+                                    <h5 class="form-section-title">Certificado puntos DGT</h5>
                                   </div>
-                          <div class="col-12 col-lg-6">
-                            <label for="procesoFechaFirma" class="form-label">Fecha de firma</label>
-                            <input
-                              type="date"
-                              class="form-control"
-                              id="procesoFechaFirma"
-                              name="fechaFirma"
-                              data-field="fechaFirma"
-                            >
-                          </div>
-                          <div class="col-12 col-lg-6 d-none">
-                            <label for="procesoEstado" class="form-label">Estado</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              id="procesoEstado"
-                              name="estado"
-                              data-field="estado"
-                              readonly
-                            >
-                          </div>
+                                  <!-- Campos eliminados intencionalmente -->
+                                </div>
+                              </div>
+
+                              <!-- Página 5: Certificado delitos sexuales -->
+                              <div class="wizard-page" data-wizard-page="5">
+                                <div class="row g-3">
+                                  <div class="col-12">
+                                    <h5 class="form-section-title">Certificado delitos sexuales</h5>
+                                  </div>
+                                  <!-- Campos eliminados intencionalmente -->
+                                </div>
+                              </div>
+
+                              <!-- Página 6: Vida laboral -->
+                              <div class="wizard-page" data-wizard-page="6">
+                                <div class="row g-3">
+                                  <div class="col-12">
+                                    <h5 class="form-section-title">Vida laboral</h5>
+                                  </div>
+                                  <!-- Campos eliminados intencionalmente -->
+                                </div>
+                              </div>
+
+                              <!-- Página 7: Cartilla VTC -->
+                              <div class="wizard-page" data-wizard-page="7">
+                                <div class="row g-3">
+                                  <div class="col-12">
+                                    <h5 class="form-section-title">Cartilla VTC</h5>
+                                  </div>
+                                  <!-- Campos eliminados intencionalmente -->
                                 </div>
                               </div>
                             </form>
@@ -2457,7 +2299,7 @@ License: You must have a valid license to legally use this template for your pro
                               <button type="button" class="btn btn-outline-secondary" data-proceso-cancelar>
                                 Cancelar
                               </button>
-                              <button type="button" class="btn btn-primary-custom" data-proceso-publicar>
+                              <button type="button" class="btn btn-warning" data-proceso-publicar>
                                 Publicar
                               </button>
                             </div>
@@ -2465,17 +2307,26 @@ License: You must have a valid license to legally use this template for your pro
 
                           <!-- Navegación del asistente -->
                           <div class="wizard-navigation">
-                            <button type="button" class="wizard-step-button active" data-wizard-step="1" aria-label="Ir a Datos personales">
-                              Datos personales
+                            <button type="button" class="wizard-step-button active" data-wizard-step="1" aria-label="Ir a Documento de identidad">
+                              Documento de identidad
                             </button>
-                            <button type="button" class="wizard-step-button" data-wizard-step="2" aria-label="Ir a Datos de contacto">
-                              Datos de contacto
+                            <button type="button" class="wizard-step-button" data-wizard-step="2" aria-label="Ir a Permiso de circulación">
+                              Permiso de circulación
                             </button>
-                            <button type="button" class="wizard-step-button" data-wizard-step="3" aria-label="Ir a Dirección">
-                              Dirección
+                            <button type="button" class="wizard-step-button" data-wizard-step="3" aria-label="Ir a Certificado cuenta bancaria">
+                              Certificado cuenta bancaria
                             </button>
-                            <button type="button" class="wizard-step-button" data-wizard-step="4" aria-label="Ir a Otros datos">
-                              Otros datos
+                            <button type="button" class="wizard-step-button" data-wizard-step="4" aria-label="Ir a Certificado puntos DGT">
+                              Certificado puntos DGT
+                            </button>
+                            <button type="button" class="wizard-step-button" data-wizard-step="5" aria-label="Ir a Certificado delitos sexuales">
+                              Certificado delitos sexuales
+                            </button>
+                            <button type="button" class="wizard-step-button" data-wizard-step="6" aria-label="Ir a Vida laboral">
+                              Vida laboral
+                            </button>
+                            <button type="button" class="wizard-step-button" data-wizard-step="7" aria-label="Ir a Cartilla VTC">
+                              Cartilla VTC
                             </button>
                           </div>
                         </div>
@@ -2483,7 +2334,7 @@ License: You must have a valid license to legally use this template for your pro
                           <button type="button" class="btn btn-outline-secondary">
                             Cancelar (duplicado oculto)
                           </button>
-                          <button type="button" class="btn btn-primary-custom">
+                          <button type="button" class="btn btn-warning">
                             Publicar
                           </button>
                         </div>
@@ -2564,10 +2415,14 @@ License: You must have a valid license to legally use this template for your pro
                     <div class="col-md-6">
                       <label for="conductorNombre" class="form-label">Nombre <span class="text-danger">*</span></label>
                       <input type="text" class="form-control" id="conductorNombre" name="nombre" autocomplete="given-name" required aria-required="true">
+                      <div class="invalid-feedback">Por favor, introduce el nombre del conductor.</div>
+                      <div class="valid-feedback">¡Perfecto!</div>
                     </div>
                     <div class="col-md-6">
                       <label for="conductorApellido1" class="form-label">Primer apellido <span class="text-danger">*</span></label>
                       <input type="text" class="form-control" id="conductorApellido1" name="apellido1" autocomplete="family-name" required aria-required="true">
+                      <div class="invalid-feedback">Por favor, introduce el primer apellido.</div>
+                      <div class="valid-feedback">¡Perfecto!</div>
                     </div>
                     <div class="col-md-6">
                       <label for="conductorApellido2" class="form-label">Segundo apellido <span class="text-secondary small ms-1">(opcional)</span></label>
@@ -2585,6 +2440,8 @@ License: You must have a valid license to legally use this template for your pro
                         aria-required="true"
                         data-validate="documento"
                       >
+                      <div class="invalid-feedback">Por favor, introduce un documento de identidad válido (DNI, NIE o Pasaporte).</div>
+                      <div class="valid-feedback">Documento válido.</div>
                     </div>
                     <div class="col-md-6">
                       <label for="conductorTelefono1" class="form-label">Teléfono principal <span class="text-danger">*</span></label>
@@ -2599,6 +2456,8 @@ License: You must have a valid license to legally use this template for your pro
                         aria-required="true"
                         data-validate="telefono"
                       >
+                      <div class="invalid-feedback">Por favor, introduce un número de teléfono válido (9 dígitos).</div>
+                      <div class="valid-feedback">Teléfono válido.</div>
                     </div>
                     <div class="col-md-6">
                       <label for="conductorTelefono2" class="form-label">Teléfono alternativo <span class="text-secondary small ms-1">(opcional)</span></label>
@@ -2924,6 +2783,571 @@ License: You must have a valid license to legally use this template for your pro
 
       // Inicializar el wizard
       initializeWizard();
+
+      // ========================================
+      // DRAG AND DROP PARA DOCUMENTOS
+      // ========================================
+      function initializeDocumentUpload() {
+        const uploadZones = document.querySelectorAll('.document-upload-zone');
+
+        uploadZones.forEach(zone => {
+          const input = zone.querySelector('.document-upload-input');
+          const content = zone.querySelector('.document-upload-content');
+          const preview = zone.querySelector('.document-upload-preview');
+          const previewImage = zone.querySelector('.document-preview-image');
+          const removeBtn = zone.querySelector('.document-remove-btn');
+
+          // Click en la zona para abrir selector de archivos
+          zone.addEventListener('click', (e) => {
+            if (!e.target.closest('.document-remove-btn')) {
+              input.click();
+            }
+          });
+
+          // Prevenir comportamiento por defecto en drag
+          ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            zone.addEventListener(eventName, preventDefaults, false);
+          });
+
+          function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+
+          // Resaltar zona cuando se arrastra sobre ella
+          ['dragenter', 'dragover'].forEach(eventName => {
+            zone.addEventListener(eventName, () => {
+              zone.classList.add('dragover');
+            });
+          });
+
+          ['dragleave', 'drop'].forEach(eventName => {
+            zone.addEventListener(eventName, () => {
+              zone.classList.remove('dragover');
+            });
+          });
+
+          // Manejar drop
+          zone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+              handleFile(files[0]);
+            }
+          });
+
+          // Manejar selección de archivo
+          input.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+              handleFile(e.target.files[0]);
+            }
+          });
+
+          // Manejar botón de eliminar
+          if (removeBtn) {
+            removeBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              clearFile();
+            });
+          }
+
+          function handleFile(file) {
+            // Validar tipo de archivo
+            if (!file.type.match('image.*') && file.type !== 'application/pdf') {
+              alert('Por favor selecciona una imagen o PDF');
+              return;
+            }
+
+            // Validar tamaño (máximo 10MB)
+            if (file.size > 10 * 1024 * 1024) {
+              alert('El archivo es demasiado grande. Máximo 10MB');
+              return;
+            }
+
+            // Guardar el archivo en el elemento para subirlo después al publicar
+            zone.uploadedFile = file;
+
+            // Mostrar preview
+            if (file.type.match('image.*')) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                content.style.display = 'none';
+                preview.style.display = 'flex';
+
+                // Si es el anverso del DNI, ejecutar OCR
+                const zoneType = zone.getAttribute('data-upload-zone');
+                if (zoneType === 'doc-anverso') {
+                  processDNIWithOCR(e.target.result, zoneType);
+                }
+              };
+              reader.readAsDataURL(file);
+            } else {
+              // Para PDFs mostrar un icono
+              previewImage.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><text x="50%" y="50%" font-size="12" text-anchor="middle" dominant-baseline="middle">PDF</text></svg>';
+              content.style.display = 'none';
+              preview.style.display = 'flex';
+            }
+          }
+
+          function clearFile() {
+            input.value = '';
+            content.style.display = 'block';
+            preview.style.display = 'none';
+            previewImage.src = '';
+
+            // Ocultar resultados de OCR si existen
+            const zoneType = zone.getAttribute('data-upload-zone');
+            const ocrResults = document.querySelector(`[data-ocr-results="${zoneType}"]`);
+            if (ocrResults) {
+              ocrResults.style.display = 'none';
+            }
+          }
+        });
+      }
+
+      // Inicializar drag and drop
+      initializeDocumentUpload();
+
+            // Aumentar resolución significativamente (x3 en lugar de x2)
+            const scale = 3;
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+
+            // Dibujar imagen escalada con mejor calidad
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // Obtener datos de imagen
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+
+            // PASO 1: Convertir a escala de grises
+            for (let i = 0; i < data.length; i += 4) {
+              const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+              data[i] = data[i + 1] = data[i + 2] = avg;
+            }
+
+            // PASO 2: Aumentar contraste (más suave para no perder texto)
+            const contrast = 2.0;
+            for (let i = 0; i < data.length; i += 4) {
+              let value = data[i];
+              value = ((value - 128) * contrast) + 128;
+              value = Math.max(0, Math.min(255, value));
+              data[i] = data[i + 1] = data[i + 2] = value;
+            }
+
+            // PASO 3: Binarización con threshold más permisivo para NO perder texto
+            const threshold = 127;
+            for (let i = 0; i < data.length; i += 4) {
+              const value = data[i] > threshold ? 255 : 0;
+              data[i] = data[i + 1] = data[i + 2] = value;
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+            resolve(canvas.toDataURL());
+          };
+          img.src = imageDataUrl;
+        });
+      }
+
+      /**
+       * Procesa una imagen de DNI con OCR y extrae los datos
+       * @param {string} imageDataUrl - URL de datos de la imagen
+       * @param {string} zoneType - Tipo de zona (doc-anverso, doc-reverso, etc.)
+       */
+      async function processDNIWithOCR(imageDataUrl, zoneType) {
+        const resultsContainer = document.querySelector(`[data-ocr-results="${zoneType}"]`);
+        const loadingSpinner = resultsContainer?.querySelector('[data-ocr-loading]');
+
+        if (!resultsContainer) {
+          console.warn('No se encontró el contenedor de resultados OCR');
+          return;
+        }
+
+        try {
+          // Mostrar contenedor y spinner
+          resultsContainer.style.display = 'block';
+          if (loadingSpinner) loadingSpinner.style.display = 'block';
+
+          console.log('🔍 Iniciando OCR del DNI...');
+          console.log('⚙️ Preprocesando imagen...');
+
+          // Preprocesar imagen
+          const processedImage = await preprocessImageForOCR(imageDataUrl);
+
+          // Ejecutar Tesseract OCR con configuración mejorada
+          const result = await Tesseract.recognize(
+            processedImage,
+            'spa+eng', // Español e inglés para mejor reconocimiento
+            {
+              logger: (m) => {
+                if (m.status === 'recognizing text') {
+                  console.log(`OCR Progress: ${Math.round(m.progress * 100)}%`);
+                }
+              },
+              tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑabcdefghijklmnopqrstuvwxyzáéíóúñ0123456789 ./-',
+              tessedit_pageseg_mode: Tesseract.PSM.AUTO
+            }
+          );
+
+          const extractedText = result.data.text;
+          console.log('📝 Texto extraído:', extractedText);
+
+          // Parsear datos del DNI
+          const dniData = parseDNIData(extractedText);
+          console.log('✅ Datos parseados:', dniData);
+
+          // Mostrar los datos extraídos
+          displayDNIData(dniData, zoneType);
+
+        } catch (error) {
+          console.error('❌ Error en OCR:', error);
+          resultsContainer.style.display = 'none';
+        } finally {
+          if (loadingSpinner) loadingSpinner.style.display = 'none';
+        }
+      }
+
+      /**
+       * Parsea el texto extraído del DNI español
+       * @param {string} text - Texto extraído por OCR
+       * @returns {Object} Datos del DNI parseados
+       */
+      function parseDNIData(text) {
+        const data = {
+          dni: null,
+          nombre: null,
+          nacimiento: null,
+          caducidad: null,
+          sexo: null,
+          nacionalidad: null
+        };
+
+        // Preservar saltos de línea para mejor análisis
+        const originalText = text;
+        const cleanText = text.replace(/\s+/g, ' ').trim().toUpperCase();
+        console.log('🔎 Texto limpio:', cleanText);
+
+        // ===== EXTRAER NÚMERO DE DNI =====
+        // Buscar patrón DNI seguido de 8 dígitos y una letra
+        let dniMatch = cleanText.match(/DNI[:\s]*(\d{8})\s*([A-Z])/i);
+        if (!dniMatch) {
+          // Buscar patrón con "ID" o "IDENTITY"
+          dniMatch = cleanText.match(/ID[ENTITY]*[:\s]*(\d{8})\s*([A-Z])/i);
+        }
+        if (!dniMatch) {
+          // Buscar solo 8 dígitos seguidos de una letra mayúscula
+          dniMatch = cleanText.match(/(\d{8})\s*([A-Z])\b/);
+        }
+        if (!dniMatch) {
+          // Buscar 8 o 9 dígitos (puede leer mal) seguidos de letra
+          // A veces el OCR lee mal y añade un dígito extra
+          const looseDniMatch = cleanText.match(/(\d{8,9})\s*([A-Z])[A-Z]*/);
+          if (looseDniMatch) {
+            // Tomar solo los primeros 8 dígitos
+            dniMatch = [looseDniMatch[0], looseDniMatch[1].substring(0, 8), looseDniMatch[2]];
+          }
+        }
+        if (dniMatch) {
+          data.dni = `${dniMatch[1]}-${dniMatch[2]}`;
+          console.log('✓ DNI encontrado:', data.dni);
+        } else {
+          console.warn('⚠️ No se pudo extraer el DNI');
+        }
+
+        // ===== EXTRAER FECHAS =====
+        // Buscar todas las fechas en formato DD.MM.YYYY, DD/MM/YYYY, DD MM YYYY
+        const allDates = cleanText.match(/\b(\d{2})[.\s/-]+(\d{2})[.\s/-]+(\d{4})\b/g);
+        if (allDates) {
+          console.log('📅 Fechas encontradas:', allDates);
+
+          // Procesar cada fecha
+          const processedDates = allDates.map(d => {
+            const parts = d.match(/(\d{2})[.\s/-]+(\d{2})[.\s/-]+(\d{4})/);
+            return `${parts[1]}/${parts[2]}/${parts[3]}`;
+          });
+
+          // Buscar contexto para identificar fechas
+          const nacimientoMatch = cleanText.match(/(?:NACIMIENTO|BIRTH|FECHA\s+NACIMIENTO)[:\s]*(\d{2}[.\s/-]+\d{2}[.\s/-]+\d{4})/i);
+          const caducidadMatch = cleanText.match(/(?:CADUCIDAD|VALID|EXPIRY|VALIDEZ)[:\s]*(\d{2}[.\s/-]+\d{2}[.\s/-]+\d{4})/i);
+
+          if (nacimientoMatch) {
+            const parts = nacimientoMatch[1].match(/(\d{2})[.\s/-]+(\d{2})[.\s/-]+(\d{4})/);
+            data.nacimiento = `${parts[1]}/${parts[2]}/${parts[3]}`;
+          } else if (processedDates[0]) {
+            data.nacimiento = processedDates[0];
+          }
+
+          if (caducidadMatch) {
+            const parts = caducidadMatch[1].match(/(\d{2})[.\s/-]+(\d{2})[.\s/-]+(\d{4})/);
+            data.caducidad = `${parts[1]}/${parts[2]}/${parts[3]}`;
+          } else if (processedDates[1]) {
+            data.caducidad = processedDates[1];
+          }
+
+          console.log('✓ Nacimiento:', data.nacimiento, '/ Caducidad:', data.caducidad);
+        }
+
+        // ===== EXTRAER SEXO =====
+        let sexoMatch = cleanText.match(/(?:SEXO|SEX)[:\s]*([MF])/i);
+        if (!sexoMatch) {
+          // Buscar M o F aislada cerca de palabras clave
+          sexoMatch = cleanText.match(/\b([MF])\b.*(?:NACIONALIDAD|ESP|BIRTH)/i);
+        }
+        if (sexoMatch) {
+          data.sexo = sexoMatch[1].toUpperCase() === 'M' ? 'Masculino' : 'Femenino';
+          console.log('✓ Sexo:', data.sexo);
+        } else {
+          console.warn('⚠️ No se pudo extraer el sexo');
+        }
+
+        // ===== EXTRAER NACIONALIDAD =====
+        if (cleanText.match(/\b(ESP|ESPAÑA|SPAIN|SPANISH)\b/i)) {
+          data.nacionalidad = 'Española';
+          console.log('✓ Nacionalidad:', data.nacionalidad);
+        }
+
+        // ===== EXTRAER NOMBRE Y APELLIDOS =====
+        // Buscar líneas con APELLIDOS y NOMBRE
+        const lines = originalText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+
+        let apellidos = null;
+        let nombre = null;
+
+        // Buscar en cada línea
+        for (let line of lines) {
+          const lineUpper = line.toUpperCase();
+
+          // Buscar APELLIDOS (con variaciones de OCR como APELLIDOS, APELLIDO, incluso con errores)
+          if (!apellidos) {
+            // Buscar con etiqueta explícita - buscar CONDO, FOLGADO después de APELLIDOS
+            const apellidosMatch = lineUpper.match(/(?:APELLIDOS?|SURNAME|APELL)/i);
+            if (apellidosMatch) {
+              // Buscar en las siguientes 3 líneas
+              const currentIndex = lines.indexOf(line);
+              const nextLines = lines.slice(currentIndex + 1, currentIndex + 4);
+              let foundApellidos = [];
+
+              for (let nextLine of nextLines) {
+                const cleaned = nextLine.toUpperCase().replace(/[^A-ZÁÉÍÓÚÑ\s]/g, '').trim();
+                if (cleaned.length > 2 && cleaned.length < 30 &&
+                    !cleaned.match(/NOMBRE|SEXO|NACIONALIDAD|NACIMIENTO|EMISION|VALIDEZ/)) {
+                  foundApellidos.push(cleaned);
+                }
+                if (foundApellidos.length >= 2) break;
+              }
+
+              if (foundApellidos.length > 0) {
+                apellidos = foundApellidos.join(' ');
+                console.log('📋 Apellidos encontrados:', apellidos);
+              }
+            }
+          }
+
+          // Buscar NOMBRE (con variaciones)
+          if (!nombre) {
+            const nombreMatch = lineUpper.match(/(?:NOMBRE|NAME|GIVEN|NOM)/i);
+            if (nombreMatch) {
+              // Buscar en la siguiente línea
+              const currentIndex = lines.indexOf(line);
+              if (currentIndex + 1 < lines.length) {
+                const nextLine = lines[currentIndex + 1];
+                const cleaned = nextLine.toUpperCase().replace(/[^A-ZÁÉÍÓÚÑ\s]/g, '').trim();
+                if (cleaned.length > 2 && cleaned.length < 30) {
+                  nombre = cleaned;
+                  console.log('📋 Nombre encontrado:', nombre);
+                }
+              }
+            }
+          }
+        }
+
+        // Si no encontramos con etiquetas, buscar líneas que parezcan nombres
+        // (típicamente después del número de DNI)
+        if (!apellidos || !nombre) {
+          // Buscar líneas con solo letras mayúsculas (formato típico del DNI)
+          const nameLines = lines.filter(line => {
+            const upper = line.toUpperCase().replace(/[^A-ZÁÉÍÓÚÑ\s]/g, ''); // Limpiar caracteres raros
+            return /^[A-ZÁÉÍÓÚÑ\s]+$/.test(upper) &&
+                   upper.trim().length > 2 &&
+                   upper.length < 50 &&
+                   !upper.match(/DNI|IDENTIDAD|NATIONALITY|SEXO|BIRTH|VALID|ESPAÑA|SPAIN|DOCUMENTO|REINO|NACIONAL|EMISION|VALIDEZ/);
+          });
+
+          console.log('🔍 Líneas candidatas para nombre:', nameLines);
+
+          if (nameLines.length >= 2) {
+            if (!apellidos) apellidos = nameLines[0].toUpperCase().replace(/[^A-ZÁÉÍÓÚÑ\s]/g, '').trim();
+            if (!nombre) nombre = nameLines[1].toUpperCase().replace(/[^A-ZÁÉÍÓÚÑ\s]/g, '').trim();
+          } else if (nameLines.length === 1) {
+            // Intentar dividir por espacios múltiples
+            const cleaned = nameLines[0].toUpperCase().replace(/[^A-ZÁÉÍÓÚÑ\s]/g, '').trim();
+            const parts = cleaned.split(/\s{2,}/);
+            if (parts.length >= 2) {
+              if (!apellidos) apellidos = parts[0];
+              if (!nombre) nombre = parts[1];
+            }
+          }
+        }
+
+        // Construir nombre completo
+        if (nombre || apellidos) {
+          data.nombre = [nombre, apellidos].filter(x => x).join(' ').trim();
+          // Convertir a formato capitalizado
+          data.nombre = data.nombre.split(' ').map(word =>
+            word.charAt(0) + word.slice(1).toLowerCase()
+          ).join(' ');
+          console.log('✓ Nombre completo:', data.nombre);
+        }
+
+        return data;
+      }
+
+      /**
+       * Muestra los datos del DNI en la UI
+       * @param {Object} data - Datos del DNI parseados
+       * @param {string} zoneType - Tipo de zona
+       */
+      function displayDNIData(data, zoneType) {
+        const resultsContainer = document.querySelector(`[data-ocr-results="${zoneType}"]`);
+        if (!resultsContainer) return;
+
+        // Actualizar cada campo
+        const setField = (selector, value) => {
+          const element = resultsContainer.querySelector(selector);
+          if (element) {
+            element.textContent = value || '-';
+          }
+        };
+
+        setField('[data-ocr-dni]', data.dni);
+        setField('[data-ocr-nombre]', data.nombre);
+        setField('[data-ocr-nacimiento]', data.nacimiento);
+        setField('[data-ocr-caducidad]', data.caducidad);
+        setField('[data-ocr-sexo]', data.sexo);
+        setField('[data-ocr-nacionalidad]', data.nacionalidad);
+
+        // Mostrar contenedor
+        resultsContainer.style.display = 'block';
+      }
+
+      // ========================================
+      // GOOGLE DRIVE - SUBIR ARCHIVOS
+      // ========================================
+      async function uploadToGoogleDrive(file, documentType) {
+        try {
+          console.log(`📤 Subiendo ${documentType} a Google Drive:`, file.name);
+
+          // Obtener el token de sessionStorage
+          const tokenData = sessionStorage.getItem('googleDriveToken');
+          if (!tokenData) {
+            throw new Error('No hay token de Google Drive disponible');
+          }
+
+          const token = JSON.parse(tokenData);
+          const accessToken = token.access_token;
+
+          // Obtener información del conductor actual
+          const conductorId = sessionStorage.getItem('currentConductorUUID') || 'unknown';
+          const conductorName = document.querySelector('[data-proceso-title]')?.textContent?.trim() || 'Conductor';
+
+          // Crear nombre de archivo descriptivo
+          const timestamp = new Date().toISOString().split('T')[0];
+          const fileName = `${conductorName}_${documentType}_${timestamp}_${file.name}`;
+
+          // Paso 1: Crear metadata del archivo
+          const metadata = {
+            name: fileName,
+            mimeType: file.type,
+            parents: ['root'] // Puedes cambiar esto a un ID de carpeta específico
+          };
+
+          // Paso 2: Crear FormData para subida multipart
+          const formData = new FormData();
+          formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+          formData.append('file', file);
+
+          // Paso 3: Subir a Google Drive usando la API
+          const uploadResponse = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+            },
+            body: formData
+          });
+
+          if (!uploadResponse.ok) {
+            const errorData = await uploadResponse.json();
+            throw new Error(`Error al subir archivo: ${errorData.error?.message || uploadResponse.statusText}`);
+          }
+
+          const result = await uploadResponse.json();
+          console.log('✅ Archivo subido exitosamente a Google Drive:', result);
+          console.log('📁 ID del archivo:', result.id);
+          console.log('🔗 Nombre:', result.name);
+
+          return {
+            success: true,
+            fileId: result.id,
+            fileName: result.name,
+            webViewLink: `https://drive.google.com/file/d/${result.id}/view`
+          };
+
+        } catch (error) {
+          console.error('❌ Error al subir a Google Drive:', error);
+          return {
+            success: false,
+            error: error.message
+          };
+        }
+      }
+
+      // ========================================
+      // GOOGLE DRIVE - REFRESCAR TOKEN
+      // ========================================
+      async function refreshGoogleDriveToken() {
+        try {
+          console.log('Ejecutando script: googleDrive.RefrescarToken mediante operación GET en layout conductor');
+
+          // Obtener el recordId del conductor actual (si existe)
+          const conductorId = sessionStorage.getItem('currentConductorRecordId') || '1';
+
+          // Ejecutar el script junto con una operación GET de registro
+          // Esto usa el parámetro script.prerequest o script.presort de la API
+          const scriptParam = encodeURIComponent('googleDrive.RefrescarToken');
+          const response = await window.ApiClient.get(
+            `layouts/conductor/records/${conductorId}?script=${scriptParam}`
+          );
+
+          if (!response.ok) {
+            console.error('Error al ejecutar script:', response.status, response.statusText);
+            return;
+          }
+
+          const data = await response.json();
+          console.log('Respuesta completa:', data);
+
+          // Extraer el resultado del script
+          const scriptResult = data?.response?.scriptResult;
+
+          if (scriptResult) {
+            // Guardar en sessionStorage
+            sessionStorage.setItem('googleDriveToken', scriptResult);
+            console.log('✅ Token guardado en sessionStorage con clave "googleDriveToken"');
+            console.log('📋 Para ver el token, ejecuta en la consola: sessionStorage.getItem("googleDriveToken")');
+            console.log('Token:', scriptResult);
+          } else {
+            console.warn('⚠️ El script no devolvió resultado en scriptResult');
+            console.log('Datos completos recibidos:', data);
+          }
+        } catch (error) {
+          console.error('❌ Error al refrescar token de Google Drive:', error);
+        }
+      }
+
+      // Ejecutar al cargar la página
+      refreshGoogleDriveToken();
 
       // Inicializar el progreso del wizard (se actualizará al cargar datos)
       setTimeout(() => {
@@ -4993,6 +5417,51 @@ License: You must have a valid license to legally use this template for your pro
             publicarConfirmarButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Publicando...';
 
             try {
+              // ========================================
+              // SUBIR ARCHIVOS A GOOGLE DRIVE
+              // ========================================
+              console.log('📤 Iniciando subida de archivos a Google Drive...');
+              const uploadZones = document.querySelectorAll('.document-upload-zone');
+              const uploadResults = [];
+
+              for (const zone of uploadZones) {
+                if (zone.uploadedFile) {
+                  const documentType = zone.getAttribute('data-upload-zone') || 'documento';
+                  console.log(`📤 Subiendo ${documentType}...`);
+
+                  publicarConfirmarButton.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Subiendo ${documentType}...`;
+
+                  const result = await uploadToGoogleDrive(zone.uploadedFile, documentType);
+                  uploadResults.push({ zone, result, documentType });
+
+                  if (result.success) {
+                    // Mostrar información en las etiquetas
+                    const driveInfo = document.querySelector(`[data-drive-info="${documentType}"]`);
+                    if (driveInfo) {
+                      const fileIdSpan = driveInfo.querySelector('[data-drive-file-id]');
+                      const urlLink = driveInfo.querySelector('[data-drive-url]');
+
+                      if (fileIdSpan) fileIdSpan.textContent = result.fileId;
+                      if (urlLink) {
+                        urlLink.href = result.webViewLink;
+                        urlLink.textContent = 'Ver en Drive';
+                      }
+
+                      driveInfo.style.display = 'block';
+                    }
+                    console.log(`✅ ${documentType} subido exitosamente - ID: ${result.fileId}`);
+                  } else {
+                    console.error(`❌ Error al subir ${documentType}:`, result.error);
+                  }
+                }
+              }
+
+              console.log('✅ Proceso de subida completado');
+              console.log('📊 Resultados:', uploadResults);
+
+              // Volver a poner texto "Publicando..."
+              publicarConfirmarButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Publicando...';
+
               // Incluir TODOS los campos de la página, incluso los vacíos
               // Esto permite que los campos borrados se guarden como vacíos en el backend
               const cleanedFormData = {};

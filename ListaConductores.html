@@ -971,6 +971,13 @@ License: You must have a valid license to legally use this template for your pro
               <span class="link-title">Todos los vehículos</span>
             </a>
           </li>
+          <li class="nav-item nav-category">Configuración</li>
+          <li class="nav-item">
+            <a href="ajustes.html" class="nav-link">
+              <i class="link-icon" data-lucide="settings"></i>
+              <span class="link-title">Ajustes</span>
+            </a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -3316,10 +3323,8 @@ License: You must have a valid license to legally use this template for your pro
       const handle = wrapper.querySelector('[data-resizable-handle]');
       if (!topPanel || !bottomPanel || !handle) return;
 
-      // Inicialmente ocultar el panel derecho y el asa (se mostrarán al seleccionar un conductor)
-      bottomPanel.classList.add('is-collapsed');
-      handle.style.display = 'none';
-      handle.setAttribute('aria-expanded', 'false');
+      // El panel de detalle estará siempre visible
+      handle.setAttribute('aria-expanded', 'true');
 
       const detailContainer = bottomPanel.querySelector('[data-clientes-detail-container]');
       const detailTabsWrapper = bottomPanel.querySelector('[data-clientes-detail-tabs-wrapper]');
@@ -5194,7 +5199,7 @@ License: You must have a valid license to legally use this template for your pro
         if (mobileQuery.matches || !isResizableMode()) {
           stopResizing();
           resetPanelSizes();
-          bottomPanel.classList.remove('is-collapsed');
+          // El panel siempre está visible, no es necesario quitar is-collapsed
           handle.setAttribute('aria-expanded', 'true');
           lastAppliedPrimarySize = null;
           updateDetailGridColumns();
@@ -5241,7 +5246,7 @@ License: You must have a valid license to legally use this template for your pro
         cancelAnimationFrame(resizeRAF);
         resizeRAF = null;
         resetPanelSizes();
-        bottomPanel.classList.remove('is-collapsed');
+        // El panel siempre está visible, no es necesario quitar is-collapsed
         lastAppliedPrimarySize = null;
         handle.setAttribute('aria-expanded', 'true');
         wrapper.classList.remove('view-split-vertical');
@@ -5346,30 +5351,8 @@ License: You must have a valid license to legally use this template for your pro
 
         renderDetail(detail.record ?? null, detail.fieldOrder ?? []);
 
-        // Mostrar/ocultar el panel derecho y el asa según si hay un conductor seleccionado
-        if (hasRecord) {
-          // Si el panel estaba colapsado, al mostrarlo posicionar el asa al 50%
-          const wasCollapsed = bottomPanel.classList.contains('is-collapsed');
-
-          // Mostrar el panel y el asa
-          bottomPanel.classList.remove('is-collapsed');
-          handle.style.display = '';
-          handle.setAttribute('aria-expanded', 'true');
-
-          // Si estaba oculto, posicionar al 50%
-          if (wasCollapsed) {
-            const bounds = getBounds();
-            if (bounds) {
-              const halfSize = bounds.axisSize * 0.5;
-              scheduleApplySizes(halfSize);
-            }
-          }
-        } else {
-          // Ocultar el panel y el asa
-          bottomPanel.classList.add('is-collapsed');
-          handle.style.display = 'none';
-          handle.setAttribute('aria-expanded', 'false');
-        }
+        // El panel de detalle siempre está visible
+        handle.setAttribute('aria-expanded', 'true');
 
         if (shouldForceDetailView && detail.record) {
           shouldForceDetailView = false;
@@ -5440,6 +5423,36 @@ License: You must have a valid license to legally use this template for your pro
 
   <script src="./assets/js/dashboard.js"></script>
   <script src="./assets/js/clientes-table.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Esperar a que la tabla esté lista
+      document.addEventListener('clientesTable:ready', function() {
+        const table = document.querySelector('#clientesTable');
+
+        if (table) {
+          // Añadir event listener para doble click en las filas del tbody
+          table.querySelector('tbody').addEventListener('dblclick', function(event) {
+            // Buscar la fila más cercana al elemento clickeado
+            const row = event.target.closest('tr');
+
+            if (row && row.dataset.recordId) {
+              const conductorId = row.dataset.recordId;
+              console.log('Navegando a fichaConductor con recordId:', conductorId);
+
+              // Navegar a fichaConductor.html con el parámetro idconductor
+              window.location.href = `fichaConductor.html?idconductor=${conductorId}`;
+            } else {
+              console.warn('No se pudo obtener el recordId del conductor de la fila');
+              console.log('Row dataset:', row ? row.dataset : 'No row found');
+            }
+          });
+
+          console.log('Event listener de doble click añadido a la tabla de conductores');
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>    

@@ -46,6 +46,27 @@ License: You must have a valid license to legally use this template for your pro
   <!-- End layout styles -->
 
   <style>
+    /* Estilo personalizado para botones primarios (Publicar, Publicar documentos, etc.) */
+    .btn-primary-custom {
+      background-color: #d4d4f0;
+      border-color: #d4d4f0;
+      color: var(--bs-primary);
+      font-weight: bold;
+    }
+
+    .btn-primary-custom:hover {
+      background-color: #c0c0e8;
+      border-color: #c0c0e8;
+      color: var(--bs-primary);
+    }
+
+    .btn-primary-custom:focus,
+    .btn-primary-custom:active {
+      background-color: #c0c0e8;
+      border-color: #c0c0e8;
+      color: var(--bs-primary);
+    }
+
     #clientesTable tbody tr {
       cursor: pointer;
     }
@@ -2382,7 +2403,7 @@ License: You must have a valid license to legally use this template for your pro
                               <button type="button" class="btn btn-outline-secondary" data-proceso-cancelar>
                                 Cancelar
                               </button>
-                              <button type="button" class="btn btn-warning" data-proceso-publicar>
+                              <button type="button" class="btn btn-primary-custom" data-proceso-publicar>
                                 Publicar
                               </button>
                             </div>
@@ -2417,7 +2438,7 @@ License: You must have a valid license to legally use this template for your pro
                           <button type="button" class="btn btn-outline-secondary">
                             Cancelar (duplicado oculto)
                           </button>
-                          <button type="button" class="btn btn-warning">
+                          <button type="button" class="btn btn-primary-custom">
                             Publicar
                           </button>
                         </div>
