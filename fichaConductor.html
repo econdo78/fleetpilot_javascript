@@ -594,6 +594,12 @@ License: You must have a valid license to legally use this template for your pro
       box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12) !important;
     }
 
+    /* Asegurar que el card-body y card-header también tengan el fondo en el panel derecho (modo claro) */
+    [data-resizable-bottom] .detail-card .card-header,
+    [data-resizable-bottom] .detail-card .card-body {
+      background-color: #e5e7eb !important;
+    }
+
     /* Modo oscuro para las cards del panel inferior DERECHO */
     [data-bs-theme='dark'] [data-resizable-bottom] .detail-card.card,
     html[data-bs-theme='dark'] [data-resizable-bottom] .detail-card.card,
