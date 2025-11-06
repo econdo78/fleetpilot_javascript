@@ -7421,6 +7421,126 @@ License: You must have a valid license to legally use this template for your pro
 
       // Inicializar autocompletado de CP
       setupPostalCodeAutocomplete();
+
+      // ============================================
+      // VALIDACIÓN DE DOCUMENTOS DE IDENTIDAD
+      // ============================================
+
+      const setupDocumentValidation = () => {
+        const tipoDocumentoSelect = document.querySelector('[data-tipo-documento]');
+        const numeroDocumentoInput = document.querySelector('input[name="ndocumentoidentidad"]');
+
+        if (!tipoDocumentoSelect || !numeroDocumentoInput) {
+          return;
+        }
+
+        // Función para validar DNI español
+        const validarDNI = (dni) => {
+          // Formato: 8 números + 1 letra
+          const dniRegex = /^[0-9]{8}[A-Z]$/i;
+
+          if (!dniRegex.test(dni)) {
+            return false;
+          }
+
+          // Calcular letra correcta
+          const letras = 'TRWAGMYFPDXBNJZSQVHLCKE';
+          const numero = parseInt(dni.substring(0, 8), 10);
+          const letraCalculada = letras[numero % 23];
+          const letraProporcionada = dni.substring(8, 9).toUpperCase();
+
+          return letraCalculada === letraProporcionada;
+        };
+
+        // Función para validar NIE español
+        const validarNIE = (nie) => {
+          // Formato: X/Y/Z + 7 números + 1 letra
+          const nieRegex = /^[XYZ][0-9]{7}[A-Z]$/i;
+
+          if (!nieRegex.test(nie)) {
+            return false;
+          }
+
+          // Reemplazar la primera letra por su valor numérico
+          let nieNumerico = nie.toUpperCase();
+          nieNumerico = nieNumerico.replace('X', '0');
+          nieNumerico = nieNumerico.replace('Y', '1');
+          nieNumerico = nieNumerico.replace('Z', '2');
+
+          // Calcular letra correcta usando el mismo algoritmo que el DNI
+          const letras = 'TRWAGMYFPDXBNJZSQVHLCKE';
+          const numero = parseInt(nieNumerico.substring(0, 8), 10);
+          const letraCalculada = letras[numero % 23];
+          const letraProporcionada = nie.substring(8, 9).toUpperCase();
+
+          return letraCalculada === letraProporcionada;
+        };
+
+        // Función para validar Pasaporte
+        const validarPasaporte = (pasaporte) => {
+          // Los pasaportes pueden tener diferentes formatos según el país
+          // Validación genérica: entre 6 y 9 caracteres alfanuméricos
+          const pasaporteRegex = /^[A-Z0-9]{6,9}$/i;
+          return pasaporteRegex.test(pasaporte);
+        };
+
+        // Función principal de validación
+        const validarDocumento = () => {
+          const tipoDocumento = tipoDocumentoSelect.value;
+          const numeroDocumento = numeroDocumentoInput.value.trim();
+
+          // Si no hay tipo o número, no validar
+          if (!tipoDocumento || !numeroDocumento) {
+            numeroDocumentoInput.classList.remove('border-danger', 'border-success');
+            return;
+          }
+
+          let esValido = false;
+
+          switch (tipoDocumento) {
+            case 'DNI':
+              esValido = validarDNI(numeroDocumento);
+              break;
+            case 'NIE':
+              esValido = validarNIE(numeroDocumento);
+              break;
+            case 'Pasaporte':
+              esValido = validarPasaporte(numeroDocumento);
+              break;
+            default:
+              // Si no hay tipo seleccionado, no validar
+              numeroDocumentoInput.classList.remove('border-danger', 'border-success');
+              return;
+          }
+
+          // Aplicar feedback visual
+          if (esValido) {
+            numeroDocumentoInput.classList.remove('border-danger');
+            numeroDocumentoInput.classList.add('border-success');
+          } else {
+            numeroDocumentoInput.classList.remove('border-success');
+            numeroDocumentoInput.classList.add('border-danger');
+          }
+        };
+
+        // Validar cuando el usuario sale del campo número de documento
+        numeroDocumentoInput.addEventListener('blur', validarDocumento);
+
+        // También validar cuando cambia el tipo de documento
+        if (window.jQuery && window.jQuery.fn.select2) {
+          $(tipoDocumentoSelect).on('select2:select select2:unselect', validarDocumento);
+        } else {
+          tipoDocumentoSelect.addEventListener('change', validarDocumento);
+        }
+
+        // Limpiar validación cuando el usuario empieza a escribir
+        numeroDocumentoInput.addEventListener('input', () => {
+          numeroDocumentoInput.classList.remove('border-danger', 'border-success');
+        });
+      };
+
+      // Inicializar validación de documentos
+      setupDocumentValidation();
     });
   </script>
 
