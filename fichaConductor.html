@@ -8392,6 +8392,70 @@ License: You must have a valid license to legally use this template for your pro
               }
             }
 
+            // Llamar al script documentacion.Crear si todos los documentos se subieron exitosamente
+            if (failCount === 0 && successCount > 0) {
+              console.log('📄 Preparando llamada al script documentacion.Crear...');
+
+              // Preparar array de documentos para el script
+              const documentos = [];
+
+              uploadResults.forEach(upload => {
+                if (upload.result.success) {
+                  const docType = upload.type;
+                  let titulo = '';
+
+                  // Determinar título según el tipo de documento
+                  if (docType === 'doc-anverso') {
+                    titulo = 'Documento de identidad - Anverso';
+                  } else if (docType === 'doc-reverso') {
+                    titulo = 'Documento de identidad - Reverso';
+                  }
+
+                  // Extraer extensión del archivo
+                  const fileName = upload.file.name;
+                  const extension = fileName.split('.').pop().toLowerCase();
+
+                  documentos.push({
+                    idDrive: upload.result.fileId,
+                    url: upload.result.webViewLink,
+                    titulo: titulo,
+                    extension: extension
+                  });
+                }
+              });
+
+              // Preparar parámetro para el script
+              const scriptParameter = {
+                idEntidad: currentConductorId,
+                documentos: documentos
+              };
+
+              console.log('📋 Parámetro del script:', JSON.stringify(scriptParameter, null, 2));
+
+              try {
+                // Ejecutar script de FileMaker usando GET
+                const layoutName = 'conductor';
+                const encodedLayout = window.ApiClient.encodePathSegment(layoutName);
+                const scriptName = 'documentacion.Crear';
+                const encodedScriptName = window.ApiClient.encodePathSegment(scriptName);
+                const scriptParam = encodeURIComponent(JSON.stringify(scriptParameter));
+
+                const scriptResponse = await window.ApiClient.get(
+                  `layouts/${encodedLayout}/script/${encodedScriptName}?script.param=${scriptParam}`
+                );
+
+                if (scriptResponse.ok) {
+                  console.log('✅ Script documentacion.Crear ejecutado exitosamente');
+                  const scriptResult = await scriptResponse.json();
+                  console.log('📊 Resultado del script:', scriptResult);
+                } else {
+                  console.error('❌ Error al ejecutar script documentacion.Crear:', scriptResponse.status);
+                }
+              } catch (scriptError) {
+                console.error('❌ Excepción al ejecutar script documentacion.Crear:', scriptError);
+              }
+            }
+
             // Cerrar modal
             const publicarModal = bootstrap.Modal.getInstance(document.getElementById('publicarConfirmModal'));
             if (publicarModal) publicarModal.hide();
@@ -8405,7 +8469,7 @@ License: You must have a valid license to legally use this template for your pro
             if (failCount === 0) {
               // Todo exitoso
               if (successMessage) {
-                successMessage.textContent = `${successCount} documento(s) publicado(s) exitosamente en Google Drive`;
+                successMessage.textContent = `Los documentos se han subido al servidor correctamente`;
               }
               if (successToast) {
                 const toast = new bootstrap.Toast(successToast);
@@ -8414,7 +8478,7 @@ License: You must have a valid license to legally use this template for your pro
             } else if (successCount === 0) {
               // Todo falló
               if (errorMessage) {
-                errorMessage.textContent = 'No se pudo publicar ningún documento. Verifica tu conexión y token de Google Drive.';
+                errorMessage.textContent = 'No se pudo publicar ningún documento. Verifica tu conexión e inténtalo de nuevo.';
               }
               if (errorToast) {
                 const toast = new bootstrap.Toast(errorToast);
@@ -8423,7 +8487,7 @@ License: You must have a valid license to legally use this template for your pro
             } else {
               // Publicación parcial (algunos exitosos, algunos fallidos)
               if (errorMessage) {
-                errorMessage.textContent = `Publicación parcial: ${successCount} exitoso(s), ${failCount} con error`;
+                errorMessage.textContent = `Publicación parcial: ${successCount} documento(s) subido(s), ${failCount} con error`;
               }
               if (errorToast) {
                 const toast = new bootstrap.Toast(errorToast);
