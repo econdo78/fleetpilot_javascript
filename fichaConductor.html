@@ -5921,13 +5921,14 @@ License: You must have a valid license to legally use this template for your pro
           }
         });
 
-        if (leftover.length) {
-          const leftoverItems = leftover.map((name) => ({
-            fieldName: name,
-            label: name
-          }));
-          appendGroupCard('Otros datos', leftoverItems, context, 'info');
-        }
+        // Sección "Otros datos" deshabilitada
+        // if (leftover.length) {
+        //   const leftoverItems = leftover.map((name) => ({
+        //     fieldName: name,
+        //     label: name
+        //   }));
+        //   appendGroupCard('Otros datos', leftoverItems, context, 'info');
+        // }
 
         if (detailCategoryNav) {
           detailCategoryNav.innerHTML = '';
