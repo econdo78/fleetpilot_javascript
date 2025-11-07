@@ -394,6 +394,15 @@
       }
     }
     const fallback = normalizeKeyValue(record.recordId);
+    if (!fallback && record.recordId !== null && record.recordId !== undefined) {
+      debugWarn('⚠️ getRecordPrimaryKey: recordId exists but normalized to falsy value:', {
+        recordId: record.recordId,
+        normalized: fallback,
+        type: typeof record.recordId,
+        nombre: fieldData.nombre,
+        apellido1: fieldData.apellido1
+      });
+    }
     return fallback || null;
   };
 
@@ -1899,6 +1908,12 @@
     sourceRecords.forEach((record) => {
       const key = getRecordPrimaryKey(record);
       if (!key) {
+        debugWarn('❌ renderTable: Skipping record with no primary key:', {
+          recordId: record?.recordId,
+          nombre: record?.fieldData?.nombre,
+          apellido1: record?.fieldData?.apellido1,
+          apellido2: record?.fieldData?.apellido2
+        });
         return;
       }
       recordsByKey.set(key, record);

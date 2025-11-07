@@ -734,7 +734,7 @@
     const attempts = [];
     for (const layoutName of layoutCandidates) {
       try {
-        return await tryFetchConductoresViaLayout(layoutName);
+        return await tryFetchConductoresViaLayout(layoutName, { limit: 500 });
       } catch (error) {
         const status = error?.response?.status ?? null;
         const message = error?.message ?? 'error inesperado';
