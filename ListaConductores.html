@@ -1172,6 +1172,7 @@ License: You must have a valid license to legally use this template for your pro
             <div class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-3 mb-4 justify-content-md-between">
               <div class="d-flex align-items-center gap-2 flex-wrap">
                 <button type="button" class="btn btn-success" data-clientes-action="create" data-bs-toggle="modal" data-bs-target="#nuevoConductorModal">Nuevo Conductor</button>
+                <button type="button" class="btn btn-warning" id="testSearchButton">🔍 TEST: Buscar Paco</button>
                 <button
                   type="button"
                   class="btn btn-outline-danger d-none"
@@ -5344,6 +5345,69 @@ License: You must have a valid license to legally use this template for your pro
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // TEST BUTTON: Buscar Paco
+      const testButton = document.getElementById('testSearchButton');
+      if (testButton) {
+        testButton.addEventListener('click', async function() {
+          try {
+            testButton.textContent = '⏳ Buscando...';
+            testButton.disabled = true;
+
+            const response = await window.ApiClient.get('layouts/conductor.Listar/records?_limit=100');
+            const data = await response.json();
+            const records = data?.response?.data || [];
+
+            console.log('========== RESULTADO DE BÚSQUEDA ==========');
+            console.log(`Total registros en conductor.Listar: ${records.length}`);
+
+            // Buscar Paco con apellido2 test
+            const paco = records.filter(r => {
+              const f = r.fieldData;
+              const nombre = String(f.nombre || '').toLowerCase();
+              const apellido2 = String(f.apellido2 || '').toLowerCase();
+              return nombre.includes('paco') || apellido2.includes('test');
+            });
+
+            console.log(`Registros con "Paco" o apellido2 "test": ${paco.length}`);
+
+            if (paco.length > 0) {
+              console.log('✅ ENCONTRADOS:', paco);
+              paco.forEach((r, idx) => {
+                console.log(`\nRegistro ${idx + 1}:`, {
+                  recordId: r.recordId,
+                  nombre: r.fieldData.nombre,
+                  apellido1: r.fieldData.apellido1,
+                  apellido2: r.fieldData.apellido2,
+                  estado: r.fieldData.estado,
+                  nombreCompleto: r.fieldData.nombreCompleto,
+                  isActivo: r.fieldData.isActivo
+                });
+              });
+              alert(`✅ ENCONTRADOS ${paco.length} registro(s). Ver consola para detalles.`);
+            } else {
+              console.log('❌ NO se encontró ningún registro.');
+              alert('❌ NO se encontró ningún registro con "Paco" o apellido2 "test"');
+            }
+
+            // Mostrar estructura de los primeros 3 registros
+            console.log('\n========== ESTRUCTURA DE LOS PRIMEROS 3 REGISTROS ==========');
+            records.slice(0, 3).forEach((r, idx) => {
+              console.log(`\nRegistro ${idx + 1}:`, r.fieldData);
+            });
+            console.log('==============================================');
+
+            testButton.textContent = '🔍 TEST: Buscar Paco';
+            testButton.disabled = false;
+
+          } catch (error) {
+            console.error('Error en búsqueda:', error);
+            alert(`Error: ${error.message}`);
+            testButton.textContent = '🔍 TEST: Buscar Paco';
+            testButton.disabled = false;
+          }
+        });
+      }
+
       // Esperar a que la tabla esté lista
       document.addEventListener('clientesTable:ready', function() {
         const table = document.querySelector('#clientesTable');
