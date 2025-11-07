@@ -2233,6 +2233,7 @@ License: You must have a valid license to legally use this template for your pro
           nombre: normalizedNombre,
           apellido1: normalizedApellido1,
           estado: normalizedEstado,
+          nombreCompleto: normalizedNombreCompleto, // Siempre incluir nombreCompleto
           isActivo: '1'
         };
 
@@ -2246,14 +2247,12 @@ License: You must have a valid license to legally use this template for your pro
         if (normalizedNumeroDocumento) {
           baseFieldValues.nDocumentoIdentidad = normalizedNumeroDocumento;
         }
-        if (normalizedNombreCompleto) {
-          baseFieldValues.nombreCompleto = normalizedNombreCompleto;
-        }
 
         const fallbackFieldData = {
           nombre: normalizedNombre,
           apellido1: normalizedApellido1,
           estado: normalizedEstado,
+          nombreCompleto: normalizedNombreCompleto, // Siempre incluir nombreCompleto
           isActivo: '1'
         };
 
@@ -2267,9 +2266,6 @@ License: You must have a valid license to legally use this template for your pro
         if (normalizedNumeroDocumento) {
           fallbackFieldData.nDocumentoIdentidad = normalizedNumeroDocumento;
           fallbackFieldData.ndocumentoidentidad = normalizedNumeroDocumento;
-        }
-        if (normalizedNombreCompleto) {
-          fallbackFieldData.nombreCompleto = normalizedNombreCompleto;
         }
 
         const resolveFieldDataForLayout = (layoutFieldNames) => {
@@ -2356,9 +2352,7 @@ License: You must have a valid license to legally use this template for your pro
             registerField('nDocumentoIdentidad', baseFieldValues.nDocumentoIdentidad, { required: false });
           }
           registerField('estado', baseFieldValues.estado, { required: true });
-          if (baseFieldValues.nombreCompleto) {
-            registerField('nombreCompleto', baseFieldValues.nombreCompleto, { required: false });
-          }
+          registerField('nombreCompleto', baseFieldValues.nombreCompleto, { required: false }); // Siempre registrar
           registerField('isActivo', baseFieldValues.isActivo, { required: false });
 
           return { fieldData, missingRequired };
