@@ -2238,42 +2238,57 @@ License: You must have a valid license to legally use this template for your pro
           normalizedApellido2
         ].filter(Boolean).join(' ');
 
-        if (!normalizedTipoDocumento) {
-          throw new Error('El tipo de documento es obligatorio.');
+        // Validaciones eliminadas: tipo y número de documento ya no son obligatorios
+        // Solo validamos nombre y apellido1
+        if (!normalizedNombre) {
+          throw new Error('El nombre es obligatorio.');
         }
 
-        if (!normalizedNumeroDocumento) {
-          throw new Error('El número de documento es obligatorio.');
+        if (!normalizedApellido1) {
+          throw new Error('El primer apellido es obligatorio.');
         }
 
         const baseFieldValues = {
           nombre: normalizedNombre,
           apellido1: normalizedApellido1,
-          apellido2: normalizedApellido2,
-          tipoDocumentoIdentidad: normalizedTipoDocumento,
-          nDocumentoIdentidad: normalizedNumeroDocumento,
           estado: normalizedEstado,
-          nombreCompleto: normalizedNombreCompleto,
           isActivo: '1'
         };
+
+        // Añadir campos opcionales solo si tienen valor
+        if (normalizedApellido2) {
+          baseFieldValues.apellido2 = normalizedApellido2;
+        }
+        if (normalizedTipoDocumento) {
+          baseFieldValues.tipoDocumentoIdentidad = normalizedTipoDocumento;
+        }
+        if (normalizedNumeroDocumento) {
+          baseFieldValues.nDocumentoIdentidad = normalizedNumeroDocumento;
+        }
+        if (normalizedNombreCompleto) {
+          baseFieldValues.nombreCompleto = normalizedNombreCompleto;
+        }
 
         const fallbackFieldData = {
           nombre: normalizedNombre,
           apellido1: normalizedApellido1,
-          tipoDocumentoIdentidad: normalizedTipoDocumento,
-          nDocumentoIdentidad: normalizedNumeroDocumento,
-          ndocumentoidentidad: normalizedNumeroDocumento,
           estado: normalizedEstado,
           isActivo: '1'
         };
 
+        // Añadir campos opcionales solo si tienen valor
         if (normalizedApellido2) {
           fallbackFieldData.apellido2 = normalizedApellido2;
         }
+        if (normalizedTipoDocumento) {
+          fallbackFieldData.tipoDocumentoIdentidad = normalizedTipoDocumento;
+        }
+        if (normalizedNumeroDocumento) {
+          fallbackFieldData.nDocumentoIdentidad = normalizedNumeroDocumento;
+          fallbackFieldData.ndocumentoidentidad = normalizedNumeroDocumento;
+        }
         if (normalizedNombreCompleto) {
           fallbackFieldData.nombreCompleto = normalizedNombreCompleto;
-        } else {
-          delete fallbackFieldData.nombreCompleto;
         }
 
         const resolveFieldDataForLayout = (layoutFieldNames) => {
@@ -2352,8 +2367,13 @@ License: You must have a valid license to legally use this template for your pro
           if (baseFieldValues.apellido2) {
             registerField('apellido2', baseFieldValues.apellido2, { required: false });
           }
-          registerField('tipoDocumentoIdentidad', baseFieldValues.tipoDocumentoIdentidad, { required: true });
-          registerField('nDocumentoIdentidad', baseFieldValues.nDocumentoIdentidad, { required: true });
+          // Campos de documento ahora opcionales
+          if (baseFieldValues.tipoDocumentoIdentidad) {
+            registerField('tipoDocumentoIdentidad', baseFieldValues.tipoDocumentoIdentidad, { required: false });
+          }
+          if (baseFieldValues.nDocumentoIdentidad) {
+            registerField('nDocumentoIdentidad', baseFieldValues.nDocumentoIdentidad, { required: false });
+          }
           registerField('estado', baseFieldValues.estado, { required: true });
           if (baseFieldValues.nombreCompleto) {
             registerField('nombreCompleto', baseFieldValues.nombreCompleto, { required: false });
