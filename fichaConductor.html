@@ -2020,6 +2020,37 @@ License: You must have a valid license to legally use this template for your pro
           </div>
         </div>
 
+        <!-- Modal para ver documentos del histórico -->
+        <div class="modal fade" id="historicoDocumentosModal" tabindex="-1" aria-labelledby="historicoDocumentosModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0">
+              <div class="modal-header bg-secondary text-white border-0">
+                <div class="d-flex align-items-center gap-2 flex-grow-1">
+                  <h5 class="modal-title text-white mb-0 flex-grow-1" id="historicoDocumentosModalLabel">
+                    <i class="me-2" data-lucide="image"></i>
+                    Documentos del histórico
+                  </h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+              <div class="modal-body pb-4">
+                <div id="historicoDocumentosContainer" class="row g-4">
+                  <!-- Las imágenes se generarán dinámicamente aquí -->
+                </div>
+                <div id="historicoDocumentosLoading" class="text-center py-5" style="display: none;">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando documentos...</span>
+                  </div>
+                  <p class="text-secondary mt-3">Descargando documentos...</p>
+                </div>
+              </div>
+              <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="modal fade" id="nuevoConductorModal" tabindex="-1" aria-labelledby="nuevoConductorModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
           <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0">
@@ -2479,6 +2510,164 @@ License: You must have a valid license to legally use this template for your pro
         }
       };
 
+      /**
+       * Muestra el modal de documentos del histórico
+       * @param {string} datosJson - JSON string con array de objetos {imagen: idGoogleDrive}
+       */
+      const showHistoricoDocumentosModal = async (datosJson) => {
+        try {
+          console.log('🖼️ Mostrando modal de documentos (raw):', datosJson);
+
+          // Parsear el JSON
+          let documentos = [];
+          if (typeof datosJson === 'string') {
+            documentos = JSON.parse(datosJson);
+          } else if (Array.isArray(datosJson)) {
+            documentos = datosJson;
+          }
+
+          console.log('✅ Documentos parseados:', documentos);
+          console.log('📊 Número de documentos:', documentos.length);
+
+          const container = document.getElementById('historicoDocumentosContainer');
+          const loading = document.getElementById('historicoDocumentosLoading');
+
+          if (!container || !loading) {
+            console.error('No se encontraron los elementos del modal de documentos');
+            return;
+          }
+
+          // Mostrar el modal primero
+          const modalElement = document.getElementById('historicoDocumentosModal');
+          const modal = new bootstrap.Modal(modalElement);
+          modal.show();
+
+          // Actualizar iconos de Lucide
+          if (window.lucide) {
+            window.lucide.createIcons();
+          }
+
+          // Limpiar el contenedor y mostrar loading
+          container.innerHTML = '';
+          loading.style.display = 'block';
+
+          // Descargar y mostrar cada imagen
+          for (let i = 0; i < documentos.length; i++) {
+            const doc = documentos[i];
+            const idGoogleDrive = doc.imagen;
+
+            if (!idGoogleDrive) {
+              console.warn('⚠️ Documento sin idGoogleDrive:', doc);
+              continue;
+            }
+
+            console.log(`📥 Descargando documento ${i + 1}/${documentos.length}:`, idGoogleDrive);
+
+            try {
+              // Descargar imagen de Google Drive
+              const imageUrl = await downloadFromGoogleDrive(idGoogleDrive);
+
+              // Determinar label (Anverso, Reverso, o Documento N)
+              let label = `Documento ${i + 1}`;
+              if (documentos.length === 2) {
+                label = i === 0 ? 'Anverso' : 'Reverso';
+              }
+
+              // Crear columna con la imagen
+              const imageHtml = `
+                <div class="col-md-6">
+                  <div class="card">
+                    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                      <h6 class="mb-0">
+                        <i data-lucide="image" class="me-2" style="width: 16px; height: 16px;"></i>
+                        ${label}
+                      </h6>
+                      <button class="btn btn-sm btn-light" onclick="(function(url, name) {
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = name + '.jpg';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      })('${imageUrl}', '${label}')" title="Descargar imagen">
+                        <i data-lucide="download" class="me-1" style="width: 14px; height: 14px;"></i>
+                        Descargar
+                      </button>
+                    </div>
+                    <div class="card-body p-2">
+                      <img src="${imageUrl}" alt="${label}" class="img-fluid w-100" style="max-height: 500px; object-fit: contain; cursor: pointer;" onclick="window.open('${imageUrl}', '_blank')">
+                    </div>
+                  </div>
+                </div>
+              `;
+
+              container.insertAdjacentHTML('beforeend', imageHtml);
+
+              console.log(`✅ Imagen ${i + 1} cargada: ${label}`);
+
+            } catch (error) {
+              console.error(`❌ Error al descargar documento ${i + 1}:`, error);
+
+              // Mostrar error en la interfaz
+              const errorHtml = `
+                <div class="col-md-6">
+                  <div class="card border-danger">
+                    <div class="card-header bg-danger text-white">
+                      <h6 class="mb-0">
+                        <i data-lucide="alert-circle" class="me-2" style="width: 16px; height: 16px;"></i>
+                        Error al cargar documento ${i + 1}
+                      </h6>
+                    </div>
+                    <div class="card-body">
+                      <p class="text-danger mb-0">No se pudo descargar la imagen de Google Drive</p>
+                      <small class="text-muted">ID: ${idGoogleDrive}</small>
+                    </div>
+                  </div>
+                </div>
+              `;
+
+              container.insertAdjacentHTML('beforeend', errorHtml);
+            }
+          }
+
+          // Ocultar loading
+          loading.style.display = 'none';
+
+          // Actualizar iconos de Lucide después de añadir el contenido
+          if (window.lucide) {
+            window.lucide.createIcons();
+          }
+
+          console.log('✅ Modal de documentos mostrado exitosamente');
+
+        } catch (error) {
+          console.error('❌ Error al mostrar modal de documentos:', error);
+
+          // Ocultar loading en caso de error
+          const loading = document.getElementById('historicoDocumentosLoading');
+          if (loading) {
+            loading.style.display = 'none';
+          }
+
+          // Mostrar mensaje de error en el container
+          const container = document.getElementById('historicoDocumentosContainer');
+          if (container) {
+            container.innerHTML = `
+              <div class="col-12">
+                <div class="alert alert-danger" role="alert">
+                  <i data-lucide="alert-circle" class="me-2"></i>
+                  Error al cargar los documentos: ${error.message}
+                </div>
+              </div>
+            `;
+
+            if (window.lucide) {
+              window.lucide.createIcons();
+            }
+          }
+        }
+      };
+
       const initProcesoLogTable = async (data = null, conductorId = null, procesoId = null) => {
         if (!window.jQuery?.fn?.DataTable) {
           return;
@@ -2551,7 +2740,13 @@ License: You must have a valid license to legally use this template for your pro
           if (row && row.data()) {
             const rowData = row.data();
             console.log('Click en Ver datos, fila:', rowData);
-            showHistoricoDatosModal(rowData.datos);
+
+            // Detectar el tipo por la acción y abrir el modal correspondiente
+            if (rowData.accion === 'SUBIDA_DOCUMENTOS') {
+              showHistoricoDocumentosModal(rowData.datos);
+            } else {
+              showHistoricoDatosModal(rowData.datos);
+            }
           }
         });
       };
