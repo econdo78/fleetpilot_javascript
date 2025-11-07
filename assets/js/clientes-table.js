@@ -21,7 +21,9 @@
   const COLUMN_SEARCH_SELECTOR = '[data-clientes-columns-search]';
   const COLUMN_EMPTY_SELECTOR = '[data-clientes-columns-empty]';
   const PRIMARY_COLUMN_ALIASES = [
-    ['nombrecompleto'],
+    ['nombre'],
+    ['apellido1', 'primerapellido'],
+    ['apellido2', 'segundoapellido'],
     ['dni', 'documentoidentidad', 'ndocumentoidentidad', 'ndcumentoidentidad'],
     ['estado'],
     ['matricula', 'matriculavehiculoasignado', 'matriculaasignada'],
