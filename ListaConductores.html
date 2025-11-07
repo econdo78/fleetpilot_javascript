@@ -5392,7 +5392,9 @@ License: You must have a valid license to legally use this template for your pro
             // Mostrar estructura de los primeros 3 registros
             console.log('\n========== ESTRUCTURA DE LOS PRIMEROS 3 REGISTROS ==========');
             records.slice(0, 3).forEach((r, idx) => {
-              console.log(`\nRegistro ${idx + 1}:`, r.fieldData);
+              console.log(`\n--- Registro ${idx + 1} (RecordId: ${r.recordId}) ---`);
+              console.log('TODOS LOS CAMPOS:', Object.keys(r.fieldData));
+              console.log('VALORES COMPLETOS:', JSON.stringify(r.fieldData, null, 2));
             });
             console.log('==============================================');
 
