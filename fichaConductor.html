@@ -8978,6 +8978,289 @@ License: You must have a valid license to legally use this template for your pro
               }
             }
 
+            // ============================================
+            // ACTUALIZACIÓN AUTOMÁTICA DE DATOS DESDE OCR
+            // ============================================
+            let numCamposActualizados = 0;
+            let camposActualizadosTexto = '';
+
+            if (failCount === 0 && successCount > 0) {
+              console.log('🔄 Verificando actualización automática desde OCR...');
+
+              // 1. Verificar que el checkbox existe y está marcado
+              const checkboxOCR = document.getElementById('actualizarDatosOCR');
+              if (!checkboxOCR || !checkboxOCR.checked) {
+                console.log('⊘ Actualización OCR omitida: checkbox no marcado');
+              } else {
+                console.log('✓ Checkbox de actualización OCR está marcado');
+
+                // 2. Obtener datos del OCR del DOM
+                const anversoData = {
+                  nombre: document.querySelector('[data-ocr-nombre]')?.textContent?.trim(),
+                  dni: document.querySelector('[data-ocr-dni]')?.textContent?.trim(),
+                  nacionalidad: document.querySelector('[data-ocr-nacionalidad]')?.textContent?.trim(),
+                  nacimiento: document.querySelector('[data-ocr-nacimiento]')?.textContent?.trim(),
+                  caducidad: document.querySelector('[data-ocr-caducidad]')?.textContent?.trim()
+                };
+
+                const reversoData = {
+                  domicilio: document.querySelector('[data-ocr-domicilio]')?.textContent?.trim(),
+                  localidad: document.querySelector('[data-ocr-localidad]')?.textContent?.trim(),
+                  provincia: document.querySelector('[data-ocr-provincia]')?.textContent?.trim()
+                };
+
+                console.log('📄 Datos OCR Anverso:', anversoData);
+                console.log('📄 Datos OCR Reverso:', reversoData);
+
+                // Verificar que hay al menos algún dato para actualizar
+                const hayDatosAnverso = Object.values(anversoData).some(v => v && v !== '-');
+                const hayDatosReverso = Object.values(reversoData).some(v => v && v !== '-');
+
+                if (!hayDatosAnverso && !hayDatosReverso) {
+                  console.log('⊘ No hay datos del OCR para actualizar');
+                } else {
+                  console.log('✓ Datos del OCR disponibles para actualización');
+
+                  // 3. Obtener datos actuales del conductor desde FileMaker
+                  console.log('📥 Obteniendo datos actuales del conductor...');
+
+                  const layoutName = 'conductor.pdbconductor';
+                  const encodedLayout = window.ApiClient.encodePathSegment(layoutName);
+
+                  try {
+                    const conductorActualResponse = await window.ApiClient.get(
+                      `layouts/${encodedLayout}/records/${encodeURIComponent(currentConductorRecordId)}`
+                    );
+
+                    if (!conductorActualResponse.ok) {
+                      console.error('❌ No se pudo obtener el conductor:', conductorActualResponse.status);
+                    } else {
+                      const conductorActualData = await conductorActualResponse.json();
+                      const conductorFields = conductorActualData?.response?.data?.[0]?.fieldData || {};
+
+                      console.log('✓ Datos actuales del conductor obtenidos');
+                      console.log('📊 Campos actuales:', conductorFields);
+
+                      // 4. Determinar qué campos necesitan actualización (solo los vacíos)
+                      const fieldsToUpdate = {};
+
+                      // Función helper para verificar si un campo está vacío
+                      function isFieldEmpty(value) {
+                        return value === null ||
+                               value === undefined ||
+                               value === '' ||
+                               String(value).trim() === '' ||
+                               value === '—' ||
+                               value === '-';
+                      }
+
+                      // --- ANVERSO ---
+
+                      // Parsear nombre completo (nombre, apellido1, apellido2)
+                      if (anversoData.nombre && anversoData.nombre !== '-') {
+                        const partes = anversoData.nombre.trim().split(/\s+/);
+                        const nombreParsed = partes[0] || '';
+                        const apellido1Parsed = partes[1] || '';
+                        const apellido2Parsed = partes[2] || '';
+
+                        if (isFieldEmpty(conductorFields.nombre) && nombreParsed) {
+                          fieldsToUpdate.nombre = nombreParsed;
+                        }
+                        if (isFieldEmpty(conductorFields.apellido1) && apellido1Parsed) {
+                          fieldsToUpdate.apellido1 = apellido1Parsed;
+                        }
+                        if (isFieldEmpty(conductorFields.apellido2) && apellido2Parsed) {
+                          fieldsToUpdate.apellido2 = apellido2Parsed;
+                        }
+                      }
+
+                      // DNI
+                      if (anversoData.dni && anversoData.dni !== '-' && isFieldEmpty(conductorFields.nDocumentoIdentidad)) {
+                        fieldsToUpdate.nDocumentoIdentidad = anversoData.dni;
+                      }
+
+                      // Fecha de nacimiento (convertir formato)
+                      if (anversoData.nacimiento && anversoData.nacimiento !== '-' && isFieldEmpty(conductorFields.fechaNacimiento)) {
+                        const [day, month, year] = anversoData.nacimiento.split('/');
+                        if (day && month && year) {
+                          fieldsToUpdate.fechaNacimiento = `${month}/${day}/${year}`; // DD/MM/YYYY → MM/DD/YYYY
+                        }
+                      }
+
+                      // Fecha de caducidad (convertir formato)
+                      if (anversoData.caducidad && anversoData.caducidad !== '-' && isFieldEmpty(conductorFields.fechaCaducidadDocumento)) {
+                        const [day, month, year] = anversoData.caducidad.split('/');
+                        if (day && month && year) {
+                          fieldsToUpdate.fechaCaducidadDocumento = `${month}/${day}/${year}`; // DD/MM/YYYY → MM/DD/YYYY
+                        }
+                      }
+
+                      // Nacionalidad (mapear código a país)
+                      if (anversoData.nacionalidad && anversoData.nacionalidad !== '-' && isFieldEmpty(conductorFields.nacionalidad)) {
+                        const nacionalidadMap = {
+                          'ESP': 'España', 'FRA': 'Francia', 'ITA': 'Italia', 'PRT': 'Portugal',
+                          'DEU': 'Alemania', 'GBR': 'Reino Unido', 'IRL': 'Irlanda', 'NLD': 'Países Bajos',
+                          'BEL': 'Bélgica', 'LUX': 'Luxemburgo', 'CHE': 'Suiza', 'AUT': 'Austria',
+                          'GRC': 'Grecia', 'SWE': 'Suecia', 'NOR': 'Noruega', 'DNK': 'Dinamarca',
+                          'FIN': 'Finlandia', 'ISL': 'Islandia', 'POL': 'Polonia', 'ROU': 'Rumanía',
+                          'BGR': 'Bulgaria', 'HUN': 'Hungría', 'CZE': 'República Checa', 'SVK': 'Eslovaquia',
+                          'SVN': 'Eslovenia', 'HRV': 'Croacia', 'SRB': 'Serbia', 'BIH': 'Bosnia y Herzegovina',
+                          'MKD': 'Macedonia del Norte', 'ALB': 'Albania', 'MNE': 'Montenegro', 'LTU': 'Lituania',
+                          'LVA': 'Letonia', 'EST': 'Estonia', 'UKR': 'Ucrania', 'BLR': 'Bielorrusia',
+                          'MDA': 'Moldavia', 'RUS': 'Rusia', 'USA': 'Estados Unidos', 'CAN': 'Canadá',
+                          'MEX': 'México', 'ARG': 'Argentina', 'BRA': 'Brasil', 'CHL': 'Chile',
+                          'COL': 'Colombia', 'PER': 'Perú', 'VEN': 'Venezuela', 'ECU': 'Ecuador',
+                          'BOL': 'Bolivia', 'PRY': 'Paraguay', 'URY': 'Uruguay', 'CUB': 'Cuba',
+                          'DOM': 'República Dominicana', 'GTM': 'Guatemala', 'HND': 'Honduras',
+                          'NIC': 'Nicaragua', 'CRI': 'Costa Rica', 'PAN': 'Panamá', 'SLV': 'El Salvador',
+                          'MAR': 'Marruecos', 'DZA': 'Argelia', 'TUN': 'Túnez', 'EGY': 'Egipto',
+                          'SEN': 'Senegal', 'GHA': 'Ghana', 'NGA': 'Nigeria', 'KEN': 'Kenia',
+                          'ZAF': 'Sudáfrica', 'ETH': 'Etiopía', 'CHN': 'China', 'JPN': 'Japón',
+                          'KOR': 'Corea del Sur', 'IND': 'India', 'PAK': 'Pakistán', 'BGD': 'Bangladesh',
+                          'PHL': 'Filipinas', 'VNM': 'Vietnam', 'THA': 'Tailandia', 'IDN': 'Indonesia',
+                          'MYS': 'Malasia', 'SGP': 'Singapur', 'IRN': 'Irán', 'IRQ': 'Irak',
+                          'SAU': 'Arabia Saudita', 'TUR': 'Turquía', 'AUS': 'Australia', 'NZL': 'Nueva Zelanda'
+                        };
+
+                        const codigo = anversoData.nacionalidad.toUpperCase();
+                        fieldsToUpdate.nacionalidad = nacionalidadMap[codigo] || codigo;
+                      }
+
+                      // --- REVERSO ---
+
+                      // Domicilio (nombreVia)
+                      if (reversoData.domicilio && reversoData.domicilio !== '-' && isFieldEmpty(conductorFields.nombreVia)) {
+                        fieldsToUpdate.nombreVia = reversoData.domicilio;
+                      }
+
+                      // Localidad
+                      if (reversoData.localidad && reversoData.localidad !== '-' && isFieldEmpty(conductorFields.localidad)) {
+                        fieldsToUpdate.localidad = reversoData.localidad;
+                      }
+
+                      // Provincia
+                      if (reversoData.provincia && reversoData.provincia !== '-' && isFieldEmpty(conductorFields.provincia)) {
+                        fieldsToUpdate.provincia = reversoData.provincia;
+                      }
+
+                      console.log('📋 Campos a actualizar:', fieldsToUpdate);
+                      console.log('📊 Total de campos a actualizar:', Object.keys(fieldsToUpdate).length);
+
+                      // Si no hay nada que actualizar, salir
+                      if (Object.keys(fieldsToUpdate).length === 0) {
+                        console.log('✓ No hay campos vacíos para actualizar');
+                      } else {
+                        // 5. Actualizar el conductor en FileMaker
+                        console.log('💾 Actualizando conductor en FileMaker...');
+
+                        const updatePayload = {
+                          fieldData: fieldsToUpdate
+                        };
+
+                        try {
+                          const updateResponse = await window.ApiClient.patch(
+                            `layouts/${encodedLayout}/records/${encodeURIComponent(currentConductorRecordId)}`,
+                            updatePayload
+                          );
+
+                          if (!updateResponse.ok) {
+                            console.error('❌ No se pudo actualizar el conductor:', updateResponse.status);
+                            const errorText = await updateResponse.text().catch(() => '');
+                            console.error('  Detalles:', errorText);
+                          } else {
+                            console.log('✅ Conductor actualizado exitosamente con datos del OCR');
+
+                            // 6. Crear registro en histórico
+                            console.log('📝 Creando registro histórico de actualización OCR...');
+
+                            const historicoDatos = JSON.stringify(fieldsToUpdate);
+                            const fieldsList = Object.keys(fieldsToUpdate).join(', ');
+                            const resumen = `Datos actualizados desde OCR del DNI: ${fieldsList}`;
+
+                            const historicoPayload = {
+                              fieldData: {
+                                accion: 'ACTUALIZACION_OCR',
+                                datos: historicoDatos,
+                                resumen: resumen,
+                                idEntidad: currentConductorId,
+                                tipo: 'datos'
+                              }
+                            };
+
+                            try {
+                              const historicoResponse = await window.ApiClient.post(
+                                'layouts/historico/records',
+                                historicoPayload
+                              );
+
+                              if (historicoResponse.ok) {
+                                console.log('✅ Registro histórico de actualización OCR creado');
+                              } else {
+                                console.warn('⚠️ No se pudo crear registro histórico de OCR:', historicoResponse.status);
+                              }
+                            } catch (historicoError) {
+                              console.warn('⚠️ Error al crear registro histórico de OCR:', historicoError);
+                            }
+
+                            // 7. Actualizar formularios visuales
+                            console.log('🔄 Actualizando formularios visuales...');
+
+                            // Combinar datos originales con los actualizados
+                            const updatedConductorData = { ...originalConductorData, ...fieldsToUpdate };
+
+                            // Repoblar formularios con los datos actualizados
+                            populateEditableForms(updatedConductorData);
+
+                            // Actualizar variable global para futuras comparaciones
+                            originalConductorData = updatedConductorData;
+
+                            console.log('✅ Formularios visuales actualizados');
+
+                            // 8. Actualizar panel derecho (vista de solo lectura)
+                            console.log('🔄 Actualizando panel de detalle...');
+
+                            try {
+                              // Obtener registro actualizado desde FileMaker
+                              const updatedRecordResponse = await window.ApiClient.get(
+                                `layouts/${encodedLayout}/records/${encodeURIComponent(currentConductorRecordId)}`
+                              );
+
+                              if (updatedRecordResponse.ok) {
+                                const updatedRecordData = await updatedRecordResponse.json();
+                                const updatedRecord = updatedRecordData?.response?.data?.[0];
+
+                                if (updatedRecord && typeof renderDetail === 'function') {
+                                  renderDetail(updatedRecord);
+                                  console.log('✅ Panel de detalle actualizado');
+                                } else {
+                                  console.warn('⚠️ No se pudo actualizar el panel de detalle: registro o función no disponible');
+                                }
+                              } else {
+                                console.warn('⚠️ No se pudo obtener registro actualizado para el panel:', updatedRecordResponse.status);
+                              }
+                            } catch (error) {
+                              console.warn('⚠️ Error al actualizar panel de detalle:', error);
+                            }
+
+                            // 9. Guardar datos para el mensaje de éxito
+                            numCamposActualizados = Object.keys(fieldsToUpdate).length;
+                            camposActualizadosTexto = Object.keys(fieldsToUpdate).join(', ');
+
+                            console.log(`✅ Actualización OCR completada: ${numCamposActualizados} campo(s) actualizados`);
+                            console.log(`   Campos: ${camposActualizadosTexto}`);
+                          }
+                        } catch (error) {
+                          console.error('❌ Error al actualizar conductor:', error);
+                        }
+                      }
+                    }
+                  } catch (error) {
+                    console.error('❌ Error al obtener datos del conductor:', error);
+                  }
+                }
+              }
+            }
+
             // Cerrar modal
             const publicarModal = bootstrap.Modal.getInstance(document.getElementById('publicarConfirmModal'));
             if (publicarModal) publicarModal.hide();
@@ -8990,8 +9273,15 @@ License: You must have a valid license to legally use this template for your pro
 
             if (failCount === 0) {
               // Todo exitoso
+              let mensajeExito = 'Los documentos se han subido al servidor correctamente';
+
+              // Si hubo actualización OCR, añadir información
+              if (numCamposActualizados > 0) {
+                mensajeExito += `. Se actualizaron ${numCamposActualizados} campo(s) del conductor: ${camposActualizadosTexto}`;
+              }
+
               if (successMessage) {
-                successMessage.textContent = `Los documentos se han subido al servidor correctamente`;
+                successMessage.textContent = mensajeExito;
               }
               if (successToast) {
                 const toast = new bootstrap.Toast(successToast);
