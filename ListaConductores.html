@@ -2047,16 +2047,16 @@ License: You must have a valid license to legally use this template for your pro
                     if (selected) {
                       debugLog('✅ Conductor seleccionado automáticamente');
                     } else {
-                      console.error('❌ No se pudo seleccionar el conductor después de 2 intentos.');
-                      showSaveToast('Conductor creado, pero no se pudo seleccionar automáticamente. Recarga la página.', 'warning');
+                      debugLog('⚠️ No se pudo seleccionar el conductor después de 2 intentos.');
+                      // No mostrar error al usuario, solo log para debugging
                     }
                   }
                 } else {
-                  console.error('❌ window.ClientesTable.reload no está disponible');
+                  debugLog('⚠️ window.ClientesTable.reload no está disponible');
                 }
               } catch (reloadError) {
-                console.error('❌ Error al recargar la tabla:', reloadError);
-                showSaveToast('Conductor creado, pero hubo un error al recargar la tabla. Recarga la página manualmente.', 'warning');
+                debugLog('⚠️ Error al recargar la tabla:', reloadError);
+                // No mostrar error al usuario, solo log para debugging
               }
 
               // Restaurar botón después de todo
