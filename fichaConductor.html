@@ -1579,7 +1579,7 @@ License: You must have a valid license to legally use this template for your pro
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nº Documento <span class="text-danger">*</span></label>
-                                          <input type="text" class="form-control" name="ndocumentoidentidad" value="" required>
+                                          <input type="text" class="form-control" name="nDocumentoIdentidad" value="" required>
                                         </div>
                                         <div class="detail-grid-item">
                                           <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Nacionalidad</label>
@@ -2947,7 +2947,7 @@ License: You must have a valid license to legally use this template for your pro
         'datos-basicos': [
           'nombre', 'apellido1', 'apellido2',
           'fechaNacimiento', 'tipoDocumentoIdentidad',
-          'ndocumentoidentidad', 'nacionalidad', 'nivelFormativoTrabajador'
+          'nDocumentoIdentidad', 'nacionalidad', 'nivelFormativoTrabajador'
         ],
         'direccion': [
           'tipoVia', 'nombreVia', 'numero',
@@ -2985,6 +2985,8 @@ License: You must have a valid license to legally use this template for your pro
             const fieldName = field.name;
             let fieldValue = fieldData[fieldName];
 
+            console.log(`    🔍 Buscando ${fieldName} en fieldData:`, fieldValue);
+
             // Si el campo tiene un valor en los datos
             if (fieldValue !== null && fieldValue !== undefined) {
               // Convertir fechas de FileMaker (MM/DD/YYYY) a formato HTML5 (YYYY-MM-DD)
@@ -2995,8 +2997,27 @@ License: You must have a valid license to legally use this template for your pro
                 }
               }
 
-              field.value = fieldValue;
-              console.log(`    ✓ ${fieldName}: ${fieldValue}`);
+              // Para selects, necesitamos asegurar que el valor existe en las opciones
+              if (field.tagName === 'SELECT') {
+                const optionExists = Array.from(field.options).some(opt => opt.value === fieldValue);
+                if (optionExists) {
+                  field.value = fieldValue;
+
+                  // Si el select usa Select2, actualizarlo
+                  if (typeof $ !== 'undefined' && $(field).data('select2')) {
+                    $(field).trigger('change');
+                  }
+
+                  console.log(`    ✓ ${fieldName}: ${fieldValue} (select poblado)`);
+                } else {
+                  console.warn(`    ⚠️ ${fieldName}: Valor "${fieldValue}" no existe en las opciones del select`);
+                }
+              } else {
+                field.value = fieldValue;
+                console.log(`    ✓ ${fieldName}: ${fieldValue}`);
+              }
+            } else {
+              console.log(`    ⊘ ${fieldName}: sin valor (null/undefined)`);
             }
           });
         });
@@ -3102,7 +3123,7 @@ License: You must have a valid license to legally use this template for your pro
               }
             } else {
               // Validación adicional para campos de documento
-              if (field.name === 'ndocumentoidentidad') {
+              if (field.name === 'nDocumentoIdentidad') {
                 const tipoDocumento = form.querySelector('[name="tipoDocumentoIdentidad"]')?.value;
                 if (tipoDocumento && !window.validarDocumentoPorTipo(value, tipoDocumento)) {
                   hasErrors = true;
@@ -3278,7 +3299,8 @@ License: You must have a valid license to legally use this template for your pro
                 accion: 'MODIFICACION',
                 datos: historicoDatos,
                 resumen: resumen,
-                idEntidad: currentConductorId
+                idEntidad: currentConductorId,
+                tipo: 'datos'
               }
             };
 
@@ -8451,6 +8473,9 @@ License: You must have a valid license to legally use this template for your pro
       // BOTÓN PUBLICAR DOCUMENTOS
       // ========================================
 
+      // Variable para controlar si la modal fue activada desde el botón de documentos
+      let isDocumentPublishMode = false;
+
       const publicarDocumentosBtn = document.getElementById('publicarDocumentosBtn');
 
       if (publicarDocumentosBtn) {
@@ -8506,6 +8531,9 @@ License: You must have a valid license to legally use this template for your pro
 
           console.log(`✅ ${documentsToUpload.length} documento(s) listo(s) para publicar`);
 
+          // Marcar que estamos en modo de publicación de documentos
+          isDocumentPublishMode = true;
+
           // Mostrar modal de confirmación
           const publicarModal = new bootstrap.Modal(document.getElementById('publicarConfirmModal'));
           publicarModal.show();
@@ -8517,7 +8545,15 @@ License: You must have a valid license to legally use this template for your pro
 
       if (publicarConfirmarBtn) {
         publicarConfirmarBtn.addEventListener('click', async () => {
-          console.log('✅ Confirmación recibida, iniciando subida...');
+          // Solo ejecutar esta lógica si estamos en modo de publicación de documentos
+          if (!isDocumentPublishMode) {
+            return;
+          }
+
+          console.log('✅ Confirmación recibida, iniciando subida de documentos...');
+
+          // Resetear el flag
+          isDocumentPublishMode = false;
 
           // Verificar que hay conductor cargado
           if (!currentConductorRecordId || !currentConductorId) {
@@ -8967,7 +9003,7 @@ License: You must have a valid license to legally use this template for your pro
 
       const setupDocumentValidation = () => {
         const tipoDocumentoSelect = document.querySelector('[data-tipo-documento]');
-        const numeroDocumentoInput = document.querySelector('input[name="ndocumentoidentidad"]');
+        const numeroDocumentoInput = document.querySelector('input[name="nDocumentoIdentidad"]');
 
         if (!tipoDocumentoSelect || !numeroDocumentoInput) {
           return;
