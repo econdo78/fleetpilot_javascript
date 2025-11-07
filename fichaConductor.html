@@ -6382,6 +6382,21 @@ License: You must have a valid license to legally use this template for your pro
 
         console.log('✅ Elementos DOM presentes, continuando con renderizado...');
 
+        // Actualizar variables globales cuando se selecciona un conductor
+        if (record) {
+          const fieldData = record.fieldData || {};
+          currentConductorRecordId = record.recordId;
+          currentConductorId = fieldData.id; // UUID del conductor
+          originalConductorData = { ...fieldData };
+
+          console.log('💾 Variables globales actualizadas en renderDetail:');
+          console.log('  - currentConductorRecordId:', currentConductorRecordId);
+          console.log('  - currentConductorId (UUID):', currentConductorId);
+
+          // Verificar y cargar documentación del DNI si existe
+          checkAndLoadDNIDocumentation();
+        }
+
         if (detailCategoryNav) {
           detailCategoryNav.innerHTML = '';
         }
@@ -7452,6 +7467,9 @@ License: You must have a valid license to legally use this template for your pro
               // Poblar los formularios editables con los datos del conductor
               populateEditableForms(fieldData);
 
+              // Verificar y cargar documentación del DNI si existe
+              checkAndLoadDNIDocumentation();
+
               console.log('✅ Panel de detalle renderizado correctamente');
             } else {
               console.error('❌ No se encontró el conductor con recordId:', initialRecordIdParam);
@@ -8220,6 +8238,214 @@ License: You must have a valid license to legally use this template for your pro
 
       // Ejecutar al cargar la página
       refreshGoogleDriveToken();
+
+      // ========================================
+      // CARGAR DOCUMENTACIÓN EXISTENTE DEL DNI
+      // ========================================
+
+      /**
+       * Consulta si existe documentación del DNI en el backend
+       * @returns {Promise<Array>} Array de documentos encontrados
+       */
+      async function loadExistingDNIDocumentation() {
+        try {
+          if (!currentConductorId) {
+            console.log('⚠️ No hay currentConductorId disponible para consultar documentación');
+            return [];
+          }
+
+          console.log('🔍 Consultando documentación existente del DNI para conductor:', currentConductorId);
+
+          // Consultar layout documentacion filtrando por idOrigen usando _find
+          const layoutName = 'documentacion';
+          const encodedLayout = window.ApiClient.encodePathSegment(layoutName);
+
+          const response = await window.ApiClient.post(
+            `layouts/${encodedLayout}/_find`,
+            {
+              query: [{
+                idOrigen: currentConductorId
+              }],
+              sort: [
+                {
+                  fieldName: "creadoEl",
+                  sortOrder: "descend"
+                }
+              ],
+              limit: "2"
+            }
+          );
+
+          // FileMaker devuelve 401 cuando no encuentra registros
+          if (response.status === 401) {
+            console.log('ℹ️ No se encontró documentación previa (401 - sin registros)');
+            return [];
+          }
+
+          if (!response.ok) {
+            console.log('⚠️ Error en la consulta:', response.status, response.statusText);
+            return [];
+          }
+
+          const data = await response.json();
+          const records = data?.response?.data || [];
+
+          console.log(`📄 Se encontraron ${records.length} documento(s) en el backend`);
+
+          // Filtrar solo los registros que corresponden al DNI (anverso o reverso)
+          const dniDocs = records.filter(record => {
+            const nombreArchivo = record.fieldData?.nombreArchivo || '';
+            return nombreArchivo.toLowerCase().includes('anverso') ||
+                   nombreArchivo.toLowerCase().includes('reverso');
+          });
+
+          console.log(`🆔 Documentos DNI encontrados: ${dniDocs.length}`, dniDocs);
+          return dniDocs;
+
+        } catch (error) {
+          console.error('❌ Error al cargar documentación existente:', error);
+          return [];
+        }
+      }
+
+      /**
+       * Descarga una imagen desde Google Drive usando el ID del archivo
+       * @param {string} fileId - ID del archivo en Google Drive
+       * @returns {Promise<string>} URL blob de la imagen descargada
+       */
+      async function downloadFromGoogleDrive(fileId) {
+        try {
+          console.log(`📥 Descargando archivo de Google Drive: ${fileId}`);
+
+          // Obtener el token de sessionStorage
+          const tokenData = sessionStorage.getItem('googleDriveToken');
+          if (!tokenData) {
+            throw new Error('No hay token de Google Drive disponible');
+          }
+
+          const token = JSON.parse(tokenData);
+          const accessToken = token.access_token;
+
+          // Descargar archivo usando la API de Google Drive
+          const downloadResponse = await fetch(
+            `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+            {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${accessToken}`
+              }
+            }
+          );
+
+          if (!downloadResponse.ok) {
+            throw new Error(`Error al descargar archivo: ${downloadResponse.statusText}`);
+          }
+
+          // Convertir la respuesta a blob y crear URL
+          const blob = await downloadResponse.blob();
+          const blobUrl = URL.createObjectURL(blob);
+
+          console.log('✅ Archivo descargado exitosamente de Google Drive');
+          return blobUrl;
+
+        } catch (error) {
+          console.error('❌ Error al descargar archivo de Google Drive:', error);
+          throw error;
+        }
+      }
+
+      /**
+       * Carga y muestra las imágenes del DNI en la interfaz
+       * @param {Array} dniDocs - Array de documentos del DNI
+       */
+      async function loadDNIImages(dniDocs) {
+        try {
+          console.log('🖼️ Cargando imágenes del DNI en la interfaz...');
+
+          for (const doc of dniDocs) {
+            const fieldData = doc.fieldData || {};
+            const nombreArchivo = fieldData.nombreArchivo || '';
+            const idGoogleDrive = fieldData.idGoogleDrive;
+
+            if (!idGoogleDrive) {
+              console.warn('⚠️ Documento sin idGoogleDrive:', nombreArchivo);
+              continue;
+            }
+
+            // Determinar si es anverso o reverso
+            const isAnverso = nombreArchivo.toLowerCase().includes('anverso');
+            const isReverso = nombreArchivo.toLowerCase().includes('reverso');
+
+            if (!isAnverso && !isReverso) {
+              console.warn('⚠️ Documento no identificado como anverso o reverso:', nombreArchivo);
+              continue;
+            }
+
+            // Descargar imagen de Google Drive
+            const imageUrl = await downloadFromGoogleDrive(idGoogleDrive);
+
+            // Seleccionar la zona de upload correcta
+            const zoneType = isAnverso ? 'doc-anverso' : 'doc-reverso';
+            const uploadZone = document.querySelector(`[data-upload-zone="${zoneType}"]`);
+
+            if (!uploadZone) {
+              console.error(`❌ No se encontró la zona de upload: ${zoneType}`);
+              continue;
+            }
+
+            // Mostrar la imagen en la zona de upload
+            const uploadContent = uploadZone.querySelector('.document-upload-content');
+            const uploadPreview = uploadZone.querySelector('.document-upload-preview');
+            const previewImage = uploadZone.querySelector('.document-preview-image');
+
+            if (uploadContent && uploadPreview && previewImage) {
+              // Ocultar contenido de upload y mostrar preview
+              uploadContent.style.display = 'none';
+              uploadPreview.style.display = 'flex';
+              previewImage.src = imageUrl;
+
+              console.log(`✅ Imagen cargada: ${isAnverso ? 'Anverso' : 'Reverso'}`);
+
+              // Nota: NO asignamos uploadedFile aquí porque es una imagen ya publicada
+              // El botón "Eliminar" solo debería limpiar la vista previa, no eliminar del servidor
+            }
+          }
+
+          console.log('✅ Todas las imágenes del DNI han sido cargadas');
+
+        } catch (error) {
+          console.error('❌ Error al cargar imágenes del DNI:', error);
+        }
+      }
+
+      /**
+       * Verifica y carga documentación del DNI al entrar en la sección
+       */
+      async function checkAndLoadDNIDocumentation() {
+        try {
+          console.log('🔄 Verificando documentación del DNI...');
+
+          // Esperar a que currentConductorId esté disponible
+          if (!currentConductorId) {
+            console.log('⏳ Esperando a que se cargue el conductor...');
+            // Reintentar después de un breve delay
+            setTimeout(checkAndLoadDNIDocumentation, 500);
+            return;
+          }
+
+          const dniDocs = await loadExistingDNIDocumentation();
+
+          if (dniDocs.length > 0) {
+            console.log(`📋 Se encontraron ${dniDocs.length} documento(s) del DNI previamente cargado(s)`);
+            await loadDNIImages(dniDocs);
+          } else {
+            console.log('ℹ️ No se encontró documentación previa del DNI');
+          }
+
+        } catch (error) {
+          console.error('❌ Error al verificar documentación del DNI:', error);
+        }
+      }
 
       // ========================================
       // BOTÓN PUBLICAR DOCUMENTOS
