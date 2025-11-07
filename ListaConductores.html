@@ -1309,7 +1309,7 @@ License: You must have a valid license to legally use this template for your pro
       </div>
 
         <div class="modal fade" id="nuevoConductorModal" tabindex="-1" aria-labelledby="nuevoConductorModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-          <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0">
               <div class="modal-header bg-success text-white border-0">
                 <h5 class="modal-title text-white" id="nuevoConductorModalLabel">Nuevo conductor</h5>
@@ -1317,35 +1317,15 @@ License: You must have a valid license to legally use this template for your pro
               </div>
               <div class="modal-body pb-4">
                 <form data-conductor-form>
-                  <p class="text-secondary small mb-4">Los campos marcados con <span class="text-danger">*</span> son obligatorios.</p>
+                  <p class="text-secondary small mb-4">Completa los datos básicos del conductor. Podrás añadir más información desde la ficha del conductor.</p>
                   <div class="row g-3 mb-4">
-                    <div class="col-md-6">
+                    <div class="col-12">
                       <label for="conductorNombre" class="form-label">Nombre <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" id="conductorNombre" name="nombre" autocomplete="given-name" required aria-required="true">
+                      <input type="text" class="form-control" id="conductorNombre" name="nombre" autocomplete="given-name" required aria-required="true" placeholder="Introduce el nombre">
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-12">
                       <label for="conductorApellido1" class="form-label">Primer apellido <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" id="conductorApellido1" name="apellido1" autocomplete="family-name" required aria-required="true">
-                    </div>
-                    <div class="col-md-6">
-                      <label for="conductorApellido2" class="form-label">Segundo apellido <span class="text-secondary small ms-1">(opcional)</span></label>
-                      <input type="text" class="form-control" id="conductorApellido2" name="apellido2" autocomplete="additional-name">
-                    </div>
-                    <div class="col-md-6">
-                      <label for="conductorTipoDocumento" class="form-label">Tipo de documento <span class="text-danger">*</span></label>
-                      <select class="form-select" id="conductorTipoDocumento" name="tipoDocumentoIdentidad" required aria-required="true">
-                        <option value="" selected disabled>Selecciona un tipo</option>
-                        <option value="DNI">DNI</option>
-                        <option value="NIE">NIE</option>
-                      </select>
-                    </div>
-                    <div class="col-md-6">
-                      <label for="conductorDocumento" class="form-label">Número de documento <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" id="conductorDocumento" name="nDocumentoIdentidad" autocomplete="off" required aria-required="true" disabled>
-                    </div>
-                    <div class="col-md-6">
-                      <label for="conductorEstado" class="form-label">Estado <span class="text-secondary small ms-1">(se asigna automáticamente)</span></label>
-                      <input type="text" class="form-control" id="conductorEstado" name="estado" value="EN BOLSA" readonly>
+                      <input type="text" class="form-control" id="conductorApellido1" name="apellido1" autocomplete="family-name" required aria-required="true" placeholder="Introduce el primer apellido">
                     </div>
                   </div>
                 </form>
@@ -1508,9 +1488,10 @@ License: You must have a valid license to legally use this template for your pro
 
       if (conductorModal) {
         const conductorForm = conductorModal.querySelector('[data-conductor-form]');
-        const tipoDocumentoSelect = conductorForm?.querySelector('#conductorTipoDocumento') ?? conductorModal.querySelector('#conductorTipoDocumento');
-        const documentoInput = conductorForm?.querySelector('#conductorDocumento') ?? conductorModal.querySelector('#conductorDocumento');
-        const estadoInput = conductorForm?.querySelector('#conductorEstado') ?? conductorModal.querySelector('#conductorEstado');
+        // Campos eliminados del formulario simplificado (solo nombre y apellido1 son requeridos)
+        // const tipoDocumentoSelect = conductorForm?.querySelector('#conductorTipoDocumento') ?? conductorModal.querySelector('#conductorTipoDocumento');
+        // const documentoInput = conductorForm?.querySelector('#conductorDocumento') ?? conductorModal.querySelector('#conductorDocumento');
+        // const estadoInput = conductorForm?.querySelector('#conductorEstado') ?? conductorModal.querySelector('#conductorEstado');
         const saveButton = conductorModal.querySelector('[data-role="conductor-guardar"]');
         const modalContent = conductorModal.querySelector('.modal-content');
         const requiredFields = Array.from(conductorForm?.querySelectorAll('[required]') ?? []);
@@ -1619,6 +1600,7 @@ License: You must have a valid license to legally use this template for your pro
           clearHighlight(field);
         };
 
+        /* ===== FUNCIONES DE DOCUMENTOS COMENTADAS (formulario simplificado) =====
         const getTipoDocumentoValue = () => (tipoDocumentoSelect?.value ?? '').trim().toUpperCase();
         const toggleDocumentoInputState = ({ focus = false } = {}) => {
           if (!documentoInput) {
@@ -1863,12 +1845,8 @@ License: You must have a valid license to legally use this template for your pro
           });
         }
 
-        /**
-         * Verifica si ya existe un conductor ACTIVO con el mismo nDocumentoIdentidad
-         * Solo bloquea la creación si existe un conductor con isActivo=1
-         * @param {string} nDocumentoIdentidad - Número de documento de identidad a verificar
-         * @returns {Promise<boolean>} - true si existe duplicado activo, false si no existe o solo hay inactivos
-         */
+        // Función comentada: no necesaria en formulario simplificado
+        /*
         const checkDocumentoIdentidadDuplicado = async (nDocumentoIdentidad) => {
           const normalizedDoc = nDocumentoIdentidad?.trim().toUpperCase();
           if (!normalizedDoc) {
@@ -1917,19 +1895,16 @@ License: You must have a valid license to legally use this template for your pro
             return false;
           }
         };
+        ===== FIN FUNCIONES DE DOCUMENTOS COMENTADAS ===== */
 
+        // Event listeners simplificados para el formulario
         conductorModal.addEventListener('shown.bs.modal', () => {
-          toggleDocumentoInputState();
           conductorForm?.querySelector('#conductorNombre')?.focus();
         });
 
         conductorModal.addEventListener('hidden.bs.modal', () => {
           conductorForm?.reset();
-          toggleDocumentoInputState();
           requiredFields.forEach((field) => resetFieldState(field));
-          if (estadoInput) {
-            estadoInput.value = 'EN BOLSA';
-          }
           modalContent?.classList.remove('modal-shake');
         });
 
@@ -1957,37 +1932,8 @@ License: You must have a valid license to legally use this template for your pro
 
             // Obtener datos del formulario
             const formData = Object.fromEntries(new FormData(conductorForm).entries());
-            formData.tipoDocumentoIdentidad = formData.tipoDocumentoIdentidad?.trim().toUpperCase() || '';
-            formData.nDocumentoIdentidad = formData.nDocumentoIdentidad?.trim().toUpperCase() || '';
-            formData.estado = formData.estado?.trim() || 'EN BOLSA';
-            if (documentoInput) {
-              documentoInput.value = formData.nDocumentoIdentidad;
-            }
-
-            // Verificar duplicados antes de crear
-            const isDuplicado = await checkDocumentoIdentidadDuplicado(formData.nDocumentoIdentidad);
-            if (isDuplicado) {
-              // Marcar campo como inválido
-              if (documentoInput) {
-                markFieldInvalid(documentoInput);
-                documentoInput.focus({ preventScroll: false });
-              }
-
-              // Mostrar animación de error en el modal
-              if (modalContent) {
-                modalContent.classList.remove('modal-shake');
-                void modalContent.offsetWidth;
-                modalContent.classList.add('modal-shake');
-              }
-
-              // Mostrar mensaje de error
-              showSaveToast(
-                `Ya existe un conductor activo con el documento ${formData.nDocumentoIdentidad}. No se puede crear un duplicado.`,
-                'danger'
-              );
-
-              return; // No continuar con la creación
-            }
+            // Establecer estado por defecto
+            formData.estado = 'EN BOLSA';
 
             // Deshabilitar botón y mostrar estado de carga
             const originalText = saveButton.textContent;
