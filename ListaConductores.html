@@ -1844,6 +1844,43 @@ License: You must have a valid license to legally use this template for your pro
             }
           });
         }
+        */ // FIN bloque funciones de documentos
+
+        // Función simplificada de validación para formulario básico
+        const validateField = (field, options = {}) => {
+          if (!field) {
+            return true;
+          }
+          const { silent = false, skipEmpty = false } = options;
+
+          if (field.disabled) {
+            resetFieldState(field);
+            return true;
+          }
+
+          const rawValue = field.value ?? '';
+          const value = rawValue.trim();
+
+          if (!value) {
+            if (skipEmpty) {
+              resetFieldState(field);
+              return true;
+            }
+            if (!silent) {
+              markFieldInvalid(field);
+            }
+            return false;
+          }
+
+          resetFieldState(field);
+          return true;
+        };
+
+        // Event listeners simplificados para campos requeridos
+        requiredFields.forEach((field) => {
+          field.addEventListener('input', () => validateField(field, { silent: true, skipEmpty: true }));
+          field.addEventListener('blur', () => validateField(field, { skipEmpty: true }));
+        });
 
         // Función comentada: no necesaria en formulario simplificado
         /*
