@@ -13,7 +13,7 @@
     window.console.warn(...args);
   };
   const TABLE_SELECTOR = '#clientesTable';
-  const LAYOUT = 'conductor.Listar';  // Cambiado de 'clientes' a 'conductor.Listar'
+  const LAYOUT = 'conductor.Listar';
   const TABLE_SEARCH_SELECTOR = '[data-clientes-table-search]';
   const COLUMN_MODAL_SELECTOR = '[data-clientes-columns-modal]';
   const COLUMN_LIST_SELECTOR = '[data-clientes-columns-list]';

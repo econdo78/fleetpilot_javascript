@@ -2232,41 +2232,25 @@ License: You must have a valid license to legally use this template for your pro
         const baseFieldValues = {
           nombre: normalizedNombre,
           apellido1: normalizedApellido1,
+          apellido2: normalizedApellido2 || '',  // Siempre enviar, aunque esté vacío
           estado: normalizedEstado,
-          nombreCompleto: normalizedNombreCompleto, // Siempre incluir nombreCompleto
+          nombreCompleto: normalizedNombreCompleto,
+          tipoDocumentoIdentidad: normalizedTipoDocumento || '',  // Siempre enviar, aunque esté vacío
+          nDocumentoIdentidad: normalizedNumeroDocumento || '',  // Siempre enviar, aunque esté vacío
           isActivo: '1'
         };
-
-        // Añadir campos opcionales solo si tienen valor
-        if (normalizedApellido2) {
-          baseFieldValues.apellido2 = normalizedApellido2;
-        }
-        if (normalizedTipoDocumento) {
-          baseFieldValues.tipoDocumentoIdentidad = normalizedTipoDocumento;
-        }
-        if (normalizedNumeroDocumento) {
-          baseFieldValues.nDocumentoIdentidad = normalizedNumeroDocumento;
-        }
 
         const fallbackFieldData = {
           nombre: normalizedNombre,
           apellido1: normalizedApellido1,
+          apellido2: normalizedApellido2 || '',  // Siempre enviar
           estado: normalizedEstado,
-          nombreCompleto: normalizedNombreCompleto, // Siempre incluir nombreCompleto
+          nombreCompleto: normalizedNombreCompleto,
+          tipoDocumentoIdentidad: normalizedTipoDocumento || '',  // Siempre enviar
+          nDocumentoIdentidad: normalizedNumeroDocumento || '',  // Siempre enviar
+          ndocumentoidentidad: normalizedNumeroDocumento || '',  // Variante lowercase
           isActivo: '1'
         };
-
-        // Añadir campos opcionales solo si tienen valor
-        if (normalizedApellido2) {
-          fallbackFieldData.apellido2 = normalizedApellido2;
-        }
-        if (normalizedTipoDocumento) {
-          fallbackFieldData.tipoDocumentoIdentidad = normalizedTipoDocumento;
-        }
-        if (normalizedNumeroDocumento) {
-          fallbackFieldData.nDocumentoIdentidad = normalizedNumeroDocumento;
-          fallbackFieldData.ndocumentoidentidad = normalizedNumeroDocumento;
-        }
 
         const resolveFieldDataForLayout = (layoutFieldNames) => {
           if (!Array.isArray(layoutFieldNames) || !layoutFieldNames.length) {
@@ -2341,18 +2325,11 @@ License: You must have a valid license to legally use this template for your pro
 
           registerField('nombre', baseFieldValues.nombre, { required: true });
           registerField('apellido1', baseFieldValues.apellido1, { required: true });
-          if (baseFieldValues.apellido2) {
-            registerField('apellido2', baseFieldValues.apellido2, { required: false });
-          }
-          // Campos de documento ahora opcionales
-          if (baseFieldValues.tipoDocumentoIdentidad) {
-            registerField('tipoDocumentoIdentidad', baseFieldValues.tipoDocumentoIdentidad, { required: false });
-          }
-          if (baseFieldValues.nDocumentoIdentidad) {
-            registerField('nDocumentoIdentidad', baseFieldValues.nDocumentoIdentidad, { required: false });
-          }
+          registerField('apellido2', baseFieldValues.apellido2, { required: false, allowEmpty: true }); // Siempre enviar
+          registerField('tipoDocumentoIdentidad', baseFieldValues.tipoDocumentoIdentidad, { required: false, allowEmpty: true }); // Siempre enviar
+          registerField('nDocumentoIdentidad', baseFieldValues.nDocumentoIdentidad, { required: false, allowEmpty: true }); // Siempre enviar
           registerField('estado', baseFieldValues.estado, { required: true });
-          registerField('nombreCompleto', baseFieldValues.nombreCompleto, { required: false }); // Siempre registrar
+          registerField('nombreCompleto', baseFieldValues.nombreCompleto, { required: false });
           registerField('isActivo', baseFieldValues.isActivo, { required: false });
 
           return { fieldData, missingRequired };
