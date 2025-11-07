@@ -1995,73 +1995,17 @@ License: You must have a valid license to legally use this template for your pro
               modalInstance.hide();
 
               // Mostrar notificación de éxito
-              showSaveToast('Conductor creado exitosamente.', 'success');
+              showSaveToast('Conductor creado exitosamente. Redirigiendo a la ficha...', 'success');
 
-              // Esperar a que FileMaker commit el nuevo registro
-              // FileMaker necesita tiempo para hacer el nuevo registro disponible en consultas GET
-              debugLog('⏳ Esperando 1.5 segundos para que FileMaker procese el nuevo registro...');
-              saveButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Esperando...';
-              await new Promise(resolve => setTimeout(resolve, 1500));
+              // Navegar a fichaConductor.html con el recordId del conductor recién creado
+              debugLog('🚀 Navegando a fichaConductor.html con recordId:', recordId);
+              saveButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Redirigiendo...';
 
-              // Cambiar texto del botón a "Recargando..."
-              saveButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Recargando tabla...';
+              // Esperar un momento para que el usuario vea el mensaje de éxito
+              await new Promise(resolve => setTimeout(resolve, 500));
 
-              // Recargar tabla de conductores y esperar a que termine
-              debugLog('🔄 Iniciando recarga de tabla...');
-              debugLog('📊 window.ClientesTable:', window.ClientesTable);
-              debugLog('🔧 window.ClientesTable?.reload:', window.ClientesTable?.reload);
-              debugLog('🔧 typeof window.ClientesTable?.reload:', typeof window.ClientesTable?.reload);
-
-              try {
-                if (window.ClientesTable?.reload) {
-                  debugLog('✅ Llamando a window.ClientesTable.reload()...');
-                  await window.ClientesTable.reload();
-                  debugLog('✅ Tabla recargada exitosamente');
-
-                  // Dar tiempo al renderizado de DataTables
-                  await new Promise(resolve => setTimeout(resolve, 300));
-
-                  // Seleccionar el conductor recién creado
-                  if (recordId && window.ClientesTable?.selectByRecordId) {
-                    debugLog('🔍 Intentando seleccionar conductor con recordId:', recordId);
-                    let selected = window.ClientesTable.selectByRecordId(recordId);
-
-                    // Si no se encontró, esperar un poco más e intentar de nuevo
-                    if (!selected) {
-                      debugWarn('⚠️ Conductor no encontrado en el primer intento. Esperando 1 segundo más...');
-                      saveButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Reintentando...';
-                      await new Promise(resolve => setTimeout(resolve, 1000));
-
-                      // Recargar de nuevo
-                      debugLog('🔄 Recargando tabla por segunda vez...');
-                      saveButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Recargando de nuevo...';
-                      await window.ClientesTable.reload();
-
-                      await new Promise(resolve => setTimeout(resolve, 300));
-
-                      // Intentar seleccionar de nuevo
-                      debugLog('🔍 Segundo intento de selección...');
-                      selected = window.ClientesTable.selectByRecordId(recordId);
-                    }
-
-                    if (selected) {
-                      debugLog('✅ Conductor seleccionado automáticamente');
-                    } else {
-                      debugLog('⚠️ No se pudo seleccionar el conductor después de 2 intentos.');
-                      // No mostrar error al usuario, solo log para debugging
-                    }
-                  }
-                } else {
-                  debugLog('⚠️ window.ClientesTable.reload no está disponible');
-                }
-              } catch (reloadError) {
-                debugLog('⚠️ Error al recargar la tabla:', reloadError);
-                // No mostrar error al usuario, solo log para debugging
-              }
-
-              // Restaurar botón después de todo
-              saveButton.disabled = false;
-              saveButton.textContent = originalText;
+              // Navegar a la ficha del conductor
+              window.location.href = `fichaConductor.html?idconductor=${encodeURIComponent(recordId)}`;
 
             } catch (error) {
               console.error('❌ Error al crear conductor:', error);
