@@ -8724,6 +8724,65 @@ License: You must have a valid license to legally use this template for your pro
               }
             }
 
+            // Crear registro histórico de subida de documentos
+            if (failCount === 0 && successCount > 0) {
+              console.log('📝 Creando registro en histórico para subida de documentos');
+
+              // Preparar array de imágenes con sus IDs de Google Drive
+              const imagenesArray = [];
+              const tiposDocumentos = [];
+
+              uploadResults.forEach(upload => {
+                if (upload.result.success) {
+                  imagenesArray.push({
+                    imagen: upload.result.fileId
+                  });
+
+                  // Identificar tipo de documento para el resumen
+                  const docType = upload.type;
+                  if (docType === 'doc-anverso') {
+                    tiposDocumentos.push('Anverso');
+                  } else if (docType === 'doc-reverso') {
+                    tiposDocumentos.push('Reverso');
+                  }
+                }
+              });
+
+              const historicoDatos = JSON.stringify(imagenesArray);
+              const resumen = `Documentos DNI publicados: ${tiposDocumentos.join(', ')}`;
+
+              const historicoPayload = {
+                fieldData: {
+                  accion: 'SUBIDA_DOCUMENTOS',
+                  datos: historicoDatos,
+                  resumen: resumen,
+                  idEntidad: currentConductorId,
+                  tipo: 'documentos'
+                }
+              };
+
+              console.log('📦 Payload del histórico:', JSON.stringify(historicoPayload, null, 2));
+
+              try {
+                const historicoResponse = await window.ApiClient.post(
+                  'layouts/historico/records',
+                  historicoPayload
+                );
+
+                console.log('📥 Respuesta de histórico, status:', historicoResponse.status);
+
+                if (!historicoResponse.ok) {
+                  const errorText = await historicoResponse.text().catch(() => '');
+                  console.warn('⚠️ No se pudo crear el registro histórico:', errorText);
+                } else {
+                  const historicoData = await historicoResponse.json();
+                  console.log('✅ Registro histórico de documentos creado exitosamente:', historicoData);
+                }
+              } catch (historicoError) {
+                console.error('❌ Error al crear registro histórico de documentos:', historicoError);
+              }
+            }
+
             // Cerrar modal
             const publicarModal = bootstrap.Modal.getInstance(document.getElementById('publicarConfirmModal'));
             if (publicarModal) publicarModal.hide();
