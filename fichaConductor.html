@@ -1985,7 +1985,7 @@ License: You must have a valid license to legally use this template for your pro
                                     </div>
 
                                     <!-- Opción de actualización automática de datos -->
-                                    <div class="mt-4 p-3 border rounded" style="background-color: rgba(255, 255, 255, 0.5);">
+                                    <div class="mt-4 p-3 border rounded" id="checkboxActualizarPermiso" style="display: none; background-color: rgba(255, 255, 255, 0.5);">
                                       <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="actualizarDatosOCRPermiso" checked>
                                         <label class="form-check-label" for="actualizarDatosOCRPermiso">
@@ -1995,7 +1995,7 @@ License: You must have a valid license to legally use this template for your pro
                                     </div>
 
                                     <!-- Botón de publicar documentos -->
-                                    <div class="d-flex justify-content-end mt-3 mb-2">
+                                    <div class="d-flex justify-content-end mt-3 mb-2" id="botonPublicarPermiso" style="display: none;">
                                       <button type="button" class="btn btn-primary" id="publicarPermisoBtn">
                                         <i data-lucide="send" class="me-2" style="width: 16px; height: 16px;"></i>
                                         Publicar documentos
@@ -6757,6 +6757,8 @@ License: You must have a valid license to legally use this template for your pro
 
           // Verificar y cargar documentación del DNI si existe
           checkAndLoadDNIDocumentation();
+          // Verificar y cargar documentación del Permiso si existe
+          checkAndLoadPermisoDocumentation();
         }
 
         if (detailCategoryNav) {
@@ -7831,6 +7833,8 @@ License: You must have a valid license to legally use this template for your pro
 
               // Verificar y cargar documentación del DNI si existe
               checkAndLoadDNIDocumentation();
+              // Verificar y cargar documentación del Permiso si existe
+              checkAndLoadPermisoDocumentation();
 
               console.log('✅ Panel de detalle renderizado correctamente');
             } else {
@@ -7933,9 +7937,10 @@ License: You must have a valid license to legally use this template for your pro
                 content.style.display = 'none';
                 preview.style.display = 'flex';
 
-                // Si es el anverso o reverso del DNI, ejecutar OCR con Google Vision
+                // Si es el anverso o reverso del DNI o Permiso, ejecutar OCR con Google Vision
                 const zoneType = zone.getAttribute('data-upload-zone');
-                if (zoneType === 'doc-anverso' || zoneType === 'doc-reverso') {
+                if (zoneType === 'doc-anverso' || zoneType === 'doc-reverso' ||
+                    zoneType === 'permiso-anverso' || zoneType === 'permiso-reverso') {
                   processWithGoogleVision(e.target.result, zoneType);
                 }
               };
@@ -8117,13 +8122,25 @@ License: You must have a valid license to legally use this template for your pro
               } else {
                 dniData = parseDNIReverso(extractedText);
               }
+            } else if (zoneType === 'permiso-anverso') {
+              // PERMISO DE CONDUCCIÓN - ANVERSO
+              dniData = parsePermisoAnverso(extractedText);
+            } else if (zoneType === 'permiso-reverso') {
+              // PERMISO DE CONDUCCIÓN - REVERSO
+              dniData = parsePermisoReverso(extractedText);
             }
 
             console.log('✅ Datos parseados:', dniData);
 
             // Mostrar los datos (añadir tipo de documento al objeto)
             dniData.documentType = documentType;
-            displayDNIData(dniData, zoneType);
+
+            // Si es permiso de conducción, usar función específica
+            if (zoneType === 'permiso-anverso' || zoneType === 'permiso-reverso') {
+              displayPermisoData(dniData, zoneType);
+            } else {
+              displayDNIData(dniData, zoneType);
+            }
           } else {
             console.warn('⚠️ No se detectó texto en la imagen');
             console.log('📋 Respuesta completa de Vision API:', JSON.stringify(data, null, 2));
@@ -9150,6 +9167,175 @@ License: You must have a valid license to legally use this template for your pro
         }
       }
 
+      /**
+       * Parsea el texto extraído del anverso del permiso de conducción
+       */
+      function parsePermisoAnverso(text) {
+        const data = {
+          nombre: null,
+          numeroPermiso: null,
+          nacionalidad: null,
+          nacimiento: null,
+          caducidad: null
+        };
+
+        console.log('🔍 Analizando ANVERSO del Permiso de Conducción...');
+        console.log('📝 Texto completo:', text);
+
+        const cleanText = text
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        // Buscar número de permiso (usualmente 8 dígitos)
+        const permisoMatch = cleanText.match(/\b(\d{8})\b/);
+        if (permisoMatch) {
+          data.numeroPermiso = permisoMatch[1];
+          console.log('✅ Número de permiso encontrado:', data.numeroPermiso);
+        }
+
+        // Buscar nombre completo (después de apellidos/nombre)
+        const nombreMatch = cleanText.match(/(?:APELLIDOS|SURNAME)[^\d]*([A-ZÁÉÍÓÚÑ\s]+)(?:NOMBRE|NAME)[^\d]*([A-ZÁÉÍÓÚÑ\s]+)/i);
+        if (nombreMatch) {
+          const apellidos = nombreMatch[1].trim();
+          const nombre = nombreMatch[2].trim();
+          data.nombre = `${nombre} ${apellidos}`;
+          console.log('✅ Nombre completo encontrado:', data.nombre);
+        }
+
+        // Buscar nacionalidad (código de 3 letras después de nacionalidad/nationality)
+        const nacionalidadMatch = cleanText.match(/(?:NACIONALIDAD|NATIONALITY)[^\w]*([A-Z]{3})/i);
+        if (nacionalidadMatch) {
+          data.nacionalidad = nacionalidadMatch[1];
+          console.log('✅ Nacionalidad encontrada:', data.nacionalidad);
+        }
+
+        // Buscar fecha de nacimiento (formato dd.mm.yyyy o dd/mm/yyyy)
+        const nacimientoMatch = cleanText.match(/(?:FECHA.*NACIMIENTO|DATE.*BIRTH)[^\d]*(\d{2}[.\/]\d{2}[.\/]\d{4})/i);
+        if (nacimientoMatch) {
+          const fecha = nacimientoMatch[1].replace(/\./g, '/');
+          data.nacimiento = convertToISODate(fecha);
+          console.log('✅ Fecha de nacimiento encontrada:', data.nacimiento);
+        }
+
+        // Buscar fecha de caducidad (formato dd.mm.yyyy o dd/mm/yyyy)
+        const caducidadMatch = cleanText.match(/(?:VÁLIDO HASTA|VALID UNTIL|4b)[^\d]*(\d{2}[.\/]\d{2}[.\/]\d{4})/i);
+        if (caducidadMatch) {
+          const fecha = caducidadMatch[1].replace(/\./g, '/');
+          data.caducidad = convertToISODate(fecha);
+          console.log('✅ Fecha de caducidad encontrada:', data.caducidad);
+        }
+
+        console.log('✅ Datos extraídos del permiso anverso:', data);
+        return data;
+      }
+
+      /**
+       * Parsea el texto extraído del reverso del permiso de conducción
+       */
+      function parsePermisoReverso(text) {
+        const data = {
+          categorias: null,
+          fechaExpedicion: null,
+          autoridad: null
+        };
+
+        console.log('🔍 Analizando REVERSO del Permiso de Conducción...');
+        console.log('📝 Texto completo:', text);
+
+        const cleanText = text
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        // Buscar categorías (B, C, D, etc.)
+        const categorias = [];
+        const categoriasMatches = cleanText.match(/\b([ABCDE]1?)\b/g);
+        if (categoriasMatches) {
+          categorias.push(...new Set(categoriasMatches));
+          data.categorias = categorias.join(', ');
+          console.log('✅ Categorías encontradas:', data.categorias);
+        }
+
+        // Buscar fecha de expedición (formato dd.mm.yyyy o dd/mm/yyyy)
+        const expedicionMatch = cleanText.match(/(?:4a|FECHA.*EXPEDICIÓN|DATE.*ISSUE)[^\d]*(\d{2}[.\/]\d{2}[.\/]\d{4})/i);
+        if (expedicionMatch) {
+          const fecha = expedicionMatch[1].replace(/\./g, '/');
+          data.fechaExpedicion = convertToISODate(fecha);
+          console.log('✅ Fecha de expedición encontrada:', data.fechaExpedicion);
+        }
+
+        // Buscar autoridad expedidora
+        const autoridadMatch = cleanText.match(/(?:4c|AUTORIDAD)[^\d]*([A-ZÁÉÍÓÚÑ\s]+?)(?:\d|$)/i);
+        if (autoridadMatch) {
+          data.autoridad = autoridadMatch[1].trim();
+          console.log('✅ Autoridad encontrada:', data.autoridad);
+        }
+
+        console.log('✅ Datos extraídos del permiso reverso:', data);
+        return data;
+      }
+
+      /**
+       * Convierte fecha en formato dd/mm/yyyy a yyyy-mm-dd
+       */
+      function convertToISODate(dateStr) {
+        const parts = dateStr.split('/');
+        if (parts.length === 3) {
+          return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+        }
+        return dateStr;
+      }
+
+      /**
+       * Muestra los datos extraídos del permiso de conducción en las cajas informativas
+       */
+      function displayPermisoData(data, zoneType) {
+        console.log('📋 Mostrando datos del permiso:', data, zoneType);
+
+        // Actualizar las cajas de resultados OCR
+        const resultsContainer = document.querySelector(`[data-ocr-results="${zoneType}"]`);
+        if (resultsContainer) {
+          resultsContainer.style.display = 'block';
+
+          if (zoneType === 'permiso-anverso') {
+            const nombreEl = resultsContainer.querySelector('[data-ocr-nombre]');
+            const permisoEl = resultsContainer.querySelector('[data-ocr-permiso]');
+            const nacionalidadEl = resultsContainer.querySelector('[data-ocr-nacionalidad]');
+            const nacimientoEl = resultsContainer.querySelector('[data-ocr-nacimiento]');
+            const caducidadEl = resultsContainer.querySelector('[data-ocr-caducidad]');
+
+            if (nombreEl) nombreEl.textContent = data.nombre || '-';
+            if (permisoEl) permisoEl.textContent = data.numeroPermiso || '-';
+            if (nacionalidadEl) nacionalidadEl.textContent = data.nacionalidad || '-';
+            if (nacimientoEl) nacimientoEl.textContent = data.nacimiento || '-';
+            if (caducidadEl) caducidadEl.textContent = data.caducidad || '-';
+          } else if (zoneType === 'permiso-reverso') {
+            const categoriasEl = resultsContainer.querySelector('[data-ocr-categorias]');
+            const expedicionEl = resultsContainer.querySelector('[data-ocr-expedicion]');
+            const autoridadEl = resultsContainer.querySelector('[data-ocr-autoridad]');
+
+            if (categoriasEl) categoriasEl.textContent = data.categorias || '-';
+            if (expedicionEl) expedicionEl.textContent = data.fechaExpedicion || '-';
+            if (autoridadEl) autoridadEl.textContent = data.autoridad || '-';
+          }
+        }
+
+        // Mostrar checkbox y botón cuando se haya procesado al menos uno de los lados
+        const checkboxDiv = document.getElementById('checkboxActualizarPermiso');
+        if (checkboxDiv) {
+          checkboxDiv.style.display = 'block';
+        }
+
+        const botonDiv = document.getElementById('botonPublicarPermiso');
+        if (botonDiv) {
+          botonDiv.style.display = 'flex';
+        }
+
+        // Reinicializar iconos de Lucide
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+      }
+
       // Cargar API Key al iniciar
       loadGoogleVisionApiKey();
 
@@ -9312,10 +9498,17 @@ License: You must have a valid license to legally use this template for your pro
           console.log(`📄 Se encontraron ${records.length} documento(s) en el backend`);
 
           // Filtrar solo los registros que corresponden al DNI (anverso o reverso)
+          // IMPORTANTE: Excluir documentos del permiso
           const dniDocs = records.filter(record => {
             const nombreArchivo = record.fieldData?.nombreArchivo || '';
-            return nombreArchivo.toLowerCase().includes('anverso') ||
-                   nombreArchivo.toLowerCase().includes('reverso');
+            const titulo = record.fieldData?.titulo || '';
+            const textoCompleto = `${nombreArchivo} ${titulo}`.toLowerCase();
+
+            // Debe contener anverso o reverso PERO NO contener "permiso"
+            const esAnversoOReverso = textoCompleto.includes('anverso') || textoCompleto.includes('reverso');
+            const esPermiso = textoCompleto.includes('permiso');
+
+            return esAnversoOReverso && !esPermiso;
           });
 
           console.log(`🆔 Documentos DNI encontrados: ${dniDocs.length}`, dniDocs);
@@ -9467,6 +9660,171 @@ License: You must have a valid license to legally use this template for your pro
       }
 
       // ========================================
+      // PERMISO DE CONDUCCIÓN - CARGAR DOCUMENTOS
+      // ========================================
+
+      /**
+       * Consulta si existe documentación del Permiso en el backend
+       * @returns {Promise<Array>} Array de documentos encontrados
+       */
+      async function loadExistingPermisoDocumentation() {
+        try {
+          if (!currentConductorId) {
+            console.log('⚠️ No hay currentConductorId disponible para consultar documentación del permiso');
+            return [];
+          }
+
+          console.log('🔍 Consultando documentación existente del Permiso para conductor:', currentConductorId);
+
+          // Consultar layout documentacion filtrando por idOrigen usando _find
+          const layoutName = 'documentacion';
+          const encodedLayout = window.ApiClient.encodePathSegment(layoutName);
+
+          const response = await window.ApiClient.post(
+            `layouts/${encodedLayout}/_find`,
+            {
+              query: [{
+                idOrigen: currentConductorId
+              }],
+              sort: [
+                {
+                  fieldName: "creadoEl",
+                  sortOrder: "descend"
+                }
+              ],
+              limit: "10"
+            }
+          );
+
+          // FileMaker devuelve 401 cuando no encuentra registros
+          if (response.status === 401) {
+            console.log('ℹ️ No se encontró documentación del permiso previa (401 - sin registros)');
+            return [];
+          }
+
+          if (!response.ok) {
+            console.log('⚠️ Error en la consulta:', response.status, response.statusText);
+            return [];
+          }
+
+          const data = await response.json();
+          const records = data?.response?.data || [];
+
+          console.log(`📄 Se encontraron ${records.length} documento(s) en el backend`);
+
+          // Filtrar solo los registros que corresponden al Permiso (anverso o reverso)
+          const permisoDocs = records.filter(record => {
+            const nombreArchivo = record.fieldData?.nombreArchivo || '';
+            const titulo = record.fieldData?.titulo || '';
+            return nombreArchivo.toLowerCase().includes('permiso') ||
+                   titulo.toLowerCase().includes('permiso');
+          });
+
+          console.log(`🚗 Documentos Permiso encontrados: ${permisoDocs.length}`, permisoDocs);
+          return permisoDocs;
+
+        } catch (error) {
+          console.error('❌ Error al cargar documentación existente del permiso:', error);
+          return [];
+        }
+      }
+
+      /**
+       * Carga y muestra las imágenes del Permiso en la interfaz
+       * @param {Array} permisoDocs - Array de documentos del Permiso
+       */
+      async function loadPermisoImages(permisoDocs) {
+        try {
+          console.log('🖼️ Cargando imágenes del Permiso en la interfaz...');
+
+          for (const doc of permisoDocs) {
+            const fieldData = doc.fieldData || {};
+            const nombreArchivo = fieldData.nombreArchivo || '';
+            const titulo = fieldData.titulo || '';
+            const idGoogleDrive = fieldData.idGoogleDrive || null;
+
+            if (!idGoogleDrive) {
+              console.warn('⚠️ Documento del permiso sin idGoogleDrive:', nombreArchivo, titulo);
+              continue;
+            }
+
+            // Determinar si es anverso o reverso (buscar en nombreArchivo o titulo)
+            const textoCompleto = `${nombreArchivo} ${titulo}`.toLowerCase();
+            const isAnverso = textoCompleto.includes('anverso');
+            const isReverso = textoCompleto.includes('reverso');
+
+            if (!isAnverso && !isReverso) {
+              console.warn('⚠️ Documento del permiso no identificado como anverso o reverso:', nombreArchivo, titulo);
+              continue;
+            }
+
+            // Descargar imagen de Google Drive
+            const imageUrl = await downloadFromGoogleDrive(idGoogleDrive);
+
+            // Seleccionar la zona de upload correcta
+            const zoneType = isAnverso ? 'permiso-anverso' : 'permiso-reverso';
+            const uploadZone = document.querySelector(`[data-upload-zone="${zoneType}"]`);
+
+            if (!uploadZone) {
+              console.error(`❌ No se encontró la zona de upload: ${zoneType}`);
+              continue;
+            }
+
+            // Mostrar la imagen en la zona de upload
+            const uploadContent = uploadZone.querySelector('.document-upload-content');
+            const uploadPreview = uploadZone.querySelector('.document-upload-preview');
+            const previewImage = uploadZone.querySelector('.document-preview-image');
+
+            if (uploadContent && uploadPreview && previewImage) {
+              // Ocultar contenido de upload y mostrar preview
+              uploadContent.style.display = 'none';
+              uploadPreview.style.display = 'flex';
+              previewImage.src = imageUrl;
+
+              console.log(`✅ Imagen del permiso cargada: ${isAnverso ? 'Anverso' : 'Reverso'}`);
+
+              // Nota: NO asignamos uploadedFile aquí porque es una imagen ya publicada
+              // El botón "Eliminar" solo debería limpiar la vista previa, no eliminar del servidor
+            }
+          }
+
+          console.log('✅ Todas las imágenes del Permiso han sido cargadas');
+
+        } catch (error) {
+          console.error('❌ Error al cargar imágenes del Permiso:', error);
+        }
+      }
+
+      /**
+       * Verifica y carga documentación del Permiso al entrar en la sección
+       */
+      async function checkAndLoadPermisoDocumentation() {
+        try {
+          console.log('🔄 Verificando documentación del Permiso...');
+
+          // Esperar a que currentConductorId esté disponible
+          if (!currentConductorId) {
+            console.log('⏳ Esperando a que se cargue el conductor...');
+            // Reintentar después de un breve delay
+            setTimeout(checkAndLoadPermisoDocumentation, 500);
+            return;
+          }
+
+          const permisoDocs = await loadExistingPermisoDocumentation();
+
+          if (permisoDocs.length > 0) {
+            console.log(`📋 Se encontraron ${permisoDocs.length} documento(s) del Permiso previamente cargado(s)`);
+            await loadPermisoImages(permisoDocs);
+          } else {
+            console.log('ℹ️ No se encontró documentación previa del Permiso');
+          }
+
+        } catch (error) {
+          console.error('❌ Error al verificar documentación del Permiso:', error);
+        }
+      }
+
+      // ========================================
       // BOTÓN PUBLICAR DOCUMENTOS
       // ========================================
 
@@ -9527,6 +9885,77 @@ License: You must have a valid license to legally use this template for your pro
           }
 
           console.log(`✅ ${documentsToUpload.length} documento(s) listo(s) para publicar`);
+
+          // Marcar que estamos en modo de publicación de documentos
+          isDocumentPublishMode = true;
+
+          // Mostrar modal de confirmación
+          const publicarModal = new bootstrap.Modal(document.getElementById('publicarConfirmModal'));
+          publicarModal.show();
+        });
+      }
+
+      // BOTÓN PUBLICAR PERMISO DE CONDUCCIÓN
+      const publicarPermisoBtn = document.getElementById('publicarPermisoBtn');
+
+      if (publicarPermisoBtn) {
+        publicarPermisoBtn.addEventListener('click', async () => {
+          console.log('🚀 Validando documentos del permiso para publicar...');
+          console.log('📋 Estado de variables:');
+          console.log('  - currentConductorRecordId:', currentConductorRecordId);
+          console.log('  - currentConductorId:', currentConductorId);
+
+          // Verificar que hay conductor cargado
+          if (!currentConductorRecordId || !currentConductorId) {
+            console.error('❌ Falta información del conductor');
+            const errorToast = document.getElementById('publicarErrorToast');
+            const errorMessage = document.getElementById('publicarErrorMessage');
+            if (errorMessage) {
+              errorMessage.textContent = 'No se ha identificado el conductor. Por favor, recarga la página.';
+            }
+            if (errorToast) {
+              const toast = new bootstrap.Toast(errorToast);
+              toast.show();
+            }
+            return;
+          }
+
+          // Obtener solo las zonas de upload del permiso
+          const permisoAnversoZone = document.querySelector('[data-upload-zone="permiso-anverso"]');
+          const permisoReversoZone = document.querySelector('[data-upload-zone="permiso-reverso"]');
+          const documentsToUpload = [];
+
+          // Verificar qué documentos del permiso están listos para subir
+          if (permisoAnversoZone && permisoAnversoZone.uploadedFile) {
+            documentsToUpload.push({
+              file: permisoAnversoZone.uploadedFile,
+              type: 'permiso-anverso',
+              zone: permisoAnversoZone
+            });
+          }
+
+          if (permisoReversoZone && permisoReversoZone.uploadedFile) {
+            documentsToUpload.push({
+              file: permisoReversoZone.uploadedFile,
+              type: 'permiso-reverso',
+              zone: permisoReversoZone
+            });
+          }
+
+          if (documentsToUpload.length === 0) {
+            const errorToast = document.getElementById('publicarErrorToast');
+            const errorMessage = document.getElementById('publicarErrorMessage');
+            if (errorMessage) {
+              errorMessage.textContent = 'No hay documentos del permiso para publicar. Por favor, selecciona al menos un documento.';
+            }
+            if (errorToast) {
+              const toast = new bootstrap.Toast(errorToast);
+              toast.show();
+            }
+            return;
+          }
+
+          console.log(`✅ ${documentsToUpload.length} documento(s) del permiso listo(s) para publicar`);
 
           // Marcar que estamos en modo de publicación de documentos
           isDocumentPublishMode = true;
@@ -9674,6 +10103,10 @@ License: You must have a valid license to legally use this template for your pro
                     titulo = 'Documento de identidad - Anverso';
                   } else if (docType === 'doc-reverso') {
                     titulo = 'Documento de identidad - Reverso';
+                  } else if (docType === 'permiso-anverso') {
+                    titulo = 'Permiso de conducción - Anverso';
+                  } else if (docType === 'permiso-reverso') {
+                    titulo = 'Permiso de conducción - Reverso';
                   }
 
                   // Extraer extensión del archivo
@@ -9738,15 +10171,19 @@ License: You must have a valid license to legally use this template for your pro
                   // Identificar tipo de documento para el resumen
                   const docType = upload.type;
                   if (docType === 'doc-anverso') {
-                    tiposDocumentos.push('Anverso');
+                    tiposDocumentos.push('DNI Anverso');
                   } else if (docType === 'doc-reverso') {
-                    tiposDocumentos.push('Reverso');
+                    tiposDocumentos.push('DNI Reverso');
+                  } else if (docType === 'permiso-anverso') {
+                    tiposDocumentos.push('Permiso Anverso');
+                  } else if (docType === 'permiso-reverso') {
+                    tiposDocumentos.push('Permiso Reverso');
                   }
                 }
               });
 
               const historicoDatos = JSON.stringify(imagenesArray);
-              const resumen = `Documentos DNI publicados: ${tiposDocumentos.join(', ')}`;
+              const resumen = `Documentos publicados: ${tiposDocumentos.join(', ')}`;
 
               const historicoPayload = {
                 fieldData: {
