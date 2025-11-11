@@ -2003,6 +2003,52 @@ License: You must have a valid license to legally use this template for your pro
                                     </div>
                                   </div>
                                 </div>
+
+                                <!-- Tarjeta: Certificado de Cuenta Bancaria -->
+                                <div class="detail-card card shadow-sm mt-3">
+                                  <div class="card-header">
+                                    <div class="bg-primary bg-opacity-10 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                      <i data-lucide="landmark" class="text-primary" style="width: 20px; height: 20px;"></i>
+                                    </div>
+                                    <h5 class="card-title mb-0">CERTIFICADO DE CUENTA BANCARIA</h5>
+                                  </div>
+                                  <div class="card-body" style="flex: 1; display: flex; flex-direction: column;">
+                                    <div class="row g-4">
+                                      <!-- Certificado Bancario -->
+                                      <div class="col-12">
+                                        <label class="form-label fw-semibold text-secondary text-uppercase small mb-2">
+                                          <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
+                                          Certificado de Cuenta Bancaria
+                                        </label>
+                                        <div class="document-upload-zone" data-upload-zone="certificado-bancario">
+                                          <input type="file" class="document-upload-input" id="certificadoBancario" accept="image/*,application/pdf" hidden>
+                                          <div class="document-upload-content">
+                                            <i data-lucide="cloud-upload" class="text-muted" style="width: 48px; height: 48px;"></i>
+                                            <p class="mb-1 fw-semibold mt-2">Arrastra el documento aquí</p>
+                                            <p class="text-muted small mb-2">o haz clic para seleccionar</p>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('certificadoBancario').click()">
+                                              Seleccionar archivo
+                                            </button>
+                                          </div>
+                                          <div class="document-upload-preview" style="display: none;">
+                                            <img class="document-preview-image" alt="Vista previa">
+                                            <button type="button" class="btn btn-sm btn-danger document-remove-btn">
+                                              <i data-lucide="x" style="width: 16px; height: 16px;"></i> Eliminar
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <!-- Botón de publicar documento -->
+                                    <div class="d-flex justify-content-end mt-3 mb-2" id="botonPublicarCertificado" style="display: none;">
+                                      <button type="button" class="btn btn-primary" id="publicarCertificadoBtn">
+                                        <i data-lucide="send" class="me-2" style="width: 16px; height: 16px;"></i>
+                                        Publicar documento
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
                                 </div>
                               </div>
 
@@ -6759,6 +6805,8 @@ License: You must have a valid license to legally use this template for your pro
           checkAndLoadDNIDocumentation();
           // Verificar y cargar documentación del Permiso si existe
           checkAndLoadPermisoDocumentation();
+          // Verificar y cargar documentación del Certificado Bancario si existe
+          checkAndLoadCertificadoDocumentation();
         }
 
         if (detailCategoryNav) {
@@ -7835,6 +7883,8 @@ License: You must have a valid license to legally use this template for your pro
               checkAndLoadDNIDocumentation();
               // Verificar y cargar documentación del Permiso si existe
               checkAndLoadPermisoDocumentation();
+              // Verificar y cargar documentación del Certificado Bancario si existe
+              checkAndLoadCertificadoDocumentation();
 
               console.log('✅ Panel de detalle renderizado correctamente');
             } else {
@@ -7943,6 +7993,14 @@ License: You must have a valid license to legally use this template for your pro
                     zoneType === 'permiso-anverso' || zoneType === 'permiso-reverso') {
                   processWithGoogleVision(e.target.result, zoneType);
                 }
+
+                // Mostrar botón de publicar certificado si es certificado bancario
+                if (zoneType === 'certificado-bancario') {
+                  const botonDiv = document.getElementById('botonPublicarCertificado');
+                  if (botonDiv) {
+                    botonDiv.style.display = 'flex';
+                  }
+                }
               };
               reader.readAsDataURL(file);
             } else {
@@ -7950,6 +8008,15 @@ License: You must have a valid license to legally use this template for your pro
               previewImage.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><text x="50%" y="50%" font-size="12" text-anchor="middle" dominant-baseline="middle">PDF</text></svg>';
               content.style.display = 'none';
               preview.style.display = 'flex';
+
+              // Mostrar botón de publicar certificado si es certificado bancario (para PDFs)
+              const zoneType = zone.getAttribute('data-upload-zone');
+              if (zoneType === 'certificado-bancario') {
+                const botonDiv = document.getElementById('botonPublicarCertificado');
+                if (botonDiv) {
+                  botonDiv.style.display = 'flex';
+                }
+              }
             }
           }
 
@@ -7964,6 +8031,14 @@ License: You must have a valid license to legally use this template for your pro
             const ocrResults = document.querySelector(`[data-ocr-results="${zoneType}"]`);
             if (ocrResults) {
               ocrResults.style.display = 'none';
+            }
+
+            // Ocultar botón de publicar certificado si es certificado bancario
+            if (zoneType === 'certificado-bancario') {
+              const botonDiv = document.getElementById('botonPublicarCertificado');
+              if (botonDiv) {
+                botonDiv.style.display = 'none';
+              }
             }
 
             // Eliminar referencia al archivo
@@ -9825,6 +9900,176 @@ License: You must have a valid license to legally use this template for your pro
       }
 
       // ========================================
+      // CERTIFICADO DE CUENTA BANCARIA - CARGAR DOCUMENTACIÓN EXISTENTE
+      // ========================================
+
+      /**
+       * Consulta el layout documentacion para obtener el Certificado Bancario existente
+       * @returns {Array} - Array de documentos del Certificado Bancario
+       */
+      async function loadExistingCertificadoDocumentation() {
+        try {
+          if (!currentConductorId) {
+            console.log('⚠️ No hay currentConductorId disponible para consultar documentación del certificado bancario');
+            return [];
+          }
+
+          console.log('🔍 Consultando documentación existente del Certificado Bancario para conductor:', currentConductorId);
+
+          // Consultar layout documentacion filtrando por idOrigen usando _find
+          const layoutName = 'documentacion';
+          const encodedLayout = window.ApiClient.encodePathSegment(layoutName);
+
+          const response = await window.ApiClient.post(
+            `layouts/${encodedLayout}/_find`,
+            {
+              query: [{
+                idOrigen: currentConductorId
+              }],
+              sort: [
+                {
+                  fieldName: "creadoEl",
+                  sortOrder: "descend"
+                }
+              ],
+              limit: "10"
+            }
+          );
+
+          // FileMaker devuelve 401 cuando no encuentra registros
+          if (response.status === 401) {
+            console.log('ℹ️ No se encontró documentación del certificado bancario previa (401 - sin registros)');
+            return [];
+          }
+
+          if (!response.ok) {
+            console.log('⚠️ Error en la consulta:', response.status, response.statusText);
+            return [];
+          }
+
+          const data = await response.json();
+          const records = data?.response?.data || [];
+
+          console.log(`📄 Se encontraron ${records.length} documento(s) en el backend`);
+
+          // Filtrar solo los registros que corresponden al Certificado Bancario
+          // Excluir documentos DNI y Permiso
+          const certificadoDocs = records.filter(record => {
+            const nombreArchivo = record.fieldData?.nombreArchivo || '';
+            const titulo = record.fieldData?.titulo || '';
+            const textoCompleto = `${nombreArchivo} ${titulo}`.toLowerCase();
+
+            // Excluir DNI y Permiso
+            if (textoCompleto.includes('dni') || textoCompleto.includes('documento de identidad')) {
+              return false;
+            }
+            if (textoCompleto.includes('permiso')) {
+              return false;
+            }
+
+            // Incluir certificado bancario
+            return textoCompleto.includes('certificado') && textoCompleto.includes('bancari');
+          });
+
+          console.log(`🏦 Documentos Certificado Bancario encontrados: ${certificadoDocs.length}`, certificadoDocs);
+          return certificadoDocs;
+
+        } catch (error) {
+          console.error('❌ Error al cargar documentación existente del certificado bancario:', error);
+          return [];
+        }
+      }
+
+      /**
+       * Carga y muestra la imagen del Certificado Bancario en la interfaz
+       * @param {Array} certificadoDocs - Array de documentos del Certificado Bancario
+       */
+      async function loadCertificadoImage(certificadoDocs) {
+        try {
+          console.log('🖼️ Cargando imagen del Certificado Bancario en la interfaz...');
+
+          // Solo tomamos el más reciente
+          if (certificadoDocs.length === 0) {
+            return;
+          }
+
+          const doc = certificadoDocs[0]; // El más reciente
+          const fieldData = doc.fieldData || {};
+          const nombreArchivo = fieldData.nombreArchivo || '';
+          const titulo = fieldData.titulo || '';
+          const idGoogleDrive = fieldData.idGoogleDrive || null;
+
+          if (!idGoogleDrive) {
+            console.warn('⚠️ Documento del certificado bancario sin idGoogleDrive:', nombreArchivo, titulo);
+            return;
+          }
+
+          // Descargar imagen de Google Drive
+          const imageUrl = await downloadFromGoogleDrive(idGoogleDrive);
+
+          // Seleccionar la zona de upload
+          const zoneType = 'certificado-bancario';
+          const uploadZone = document.querySelector(`[data-upload-zone="${zoneType}"]`);
+
+          if (!uploadZone) {
+            console.error(`❌ No se encontró la zona de upload: ${zoneType}`);
+            return;
+          }
+
+          // Mostrar la imagen en la zona de upload
+          const uploadContent = uploadZone.querySelector('.document-upload-content');
+          const uploadPreview = uploadZone.querySelector('.document-upload-preview');
+          const previewImage = uploadZone.querySelector('.document-preview-image');
+
+          if (uploadContent && uploadPreview && previewImage) {
+            // Ocultar contenido de upload y mostrar preview
+            uploadContent.style.display = 'none';
+            uploadPreview.style.display = 'flex';
+            previewImage.src = imageUrl;
+
+            console.log(`✅ Imagen del certificado bancario cargada`);
+
+            // Nota: NO asignamos uploadedFile aquí porque es una imagen ya publicada
+            // El botón "Eliminar" solo debería limpiar la vista previa, no eliminar del servidor
+          }
+
+          console.log('✅ Imagen del Certificado Bancario cargada');
+
+        } catch (error) {
+          console.error('❌ Error al cargar imagen del Certificado Bancario:', error);
+        }
+      }
+
+      /**
+       * Verifica y carga documentación del Certificado Bancario al entrar en la sección
+       */
+      async function checkAndLoadCertificadoDocumentation() {
+        try {
+          console.log('🔄 Verificando documentación del Certificado Bancario...');
+
+          // Esperar a que currentConductorId esté disponible
+          if (!currentConductorId) {
+            console.log('⏳ Esperando a que se cargue el conductor...');
+            // Reintentar después de un breve delay
+            setTimeout(checkAndLoadCertificadoDocumentation, 500);
+            return;
+          }
+
+          const certificadoDocs = await loadExistingCertificadoDocumentation();
+
+          if (certificadoDocs.length > 0) {
+            console.log(`📋 Se encontró certificado bancario previamente cargado`);
+            await loadCertificadoImage(certificadoDocs);
+          } else {
+            console.log('ℹ️ No se encontró documentación previa del Certificado Bancario');
+          }
+
+        } catch (error) {
+          console.error('❌ Error al verificar documentación del Certificado Bancario:', error);
+        }
+      }
+
+      // ========================================
       // BOTÓN PUBLICAR DOCUMENTOS
       // ========================================
 
@@ -9956,6 +10201,68 @@ License: You must have a valid license to legally use this template for your pro
           }
 
           console.log(`✅ ${documentsToUpload.length} documento(s) del permiso listo(s) para publicar`);
+
+          // Marcar que estamos en modo de publicación de documentos
+          isDocumentPublishMode = true;
+
+          // Mostrar modal de confirmación
+          const publicarModal = new bootstrap.Modal(document.getElementById('publicarConfirmModal'));
+          publicarModal.show();
+        });
+      }
+
+      // BOTÓN PUBLICAR CERTIFICADO DE CUENTA BANCARIA
+      const publicarCertificadoBtn = document.getElementById('publicarCertificadoBtn');
+
+      if (publicarCertificadoBtn) {
+        publicarCertificadoBtn.addEventListener('click', async () => {
+          console.log('🚀 Validando certificado bancario para publicar...');
+          console.log('📋 Estado de variables:');
+          console.log('  - currentConductorRecordId:', currentConductorRecordId);
+          console.log('  - currentConductorId:', currentConductorId);
+
+          // Verificar que hay conductor cargado
+          if (!currentConductorRecordId || !currentConductorId) {
+            console.error('❌ Falta información del conductor');
+            const errorToast = document.getElementById('publicarErrorToast');
+            const errorMessage = document.getElementById('publicarErrorMessage');
+            if (errorMessage) {
+              errorMessage.textContent = 'No se ha identificado el conductor. Por favor, recarga la página.';
+            }
+            if (errorToast) {
+              const toast = new bootstrap.Toast(errorToast);
+              toast.show();
+            }
+            return;
+          }
+
+          // Obtener la zona de upload del certificado bancario
+          const certificadoBancarioZone = document.querySelector('[data-upload-zone="certificado-bancario"]');
+          const documentsToUpload = [];
+
+          // Verificar que el certificado está listo para subir
+          if (certificadoBancarioZone && certificadoBancarioZone.uploadedFile) {
+            documentsToUpload.push({
+              file: certificadoBancarioZone.uploadedFile,
+              type: 'certificado-bancario',
+              zone: certificadoBancarioZone
+            });
+          }
+
+          if (documentsToUpload.length === 0) {
+            const errorToast = document.getElementById('publicarErrorToast');
+            const errorMessage = document.getElementById('publicarErrorMessage');
+            if (errorMessage) {
+              errorMessage.textContent = 'No hay certificado bancario para publicar. Por favor, selecciona el documento.';
+            }
+            if (errorToast) {
+              const toast = new bootstrap.Toast(errorToast);
+              toast.show();
+            }
+            return;
+          }
+
+          console.log(`✅ Certificado bancario listo para publicar`);
 
           // Marcar que estamos en modo de publicación de documentos
           isDocumentPublishMode = true;
@@ -10107,6 +10414,8 @@ License: You must have a valid license to legally use this template for your pro
                     titulo = 'Permiso de conducción - Anverso';
                   } else if (docType === 'permiso-reverso') {
                     titulo = 'Permiso de conducción - Reverso';
+                  } else if (docType === 'certificado-bancario') {
+                    titulo = 'Certificado de Cuenta Bancaria';
                   }
 
                   // Extraer extensión del archivo
@@ -10178,6 +10487,8 @@ License: You must have a valid license to legally use this template for your pro
                     tiposDocumentos.push('Permiso Anverso');
                   } else if (docType === 'permiso-reverso') {
                     tiposDocumentos.push('Permiso Reverso');
+                  } else if (docType === 'certificado-bancario') {
+                    tiposDocumentos.push('Certificado Bancario');
                   }
                 }
               });
