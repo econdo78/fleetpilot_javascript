@@ -1724,15 +1724,15 @@ License: You must have a valid license to legally use this template for your pro
                                     <div class="bg-primary bg-opacity-10 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                                       <i data-lucide="credit-card" class="text-primary" style="width: 20px; height: 20px;"></i>
                                     </div>
-                                    <h5 class="card-title mb-0">DOCUMENTO DE IDENTIDAD (DNI/NIE)</h5>
+                                    <h5 class="card-title mb-0">DOCUMENTO DE IDENTIDAD (DNI/NIE/PASAPORTE)</h5>
                                   </div>
                                   <div class="card-body" style="flex: 1; display: flex; flex-direction: column;">
                                     <div class="row g-4">
-                                      <!-- Anverso del DNI -->
+                                      <!-- Anverso del Documento -->
                                       <div class="col-md-6">
                                         <label class="form-label fw-semibold text-secondary text-uppercase small mb-2">
                                           <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
-                                          DNI - Anverso (Frontal)
+                                          Documento - Anverso (Frontal)
                                         </label>
                                         <div class="document-upload-zone" data-upload-zone="doc-anverso">
                                           <input type="file" class="document-upload-input" id="docAnverso" accept="image/*,application/pdf" hidden>
@@ -1788,11 +1788,11 @@ License: You must have a valid license to legally use this template for your pro
                                         </div>
                                       </div>
 
-                                      <!-- Reverso del DNI -->
+                                      <!-- Reverso del Documento -->
                                       <div class="col-md-6">
                                         <label class="form-label fw-semibold text-secondary text-uppercase small mb-2">
                                           <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
-                                          DNI - Reverso (Trasera)
+                                          Documento - Reverso (Trasera)
                                         </label>
                                         <div class="document-upload-zone" data-upload-zone="doc-reverso">
                                           <input type="file" class="document-upload-input" id="docReverso" accept="image/*,application/pdf" hidden>
@@ -3304,6 +3304,7 @@ License: You must have a valid license to legally use this template for your pro
       let currentConductorRecordId = null;
       let currentConductorId = null;
       let currentFormSection = null; // Para rastrear qué formulario se está publicando
+      let detectedDocumentType = null; // Tipo de documento detectado por OCR (DNI, NIE, PASAPORTE)
 
       // Función para poblar los formularios con los datos del conductor
       const populateEditableForms = (fieldData) => {
@@ -8088,16 +8089,40 @@ License: You must have a valid license to legally use this template for your pro
             console.log('------- FIN -------');
             console.log('📝 Texto con caracteres especiales visibles:', JSON.stringify(extractedText));
 
-            // Parsear según si es anverso o reverso
+            // Detectar tipo de documento automáticamente
+            const documentType = detectDocumentType(extractedText);
+            console.log('📋 Tipo de documento detectado:', documentType);
+            console.log('📋 Zona del documento:', zoneType);
+
+            // Parsear según el tipo de documento detectado y la zona
             let dniData;
+
             if (zoneType === 'doc-anverso') {
-              dniData = parseDNIAnverso(extractedText);
+              // ANVERSO - detectar y parsear
+              if (documentType === 'PASAPORTE') {
+                dniData = parsePasaporte(extractedText);
+              } else if (documentType === 'NIE') {
+                dniData = parseNIEAnverso(extractedText);
+              } else {
+                dniData = parseDNIAnverso(extractedText);
+              }
             } else if (zoneType === 'doc-reverso') {
-              dniData = parseDNIReverso(extractedText);
+              // REVERSO - detectar y parsear
+              if (documentType === 'PASAPORTE') {
+                // Los pasaportes normalmente solo tienen una cara relevante,
+                // pero intentamos extraer lo que haya
+                dniData = parsePasaporte(extractedText);
+              } else if (documentType === 'NIE') {
+                dniData = parseNIEReverso(extractedText);
+              } else {
+                dniData = parseDNIReverso(extractedText);
+              }
             }
+
             console.log('✅ Datos parseados:', dniData);
 
-            // Mostrar los datos
+            // Mostrar los datos (añadir tipo de documento al objeto)
+            dniData.documentType = documentType;
             displayDNIData(dniData, zoneType);
           } else {
             console.warn('⚠️ No se detectó texto en la imagen');
@@ -8121,6 +8146,583 @@ License: You must have a valid license to legally use this template for your pro
         } finally {
           if (loadingSpinner) loadingSpinner.style.display = 'none';
         }
+      }
+
+      /**
+       * Detecta automáticamente el tipo de documento (DNI, NIE o Pasaporte)
+       * @param {string} text - Texto extraído del documento
+       * @returns {string} - 'DNI', 'NIE' o 'PASAPORTE'
+       */
+      function detectDocumentType(text) {
+        const cleanText = text.toUpperCase();
+
+        console.log('🔍 Detectando tipo de documento...');
+
+        // Buscar indicadores de PASAPORTE
+        if (cleanText.includes('PASSPORT') ||
+            cleanText.includes('PASAPORTE') ||
+            cleanText.includes('TYPE/TIPO') ||
+            /P<ESP</.test(cleanText)) { // Línea MRZ de pasaporte español
+          console.log('✅ Documento detectado: PASAPORTE');
+          return 'PASAPORTE';
+        }
+
+        // Buscar formato de NIE (X/Y/Z seguido de 7 dígitos)
+        if (/[XYZ]\d{7}[A-Z]/.test(cleanText)) {
+          console.log('✅ Documento detectado: NIE');
+          return 'NIE';
+        }
+
+        // Buscar palabra clave NIE
+        if (cleanText.includes('NÚMERO DE IDENTIDAD DE EXTRANJERO') ||
+            cleanText.includes('NIE')) {
+          console.log('✅ Documento detectado: NIE (por palabra clave)');
+          return 'NIE';
+        }
+
+        // Buscar formato de DNI (8 dígitos + letra)
+        if (/\b\d{8}[A-Z]\b/.test(cleanText)) {
+          console.log('✅ Documento detectado: DNI');
+          return 'DNI';
+        }
+
+        // Por defecto, asumir DNI
+        console.log('⚠️ No se pudo detectar el tipo, asumiendo DNI');
+        return 'DNI';
+      }
+
+      /**
+       * Parsea el texto extraído para obtener datos del NIE español (ANVERSO)
+       */
+      function parseNIEAnverso(text) {
+        const data = {
+          nie: null,
+          nombre: null,
+          nacimiento: null,
+          caducidad: null,
+          sexo: null,
+          nacionalidad: null
+        };
+
+        console.log('🔍 Analizando ANVERSO del NIE...');
+        console.log('📝 Texto completo:', text);
+
+        // Limpieza del texto
+        const cleanText = text
+          .replace(/[•●○◦]/g, '') // Eliminar bullets
+          .replace(/\s+/g, ' ')   // Normalizar espacios múltiples
+          .trim()
+          .toUpperCase();
+
+        console.log('🧹 Texto limpio:', cleanText);
+
+        // ==========================================
+        // BUSCAR NIE (X/Y/Z + 7 dígitos + letra)
+        // ==========================================
+        const nieMatch = cleanText.match(/\b([XYZ]\d{7}[A-Z])\b/);
+        if (nieMatch) {
+          data.nie = nieMatch[1];
+          console.log('✅ NIE encontrado:', data.nie);
+        }
+
+        // ==========================================
+        // BUSCAR NOMBRE COMPLETO (igual que DNI)
+        // ==========================================
+        console.log('🔍 Buscando nombre completo...');
+
+        // ESTRATEGIA 1: Buscar palabras clave "APELLIDOS" y "NOMBRE"
+        const apellidosMatch = cleanText.match(/APELLIDOS[\s\n]+([A-ZÁÉÍÓÚÑ\s]+?)(?=NOMBRE|NACIONALIDAD|SEXO|EMISIÓN|VALIDEZ)/i);
+        const nombreMatch = cleanText.match(/NOMBRE[\s\n]+([A-ZÁÉÍÓÚÑ\s]+?)(?=SEXO|NACIONALIDAD|FECHA|EMISIÓN|VALIDEZ)/i);
+
+        if (apellidosMatch && nombreMatch) {
+          const apellidos = apellidosMatch[1].trim().replace(/\s+/g, ' ');
+          const nombre = nombreMatch[1].trim().replace(/\s+/g, ' ');
+          data.nombre = `${nombre} ${apellidos}`;
+          console.log('✅ Nombre encontrado (método 1 - palabras clave):', data.nombre);
+        }
+
+        // ESTRATEGIA 2: Buscar nombre en formato de permiso de residencia
+        // El nombre suele aparecer en 2-3 líneas después del código de país y antes del NIE
+        if (!data.nombre) {
+          const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+          console.log('📋 Todas las líneas del texto:', lines);
+
+          let nombreLines = [];
+          let foundCountry = false;
+          let linesSinceCountry = 0;
+
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            const lineUpper = line.toUpperCase();
+
+            // Detectar si encontramos el código de país (ARG, ESP, etc.)
+            if (!foundCountry && /\b[A-Z]{3}\b/.test(lineUpper) && !/NIE|DNI|PERMISO|RESIDENCIA/.test(lineUpper)) {
+              foundCountry = true;
+              console.log(`📍 Código de país encontrado en línea ${i}: "${line}"`);
+              continue;
+            }
+
+            // Si ya pasamos el país, contar líneas
+            if (foundCountry) {
+              linesSinceCountry++;
+
+              // Si encontramos el NIE explícito, ya pasamos la zona del nombre
+              if (/NIE[:\s]*[XYZ]\d{7}[A-Z]/.test(lineUpper)) {
+                console.log(`🛑 NIE encontrado en línea ${i}, deteniendo búsqueda`);
+                break;
+              }
+
+              // Capturar líneas con nombres (letras, espacios, guiones, caracteres acentuados)
+              // Solo las primeras 3-4 líneas después del país
+              if (linesSinceCountry <= 4 && /^[A-ZÁÉÍÓÚÑ\s\-]+$/i.test(line) && line.length >= 3) {
+                // Evitar palabras clave comunes en NIE
+                if (!/^(RESIDENCIA|TRABAJO|PROFESIONALES|ALTA|CUALIFICA|OBSERVACIONES|REMARKS|SOPORTE|NÚMERO|PERMISO|TARJETA|VALIDEZ)$/i.test(lineUpper)) {
+                  nombreLines.push(line);
+                  console.log(`📝 Línea ${i} capturada como parte del nombre: "${line}"`);
+                }
+              }
+
+              // Detener después de 6 líneas del país
+              if (linesSinceCountry > 6) {
+                console.log('⏹️ Límite de líneas alcanzado, deteniendo búsqueda');
+                break;
+              }
+            }
+          }
+
+          if (nombreLines.length > 0) {
+            // Unir las líneas, limpiar guiones múltiples y espacios
+            data.nombre = nombreLines.join(' ')
+              .replace(/\-+/g, '-')    // Guiones múltiples a uno solo
+              .replace(/\s+/g, ' ')    // Espacios múltiples a uno solo
+              .trim();
+            console.log('✅ Nombre encontrado (método 2 - formato permiso residencia):', data.nombre);
+          } else {
+            console.log('⚠️ No se encontró nombre con método 2');
+          }
+        }
+
+        // ESTRATEGIA 3: Buscar en líneas después del NIE explícito (fallback)
+        if (!data.nombre) {
+          const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+          let nombreLines = [];
+          let foundNIE = false;
+          let foundDate = false;
+
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim().toUpperCase();
+
+            if (/[XYZ]\d{7}[A-Z]/.test(line)) {
+              foundNIE = true;
+              continue;
+            }
+
+            if (/\d{2}[\s\/\.\-]\d{2}[\s\/\.\-]\d{4}/.test(line)) {
+              foundDate = true;
+              break;
+            }
+
+            if (foundNIE && !foundDate && /^[A-ZÁÉÍÓÚÑ\s\-]{3,}$/.test(line)) {
+              // Evitar palabras clave
+              if (!/^(APELLIDOS|NOMBRE|SEXO|NACIONALIDAD|EMISIÓN|VALIDEZ|NACIMIENTO|NIE|NÚMERO|IDENTIDAD|EXTRANJERO|REINO|ESPAÑA|ESP|RESIDENCIA|TRABAJO)$/.test(line)) {
+                nombreLines.push(line);
+              }
+            }
+          }
+
+          if (nombreLines.length > 0) {
+            data.nombre = nombreLines.join(' ').trim().replace(/\s+/g, ' ');
+            console.log('✅ Nombre encontrado (método 3 - después de NIE):', data.nombre);
+          }
+        }
+
+        // ==========================================
+        // BUSCAR FECHAS (igual que DNI)
+        // ==========================================
+        console.log('🔍 Buscando fechas de nacimiento y caducidad...');
+
+        const nacimientoMatch = cleanText.match(/NACIMIENTO[\s\n]+(\d{2})[\s\/\.\-]+(\d{2})[\s\/\.\-]+(\d{4})/i);
+        if (nacimientoMatch) {
+          data.nacimiento = `${nacimientoMatch[1]}/${nacimientoMatch[2]}/${nacimientoMatch[3]}`;
+          console.log('✅ Fecha nacimiento encontrada:', data.nacimiento);
+        }
+
+        const caducidadMatch = cleanText.match(/(?:VALIDEZ|CADUCIDAD)[\s\n]+(\d{2})[\s\/\.\-]+(\d{2})[\s\/\.\-]+(\d{4})(?:[\s\n]+\d{2}[\s\/\.\-]+\d{2}[\s\/\.\-]+(\d{4}))?/i);
+        if (caducidadMatch) {
+          if (caducidadMatch[4]) {
+            data.caducidad = `${caducidadMatch[1]}/${caducidadMatch[2]}/${caducidadMatch[4]}`;
+          } else {
+            data.caducidad = `${caducidadMatch[1]}/${caducidadMatch[2]}/${caducidadMatch[3]}`;
+          }
+          console.log('✅ Fecha caducidad encontrada:', data.caducidad);
+        }
+
+        // Fallback: buscar todas las fechas
+        if (!data.nacimiento || !data.caducidad) {
+          const todasLasFechas = cleanText.match(/\d{2}[\s\/\.\-]\d{2}[\s\/\.\-]\d{4}/g);
+          if (todasLasFechas && todasLasFechas.length > 0) {
+            const fechasNormalizadas = todasLasFechas.map(f => f.replace(/[\s\.\-]/g, '/'));
+            const fechasConAnio = fechasNormalizadas.map(fecha => {
+              const partes = fecha.split('/');
+              return { fecha: fecha, anio: parseInt(partes[2]) };
+            }).filter(f => f.anio >= 1900 && f.anio <= 2050);
+
+            fechasConAnio.sort((a, b) => a.anio - b.anio);
+
+            if (fechasConAnio.length >= 2) {
+              if (!data.nacimiento) data.nacimiento = fechasConAnio[0].fecha;
+              if (!data.caducidad) data.caducidad = fechasConAnio[fechasConAnio.length - 1].fecha;
+            }
+          }
+        }
+
+        // ==========================================
+        // BUSCAR SEXO
+        // ==========================================
+        const sexoMatch = cleanText.match(/\bSEXO[:\s]*([MF])\b/);
+        if (sexoMatch) {
+          data.sexo = sexoMatch[1];
+          console.log('✅ Sexo encontrado:', data.sexo);
+        }
+
+        // ==========================================
+        // BUSCAR NACIONALIDAD
+        // ==========================================
+        // En NIE puede ser cualquier nacionalidad, no solo ESP
+        const nacionalidadMatch = cleanText.match(/\b([A-Z]{3})\b/);
+        if (nacionalidadMatch && nacionalidadMatch[1] !== 'NIE' && nacionalidadMatch[1] !== 'DNI') {
+          data.nacionalidad = nacionalidadMatch[1];
+          console.log('✅ Nacionalidad encontrada:', data.nacionalidad);
+        }
+
+        console.log('✅ RESULTADO FINAL (NIE ANVERSO):', data);
+        return data;
+      }
+
+      /**
+       * Parsea el texto extraído para obtener datos del NIE español (REVERSO)
+       */
+      function parseNIEReverso(text) {
+        const data = {
+          domicilio: null,
+          localidad: null,
+          provincia: null
+        };
+
+        console.log('🔍 Analizando REVERSO del NIE para extraer domicilio...');
+        console.log('📝 Texto completo:', text);
+
+        const cleanText = text
+          .replace(/[•●○◦]/g, '')
+          .replace(/[ \t]+/g, ' ')  // Preservar \n
+          .trim();
+
+        console.log('🧹 Texto limpio:', cleanText);
+
+        const lines = cleanText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+        console.log('📋 Líneas del texto:', lines);
+
+        // ==========================================
+        // ESTRATEGIA 1: Buscar "DOMICILIO" o "DIRECCIÓN" y capturar líneas siguientes
+        // ==========================================
+        let domicilioIndex = lines.findIndex(line =>
+          /^DOMICILIO$/i.test(line) ||
+          /^DOMICILIO[:\s]/i.test(line) ||
+          /^ADDRESS$/i.test(line) ||
+          /^DIRECCIÓN$/i.test(line) ||
+          /^DIRECCION$/i.test(line)
+        );
+
+        if (domicilioIndex !== -1) {
+          console.log(`✅ Palabra "DOMICILIO/DIRECCIÓN" encontrada en línea ${domicilioIndex}`);
+          let capturedLines = 0;
+
+          for (let i = domicilioIndex + 1; i < lines.length && capturedLines < 3; i++) {
+            const line = lines[i].trim();
+
+            // Detener si encontramos otra sección claramente identificada
+            if (/^(LUGAR DE NACIMIENTO|HIJO|HIJA|PADRE|MADRE|EQUIPO|OBSERVACIONES|REMARKS|SOPORTE)/i.test(line)) {
+              console.log(`🛑 Deteniendo en línea ${i} (nueva sección):`, line);
+              break;
+            }
+
+            if (line.length >= 3) {
+              console.log(`📋 Procesando línea ${i} (captura ${capturedLines + 1}/3):`, line);
+
+              // Primera línea: domicilio (calle con número y posiblemente código postal)
+              if (capturedLines === 0) {
+                data.domicilio = line;
+                console.log(`📍 Línea ${i} - DOMICILIO:`, line);
+                capturedLines++;
+              }
+              // Segunda línea: localidad
+              else if (capturedLines === 1) {
+                data.localidad = line;
+                console.log(`🏘️ Línea ${i} - LOCALIDAD:`, line);
+                capturedLines++;
+              }
+              // Tercera línea: provincia
+              else if (capturedLines === 2) {
+                data.provincia = line;
+                console.log(`🗺️ Línea ${i} - PROVINCIA:`, line);
+                capturedLines++;
+                break; // Ya tenemos las 3 líneas
+              }
+            }
+          }
+
+          if (capturedLines > 0) {
+            console.log(`✅ Capturadas ${capturedLines} líneas de dirección`);
+          } else {
+            console.warn('⚠️ No se capturaron líneas después de DOMICILIO');
+          }
+        } else {
+          console.log('⚠️ No se encontró la palabra DOMICILIO/DIRECCIÓN');
+        }
+
+        // ==========================================
+        // ESTRATEGIA 2: Buscar patrón de código postal (5 dígitos) para identificar domicilio
+        // ==========================================
+        if (!data.domicilio && !data.localidad) {
+          console.log('🔍 Buscando código postal para identificar domicilio...');
+
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+
+            // Buscar línea que contenga código postal (5 dígitos)
+            if (/\b\d{5}\b/.test(line) && !/NIE|DNI|DOCUMENTO|IDENTIDAD|FECHA/i.test(line)) {
+              console.log(`📮 Código postal encontrado en línea ${i}:`, line);
+
+              // Esta línea podría ser el domicilio completo o parte de él
+              let domicilioLines = [];
+
+              // Incluir línea anterior si no es un encabezado
+              if (i > 0 && lines[i-1].length > 5 && !/DOMICILIO|DIRECCIÓN|DIRECCION|ADDRESS|LUGAR|NACIMIENTO/i.test(lines[i-1])) {
+                domicilioLines.push(lines[i-1]);
+                console.log(`📍 Línea anterior incluida: ${lines[i-1]}`);
+              }
+
+              // Incluir línea con CP
+              domicilioLines.push(line);
+
+              // La primera línea con contenido es el domicilio
+              data.domicilio = domicilioLines.join(', ');
+              console.log('✅ Domicilio encontrado (método 2 - código postal):', data.domicilio);
+
+              // La siguiente línea podría ser la localidad
+              if (i + 1 < lines.length && lines[i + 1].length > 2) {
+                const nextLine = lines[i + 1];
+                if (!/OBSERVACIONES|REMARKS|SOPORTE|NÚMERO|PERMISO/i.test(nextLine)) {
+                  data.localidad = nextLine;
+                  console.log('✅ Localidad encontrada (método 2):', data.localidad);
+
+                  // Y la siguiente sería la provincia
+                  if (i + 2 < lines.length && lines[i + 2].length > 2) {
+                    const nextNextLine = lines[i + 2];
+                    if (!/OBSERVACIONES|REMARKS|SOPORTE|NÚMERO|PERMISO/i.test(nextNextLine)) {
+                      data.provincia = nextNextLine;
+                      console.log('✅ Provincia encontrada (método 2):', data.provincia);
+                    }
+                  }
+                }
+              }
+
+              break;
+            }
+          }
+        }
+
+        // ==========================================
+        // ESTRATEGIA 3: Buscar patrones de dirección sin palabra clave explícita
+        // ==========================================
+        if (!data.domicilio) {
+          console.log('🔍 Buscando patrones de dirección...');
+
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+
+            // Buscar líneas que parezcan direcciones (contienen CALLE, C/, AV, etc.)
+            if (/\b(CALLE|AVENIDA|PLAZA|PASEO|C\/|AV\.|CL\.|PZ\.)/i.test(line)) {
+              console.log(`🏠 Patrón de dirección encontrado en línea ${i}:`, line);
+              data.domicilio = line;
+
+              // Capturar las siguientes 2 líneas como localidad y provincia
+              if (i + 1 < lines.length) {
+                const nextLine = lines[i + 1];
+                if (nextLine.length > 2 && !/OBSERVACIONES|REMARKS|SOPORTE/i.test(nextLine)) {
+                  data.localidad = nextLine;
+                  console.log(`🏘️ Localidad capturada: ${nextLine}`);
+
+                  if (i + 2 < lines.length) {
+                    const nextNextLine = lines[i + 2];
+                    if (nextNextLine.length > 2 && !/OBSERVACIONES|REMARKS|SOPORTE/i.test(nextNextLine)) {
+                      data.provincia = nextNextLine;
+                      console.log(`🗺️ Provincia capturada: ${nextNextLine}`);
+                    }
+                  }
+                }
+              }
+              break;
+            }
+          }
+        }
+
+        // ==========================================
+        // Limpiar datos finales
+        // ==========================================
+        if (data.domicilio) {
+          data.domicilio = data.domicilio
+            .replace(/^(DOMICILIO|ADDRESS|DIRECCIÓN|DIRECCION)[:\s]*/i, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+          console.log('✅ DOMICILIO FINAL:', data.domicilio);
+        } else {
+          console.warn('⚠️ No se pudo detectar el domicilio en el reverso del NIE');
+        }
+
+        if (data.localidad) {
+          data.localidad = data.localidad.replace(/\s+/g, ' ').trim();
+          console.log('✅ LOCALIDAD FINAL:', data.localidad);
+        } else {
+          console.warn('⚠️ No se pudo detectar la localidad');
+        }
+
+        if (data.provincia) {
+          data.provincia = data.provincia.replace(/\s+/g, ' ').trim();
+          console.log('✅ PROVINCIA FINAL:', data.provincia);
+        } else {
+          console.warn('⚠️ No se pudo detectar la provincia');
+        }
+
+        console.log('✅ RESULTADO FINAL (REVERSO NIE):', data);
+        return data;
+      }
+
+      /**
+       * Parsea el texto extraído para obtener datos del Pasaporte
+       */
+      function parsePasaporte(text) {
+        const data = {
+          pasaporte: null,
+          nombre: null,
+          nacimiento: null,
+          caducidad: null,
+          sexo: null,
+          nacionalidad: null
+        };
+
+        console.log('🔍 Analizando PASAPORTE...');
+        console.log('📝 Texto completo:', text);
+
+        const cleanText = text
+          .replace(/[•●○◦]/g, '')
+          .trim()
+          .toUpperCase();
+
+        console.log('🧹 Texto limpio:', cleanText);
+
+        // ==========================================
+        // BUSCAR NÚMERO DE PASAPORTE
+        // ==========================================
+        // Formato pasaporte español: AAA999999 o similar
+        const pasaporteMatch = cleanText.match(/\b([A-Z]{3}\d{6})\b/);
+        if (pasaporteMatch) {
+          data.pasaporte = pasaporteMatch[1];
+          console.log('✅ Número de pasaporte encontrado:', data.pasaporte);
+        }
+
+        // ==========================================
+        // BUSCAR NOMBRE COMPLETO
+        // ==========================================
+        console.log('🔍 Buscando nombre completo...');
+
+        // ESTRATEGIA 1: Buscar en zona MRZ (Machine Readable Zone)
+        // Formato: P<ESP<APELLIDO1<<APELLIDO2<<NOMBRE<<<<<<<<<<<<
+        const mrzMatch = text.match(/P<ESP<([A-Z<]+)/);
+        if (mrzMatch) {
+          const mrzNombre = mrzMatch[1].replace(/</g, ' ').trim().replace(/\s+/g, ' ');
+          data.nombre = mrzNombre;
+          console.log('✅ Nombre encontrado en MRZ:', data.nombre);
+        }
+
+        // ESTRATEGIA 2: Buscar palabras clave "SURNAME" / "APELLIDOS" y "GIVEN NAMES" / "NOMBRE"
+        if (!data.nombre) {
+          const surnameMatch = cleanText.match(/(?:SURNAME|APELLIDOS)[\s\n]+([A-ZÁÉÍÓÚÑ\s]+?)(?=GIVEN|NOMBRE|DATE|FECHA|SEX|SEXO)/i);
+          const givenMatch = cleanText.match(/(?:GIVEN NAMES|NOMBRE)[\s\n]+([A-ZÁÉÍÓÚÑ\s]+?)(?=DATE|FECHA|SEX|SEXO|NATIONALITY)/i);
+
+          if (surnameMatch && givenMatch) {
+            const apellidos = surnameMatch[1].trim().replace(/\s+/g, ' ');
+            const nombre = givenMatch[1].trim().replace(/\s+/g, ' ');
+            data.nombre = `${nombre} ${apellidos}`;
+            console.log('✅ Nombre encontrado (palabras clave):', data.nombre);
+          }
+        }
+
+        // ==========================================
+        // BUSCAR FECHAS
+        // ==========================================
+        console.log('🔍 Buscando fechas...');
+
+        // Fecha de nacimiento
+        const nacimientoMatch = cleanText.match(/(?:DATE OF BIRTH|FECHA DE NACIMIENTO|BIRTH)[\s\n:]+(\d{2})[\s\/\.\-]+(\d{2})[\s\/\.\-]+(\d{4})/i);
+        if (nacimientoMatch) {
+          data.nacimiento = `${nacimientoMatch[1]}/${nacimientoMatch[2]}/${nacimientoMatch[3]}`;
+          console.log('✅ Fecha nacimiento encontrada:', data.nacimiento);
+        }
+
+        // Fecha de caducidad
+        const caducidadMatch = cleanText.match(/(?:DATE OF EXPIRY|FECHA DE CADUCIDAD|EXPIRY)[\s\n:]+(\d{2})[\s\/\.\-]+(\d{2})[\s\/\.\-]+(\d{4})/i);
+        if (caducidadMatch) {
+          data.caducidad = `${caducidadMatch[1]}/${caducidadMatch[2]}/${caducidadMatch[3]}`;
+          console.log('✅ Fecha caducidad encontrada:', data.caducidad);
+        }
+
+        // Fallback: buscar todas las fechas si no se encontraron
+        if (!data.nacimiento || !data.caducidad) {
+          const todasLasFechas = cleanText.match(/\d{2}[\s\/\.\-]\d{2}[\s\/\.\-]\d{4}/g);
+          if (todasLasFechas && todasLasFechas.length >= 2) {
+            const fechasNormalizadas = todasLasFechas.map(f => f.replace(/[\s\.\-]/g, '/'));
+            const fechasConAnio = fechasNormalizadas.map(fecha => {
+              const partes = fecha.split('/');
+              return { fecha: fecha, anio: parseInt(partes[2]) };
+            }).filter(f => f.anio >= 1900 && f.anio <= 2050);
+
+            fechasConAnio.sort((a, b) => a.anio - b.anio);
+
+            if (fechasConAnio.length >= 2) {
+              if (!data.nacimiento) data.nacimiento = fechasConAnio[0].fecha;
+              if (!data.caducidad) data.caducidad = fechasConAnio[fechasConAnio.length - 1].fecha;
+            }
+          }
+        }
+
+        // ==========================================
+        // BUSCAR SEXO
+        // ==========================================
+        const sexoMatch = cleanText.match(/\b(?:SEX|SEXO)[:\s]*([MF])\b/);
+        if (sexoMatch) {
+          data.sexo = sexoMatch[1];
+          console.log('✅ Sexo encontrado:', data.sexo);
+        }
+
+        // ==========================================
+        // BUSCAR NACIONALIDAD
+        // ==========================================
+        const nacionalidadMatch = cleanText.match(/\b(?:NATIONALITY|NACIONALIDAD)[:\s]+([A-ZÁÉÍÓÚÑ\s]+)/i);
+        if (nacionalidadMatch) {
+          data.nacionalidad = nacionalidadMatch[1].trim();
+          console.log('✅ Nacionalidad encontrada:', data.nacionalidad);
+        } else {
+          // Buscar código de 3 letras (ESP, USA, etc.)
+          const codigoMatch = cleanText.match(/\b([A-Z]{3})\b/);
+          if (codigoMatch && codigoMatch[1] !== 'ESP') {
+            data.nacionalidad = codigoMatch[1];
+            console.log('✅ Nacionalidad (código) encontrada:', data.nacionalidad);
+          }
+        }
+
+        console.log('✅ RESULTADO FINAL (PASAPORTE):', data);
+        return data;
       }
 
       /**
@@ -8456,11 +9058,19 @@ License: You must have a valid license to legally use this template for your pro
       }
 
       /**
-       * Muestra los datos extraídos del DNI en la interfaz
+       * Muestra los datos extraídos del DNI/NIE/Pasaporte en la interfaz
        */
       function displayDNIData(data, zoneType) {
         const resultsContainer = document.querySelector(`[data-ocr-results="${zoneType}"]`);
         if (!resultsContainer) return;
+
+        const documentType = data.documentType || 'DNI';
+
+        // Guardar el tipo de documento detectado en variable global (solo desde anverso)
+        if (zoneType === 'doc-anverso') {
+          detectedDocumentType = documentType;
+          console.log('💾 Tipo de documento guardado en variable global:', detectedDocumentType);
+        }
 
         if (zoneType === 'doc-anverso') {
           const nombreEl = resultsContainer.querySelector('[data-ocr-nombre]');
@@ -8469,8 +9079,44 @@ License: You must have a valid license to legally use this template for your pro
           const nacimientoEl = resultsContainer.querySelector('[data-ocr-nacimiento]');
           const caducidadEl = resultsContainer.querySelector('[data-ocr-caducidad]');
 
+          // Actualizar título según tipo de documento
+          const titleEl = resultsContainer.querySelector('strong');
+          if (titleEl) {
+            if (documentType === 'NIE') {
+              titleEl.textContent = 'Datos extraídos del NIE';
+            } else if (documentType === 'PASAPORTE') {
+              titleEl.textContent = 'Datos extraídos del Pasaporte';
+            } else {
+              titleEl.textContent = 'Datos extraídos del DNI';
+            }
+          }
+
           if (nombreEl) nombreEl.textContent = data.nombre || '-';
-          if (dniEl) dniEl.textContent = data.dni || '-';
+
+          // Mostrar número de documento según tipo
+          if (dniEl) {
+            if (documentType === 'NIE') {
+              dniEl.textContent = data.nie || '-';
+            } else if (documentType === 'PASAPORTE') {
+              dniEl.textContent = data.pasaporte || '-';
+            } else {
+              dniEl.textContent = data.dni || '-';
+            }
+          }
+
+          // Actualizar label del número de documento
+          const dniLabelEl = dniEl?.previousElementSibling;
+          if (dniLabelEl && dniLabelEl.querySelector('strong')) {
+            const labelStrong = dniLabelEl.querySelector('strong');
+            if (documentType === 'NIE') {
+              labelStrong.textContent = 'Número NIE:';
+            } else if (documentType === 'PASAPORTE') {
+              labelStrong.textContent = 'Número Pasaporte:';
+            } else {
+              labelStrong.textContent = 'Número DNI:';
+            }
+          }
+
           if (nacionalidadEl) nacionalidadEl.textContent = data.nacionalidad || '-';
           if (nacimientoEl) nacimientoEl.textContent = data.nacimiento || '-';
           if (caducidadEl) caducidadEl.textContent = data.caducidad || '-';
@@ -8478,6 +9124,18 @@ License: You must have a valid license to legally use this template for your pro
           const domicilioEl = resultsContainer.querySelector('[data-ocr-domicilio]');
           const localidadEl = resultsContainer.querySelector('[data-ocr-localidad]');
           const provinciaEl = resultsContainer.querySelector('[data-ocr-provincia]');
+
+          // Actualizar título según tipo de documento
+          const titleEl = resultsContainer.querySelector('strong');
+          if (titleEl) {
+            if (documentType === 'NIE') {
+              titleEl.textContent = 'Datos de dirección extraídos del NIE';
+            } else if (documentType === 'PASAPORTE') {
+              titleEl.textContent = 'Datos de dirección extraídos del Pasaporte';
+            } else {
+              titleEl.textContent = 'Datos de dirección extraídos del DNI';
+            }
+          }
 
           if (domicilioEl) domicilioEl.textContent = data.domicilio || '-';
           if (localidadEl) localidadEl.textContent = data.localidad || '-';
@@ -9218,9 +9876,16 @@ License: You must have a valid license to legally use this template for your pro
                         }
                       }
 
-                      // DNI
-                      if (anversoData.dni && anversoData.dni !== '-' && isFieldEmpty(conductorFields.nDocumentoIdentidad)) {
-                        fieldsToUpdate.nDocumentoIdentidad = anversoData.dni;
+                      // DNI / NIE / Pasaporte (número de documento)
+                      const numeroDocumento = anversoData.dni || anversoData.nie || anversoData.pasaporte;
+                      if (numeroDocumento && numeroDocumento !== '-' && isFieldEmpty(conductorFields.nDocumentoIdentidad)) {
+                        fieldsToUpdate.nDocumentoIdentidad = numeroDocumento;
+                      }
+
+                      // Tipo de documento (DNI, NIE o PASAPORTE)
+                      if (detectedDocumentType && isFieldEmpty(conductorFields.tipoDocumentoIdentidad)) {
+                        fieldsToUpdate.tipoDocumentoIdentidad = detectedDocumentType;
+                        console.log('📋 Tipo de documento detectado para actualizar:', detectedDocumentType);
                       }
 
                       // Fecha de nacimiento (convertir formato)
