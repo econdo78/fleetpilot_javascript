@@ -33,9 +33,6 @@
   ];
   const DEFAULT_VISIBLE_COLUMN_KEYS = new Set(PRIMARY_COLUMN_ALIASES.flat());
   const LOCKED_COLUMNS = new Set(['id', ...DEFAULT_VISIBLE_COLUMN_KEYS]);
-  const ACTIONS_TRIGGER_SELECTOR = '[data-clientes-actions-toggle]';
-  const ACTIONS_NAME_SELECTOR = '[data-clientes-actions-name]';
-  const ACTIONS_OFFCANVAS_ID = 'clientesActionsOffcanvas';
   const EXPORT_BUTTON_SELECTOR = '[data-clientes-export]';
   const EXPORT_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
   const PROCESS_SELECTION_STORAGE_KEY = 'clientes.process-selection';
@@ -453,32 +450,6 @@
     return fallback || null;
   };
 
-  const updateActionsControls = (record) => {
-    const trigger = select(ACTIONS_TRIGGER_SELECTOR);
-    const nameTarget = select(ACTIONS_NAME_SELECTOR);
-    const hasRecord = Boolean(record);
-    if (trigger) {
-      const forceVisible = trigger.hasAttribute('data-actions-always-visible');
-      if (forceVisible) {
-        trigger.classList.remove('d-none');
-        trigger.setAttribute('aria-hidden', 'false');
-        trigger.toggleAttribute('disabled', !hasRecord);
-      } else {
-        trigger.classList.toggle('d-none', !hasRecord);
-        trigger.toggleAttribute('disabled', !hasRecord);
-        trigger.setAttribute('aria-hidden', hasRecord ? 'false' : 'true');
-      }
-      if (!hasRecord) {
-        const offcanvasElement = document.getElementById(ACTIONS_OFFCANVAS_ID);
-        const offcanvasInstance = window.bootstrap?.Offcanvas?.getInstance?.(offcanvasElement);
-        offcanvasInstance?.hide?.();
-      }
-    }
-    if (nameTarget) {
-      nameTarget.textContent = hasRecord ? getRecordDisplayLabel(record) : 'seleccionado';
-    }
-  };
-
   let dataTableInstance = null;
   let selectedRecordKey = null;
   let recordsByKey = new Map();
@@ -624,7 +595,6 @@
     const record = selectedRecordKey ? recordsByKey.get(selectedRecordKey) ?? null : null;
     const currentFieldOrder = Array.isArray(fieldOrder) ? [...fieldOrder] : [];
     const displayName = record ? getRecordDisplayLabel(record) : null;
-    updateActionsControls(record);
     if (record) {
       saveProcessSelection(record, currentFieldOrder, displayName, selectedRecordKey);
     } else {
