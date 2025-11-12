@@ -303,6 +303,73 @@ License: You must have a valid license to legally use this template for your pro
       min-height: 0 !important;
     }
 
+    /* Estilos para la tabla de documentación */
+    #clientes-detail-documentacion .dataTables_wrapper .dataTables_filter {
+      width: 100% !important;
+      text-align: left !important;
+      float: none !important;
+      margin-bottom: 1rem;
+    }
+
+    #clientes-detail-documentacion .dataTables_wrapper .dataTables_filter label {
+      width: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.5rem;
+      margin: 0 !important;
+    }
+
+    #clientes-detail-documentacion .dataTables_wrapper .dataTables_filter input[type="search"] {
+      flex: 1 !important;
+      width: auto !important;
+      min-width: 0 !important;
+      margin-left: 0 !important;
+      display: block !important;
+    }
+
+    /* Cursor pointer en filas de la tabla de documentación */
+    #conductorDocumentacionTable tbody tr {
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    #conductorDocumentacionTable tbody tr:hover {
+      background-color: rgba(var(--bs-primary-rgb), 0.08) !important;
+    }
+
+    /* Estilos para el modal de preview de documentos */
+    .documento-preview-container {
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f8f9fa;
+      border-radius: 0.375rem;
+      padding: 1rem;
+    }
+
+    .documento-preview-container img {
+      max-width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+      border-radius: 0.375rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .documento-preview-container iframe,
+    .documento-preview-container embed {
+      width: 100%;
+      height: 70vh;
+      border: none;
+      border-radius: 0.375rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .documento-preview-container .no-preview-message {
+      text-align: center;
+      color: #6c757d;
+    }
+
     /* Bordes visibles para los paneles del menú lateral */
     #nav-datos,
     #nav-documentacion,
@@ -2446,6 +2513,46 @@ License: You must have a valid license to legally use this template for your pro
           </div>
         </div>
 
+        <!-- Modal para preview de documentos -->
+        <div class="modal fade" id="documentoPreviewModal" tabindex="-1" aria-labelledby="documentoPreviewModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0">
+              <div class="modal-header bg-secondary text-white border-0">
+                <h5 class="modal-title text-white" id="documentoPreviewModalLabel">
+                  <i class="me-2" data-lucide="file-text"></i>
+                  <span id="documentoPreviewModalFileName">Vista previa del documento</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+              <div class="modal-body pb-4">
+                <!-- Spinner de carga -->
+                <div id="documentoPreviewLoading" class="text-center py-5">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando documento...</span>
+                  </div>
+                  <p class="text-secondary mt-3">Descargando documento...</p>
+                </div>
+                <!-- Contenedor de preview -->
+                <div id="documentoPreviewContainer" class="documento-preview-container" style="display: none;">
+                  <!-- El contenido se generará dinámicamente aquí -->
+                </div>
+                <!-- Mensaje de error -->
+                <div id="documentoPreviewError" class="alert alert-danger" style="display: none;" role="alert">
+                  <i data-lucide="alert-circle" class="me-2"></i>
+                  <span id="documentoPreviewErrorMessage">Error al cargar el documento</span>
+                </div>
+              </div>
+              <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="documentoPreviewDescargarBtn" style="display: none;">
+                  <i data-lucide="download" class="me-2" style="width: 16px; height: 16px;"></i>
+                  Descargar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="modal fade" id="nuevoConductorModal" tabindex="-1" aria-labelledby="nuevoConductorModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
           <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0">
@@ -3197,6 +3304,120 @@ License: You must have a valid license to legally use this template for your pro
       };
 
       // ================================================================================
+      // Función para mostrar el modal de preview de documentos
+      // ================================================================================
+      let currentDocumentoBlobUrl = null; // Variable global para almacenar la URL del blob
+
+      const showDocumentoPreviewModal = async (documentoData) => {
+        try {
+          console.log('📄 Mostrando preview de documento:', documentoData);
+
+          // Obtener elementos del modal
+          const modal = document.getElementById('documentoPreviewModal');
+          const modalFileName = document.getElementById('documentoPreviewModalFileName');
+          const loadingDiv = document.getElementById('documentoPreviewLoading');
+          const previewContainer = document.getElementById('documentoPreviewContainer');
+          const errorDiv = document.getElementById('documentoPreviewError');
+          const errorMessage = document.getElementById('documentoPreviewErrorMessage');
+          const descargarBtn = document.getElementById('documentoPreviewDescargarBtn');
+
+          if (!modal) {
+            console.error('❌ Modal no encontrado');
+            return;
+          }
+
+          // Resetear estado del modal
+          loadingDiv.style.display = 'block';
+          previewContainer.style.display = 'none';
+          previewContainer.innerHTML = '';
+          errorDiv.style.display = 'none';
+          descargarBtn.style.display = 'none';
+
+          // Actualizar nombre del archivo en el título
+          const nombreArchivo = documentoData.nombreArchivo || 'Documento';
+          modalFileName.textContent = nombreArchivo;
+
+          // Mostrar el modal
+          const bootstrapModal = new bootstrap.Modal(modal);
+          bootstrapModal.show();
+
+          // Recrear iconos de Lucide en el modal
+          if (window.lucide?.createIcons) {
+            window.lucide.createIcons();
+          }
+
+          // Obtener el ID del archivo de Google Drive
+          const fileId = documentoData.idGoogleDrive;
+          if (!fileId) {
+            throw new Error('No se encontró el ID del archivo en Google Drive');
+          }
+
+          // Descargar el archivo desde Google Drive
+          const blobUrl = await downloadFromGoogleDrive(fileId);
+          currentDocumentoBlobUrl = blobUrl;
+
+          // Determinar el tipo de archivo según la extensión
+          const extension = (documentoData.extension || '').toLowerCase().replace('.', '');
+
+          // Ocultar loading y mostrar preview
+          loadingDiv.style.display = 'none';
+          previewContainer.style.display = 'flex';
+          descargarBtn.style.display = 'inline-flex';
+
+          // Guardar datos del documento en el botón de descarga
+          descargarBtn.setAttribute('data-file-id', fileId);
+          descargarBtn.setAttribute('data-file-name', nombreArchivo);
+
+          // Renderizar preview según el tipo
+          if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension)) {
+            // Preview de imagen
+            previewContainer.innerHTML = `<img src="${blobUrl}" alt="${nombreArchivo}" class="img-fluid">`;
+          } else if (extension === 'pdf') {
+            // Preview de PDF
+            previewContainer.innerHTML = `<embed src="${blobUrl}" type="application/pdf" width="100%" height="600px">`;
+          } else {
+            // No hay preview disponible
+            previewContainer.innerHTML = `
+              <div class="no-preview-message">
+                <i data-lucide="file" style="width: 64px; height: 64px;" class="mb-3"></i>
+                <h5>Vista previa no disponible</h5>
+                <p class="text-muted">Este tipo de archivo no puede mostrarse en el navegador.</p>
+                <p class="text-muted">Usa el botón "Descargar" para obtener el archivo.</p>
+              </div>
+            `;
+          }
+
+          // Recrear iconos después de renderizar
+          if (window.lucide?.createIcons) {
+            window.lucide.createIcons();
+          }
+
+          console.log('✅ Preview del documento mostrado correctamente');
+
+        } catch (error) {
+          console.error('❌ Error al mostrar preview del documento:', error);
+
+          // Mostrar mensaje de error
+          const loadingDiv = document.getElementById('documentoPreviewLoading');
+          const errorDiv = document.getElementById('documentoPreviewError');
+          const errorMessage = document.getElementById('documentoPreviewErrorMessage');
+
+          if (loadingDiv) loadingDiv.style.display = 'none';
+          if (errorDiv) {
+            errorDiv.style.display = 'block';
+            if (errorMessage) {
+              errorMessage.textContent = error.message || 'Error al cargar el documento. Por favor, inténtalo de nuevo.';
+            }
+          }
+
+          // Recrear iconos
+          if (window.lucide?.createIcons) {
+            window.lucide.createIcons();
+          }
+        }
+      };
+
+      // ================================================================================
       // Función para inicializar la tabla de documentación del conductor
       // ================================================================================
       const initDocumentacionTable = async (conductorId = null) => {
@@ -3226,10 +3447,40 @@ License: You must have a valid license to legally use this template for your pro
 
         // Definir columnas
         const columns = [
-          { data: 'creadoPor', title: 'Creado por', defaultContent: '' },
-          { data: 'creadoEl', title: 'Creado el', defaultContent: '' },
+          {
+            data: 'extension',
+            title: 'Tipo',
+            orderable: false,
+            className: 'text-center',
+            width: '60px',
+            render: function(data, type, row) {
+              if (type === 'display') {
+                const ext = (data || '').toLowerCase().replace('.', '');
+                let icon = 'file';
+
+                // Determinar icono según extensión
+                if (ext === 'pdf') {
+                  icon = 'file-text';
+                } else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(ext)) {
+                  icon = 'image';
+                } else if (['doc', 'docx'].includes(ext)) {
+                  icon = 'file-text';
+                } else if (['xls', 'xlsx'].includes(ext)) {
+                  icon = 'sheet';
+                } else if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) {
+                  icon = 'archive';
+                } else if (['mp4', 'avi', 'mov', 'mkv', 'webm'].includes(ext)) {
+                  icon = 'video';
+                }
+
+                return '<i data-lucide="' + icon + '" class="text-primary" style="width: 28px; height: 28px;"></i>';
+              }
+              return data;
+            }
+          },
           { data: 'nombreArchivo', title: 'Nombre archivo', defaultContent: '' },
-          { data: 'extension', title: 'Extensión', defaultContent: '' }
+          { data: 'creadoPor', title: 'Creado por', defaultContent: '' },
+          { data: 'creadoEl', title: 'Creado el', defaultContent: '' }
         ];
 
         // Destruir instancia existente si la hay
@@ -3243,19 +3494,38 @@ License: You must have a valid license to legally use this template for your pro
         const instance = $table.DataTable({
           data: data,
           columns: columns,
-          dom: 'frti', // f=search, r=processing, t=table, i=info
+          dom: 'frt', // f=search, r=processing, t=table
           paging: false,
           searching: true,
+          info: false,
           ordering: true,
-          order: [[1, 'desc']], // Ordenar por fecha (creadoEl) descendente
+          order: [[3, 'desc']], // Ordenar por fecha (creadoEl) descendente - columna 3
           autoWidth: false,
           language: {
             search: 'Buscar:',
             emptyTable: 'No hay documentos disponibles',
-            zeroRecords: 'No se encontraron documentos',
-            info: 'Mostrando _TOTAL_ documentos',
-            infoEmpty: 'Mostrando 0 documentos',
-            infoFiltered: '(filtrado de _MAX_ documentos totales)'
+            zeroRecords: 'No se encontraron documentos'
+          },
+          drawCallback: function() {
+            // Renderizar iconos de Lucide después de cada dibujado de la tabla
+            if (window.lucide?.createIcons) {
+              window.lucide.createIcons();
+            }
+          }
+        });
+
+        // Renderizar iconos inicialmente
+        if (window.lucide?.createIcons) {
+          window.lucide.createIcons();
+        }
+
+        // Agregar evento de doble clic en las filas
+        $table.on('dblclick', 'tbody tr', function() {
+          const row = instance.row(this);
+          if (row && row.data()) {
+            const rowData = row.data();
+            console.log('👆 Doble clic en documento:', rowData);
+            showDocumentoPreviewModal(rowData);
           }
         });
 
@@ -13092,6 +13362,77 @@ License: You must have a valid license to legally use this template for your pro
       // Inicializar funcionalidad de pin para el modal de histórico
       // (el drag se inicializa la primera vez que se abre el modal)
       initPinnableModal();
+
+      // ================================================================================
+      // Event listeners para el modal de preview de documentos
+      // ================================================================================
+
+      // Botón de descarga del modal
+      const documentoPreviewDescargarBtn = document.getElementById('documentoPreviewDescargarBtn');
+      if (documentoPreviewDescargarBtn) {
+        documentoPreviewDescargarBtn.addEventListener('click', () => {
+          const fileName = documentoPreviewDescargarBtn.getAttribute('data-file-name');
+          const blobUrl = currentDocumentoBlobUrl;
+
+          if (blobUrl && fileName) {
+            console.log('💾 Descargando documento:', fileName);
+
+            // Crear elemento <a> temporal para descarga
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            console.log('✅ Documento descargado');
+          } else {
+            console.error('❌ No hay documento para descargar');
+          }
+        });
+      }
+
+      // Limpieza al cerrar el modal
+      const documentoPreviewModal = document.getElementById('documentoPreviewModal');
+      if (documentoPreviewModal) {
+        documentoPreviewModal.addEventListener('hidden.bs.modal', () => {
+          console.log('🧹 Limpiando modal de preview');
+
+          // Limpiar contenido del preview
+          const previewContainer = document.getElementById('documentoPreviewContainer');
+          if (previewContainer) {
+            previewContainer.innerHTML = '';
+            previewContainer.style.display = 'none';
+          }
+
+          // Resetear estado de error
+          const errorDiv = document.getElementById('documentoPreviewError');
+          if (errorDiv) {
+            errorDiv.style.display = 'none';
+          }
+
+          // Ocultar botón de descarga
+          const descargarBtn = document.getElementById('documentoPreviewDescargarBtn');
+          if (descargarBtn) {
+            descargarBtn.style.display = 'none';
+            descargarBtn.removeAttribute('data-file-id');
+            descargarBtn.removeAttribute('data-file-name');
+          }
+
+          // Liberar URL del blob
+          if (currentDocumentoBlobUrl) {
+            URL.revokeObjectURL(currentDocumentoBlobUrl);
+            currentDocumentoBlobUrl = null;
+            console.log('✅ Blob URL liberada');
+          }
+
+          // Resetear título
+          const modalFileName = document.getElementById('documentoPreviewModalFileName');
+          if (modalFileName) {
+            modalFileName.textContent = 'Vista previa del documento';
+          }
+        });
+      }
     });
   </script>
 
