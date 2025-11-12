@@ -12507,6 +12507,8 @@ License: You must have a valid license to legally use this template for your pro
 
       // Variable para controlar si la modal fue activada desde el botón de documentos
       let isDocumentPublishMode = false;
+      // Variable para almacenar los documentos que se van a subir
+      let documentsToUploadGlobal = [];
 
       const publicarDocumentosBtn = document.getElementById('publicarDocumentosBtn');
 
@@ -12532,8 +12534,9 @@ License: You must have a valid license to legally use this template for your pro
             return;
           }
 
-          // Obtener todas las zonas de upload
-          const uploadZones = document.querySelectorAll('.document-upload-zone');
+          // Obtener solo las zonas de upload de la card del DNI (card padre del botón)
+          const card = publicarDocumentosBtn.closest('.detail-card');
+          const uploadZones = card ? card.querySelectorAll('.document-upload-zone') : [];
           const documentsToUpload = [];
 
           // Verificar qué documentos están listos para subir
@@ -12562,6 +12565,9 @@ License: You must have a valid license to legally use this template for your pro
           }
 
           console.log(`✅ ${documentsToUpload.length} documento(s) listo(s) para publicar`);
+
+          // Guardar documentos en variable global para usar al confirmar
+          documentsToUploadGlobal = documentsToUpload;
 
           // Marcar que estamos en modo de publicación de documentos
           isDocumentPublishMode = true;
@@ -12634,6 +12640,9 @@ License: You must have a valid license to legally use this template for your pro
 
           console.log(`✅ ${documentsToUpload.length} documento(s) del permiso listo(s) para publicar`);
 
+          // Guardar documentos en variable global para usar al confirmar
+          documentsToUploadGlobal = documentsToUpload;
+
           // Marcar que estamos en modo de publicación de documentos
           isDocumentPublishMode = true;
 
@@ -12695,6 +12704,9 @@ License: You must have a valid license to legally use this template for your pro
           }
 
           console.log(`✅ Certificado bancario listo para publicar`);
+
+          // Guardar documentos en variable global para usar al confirmar
+          documentsToUploadGlobal = documentsToUpload;
 
           // Marcar que estamos en modo de publicación de documentos
           isDocumentPublishMode = true;
@@ -12758,6 +12770,9 @@ License: You must have a valid license to legally use this template for your pro
 
           console.log(`✅ Certificado de puntos DGT listo para publicar`);
 
+          // Guardar documentos en variable global para usar al confirmar
+          documentsToUploadGlobal = documentsToUpload;
+
           // Marcar que estamos en modo de publicación de documentos
           isDocumentPublishMode = true;
 
@@ -12819,6 +12834,9 @@ License: You must have a valid license to legally use this template for your pro
           }
 
           console.log(`✅ Cartilla VTC lista para publicar`);
+
+          // Guardar documentos en variable global para usar al confirmar
+          documentsToUploadGlobal = documentsToUpload;
 
           // Marcar que estamos en modo de publicación de documentos
           isDocumentPublishMode = true;
@@ -12882,6 +12900,9 @@ License: You must have a valid license to legally use this template for your pro
 
           console.log(`✅ Certificado de Delitos Sexuales listo para publicar`);
 
+          // Guardar documentos en variable global para usar al confirmar
+          documentsToUploadGlobal = documentsToUpload;
+
           // Marcar que estamos en modo de publicación de documentos
           isDocumentPublishMode = true;
 
@@ -12943,6 +12964,9 @@ License: You must have a valid license to legally use this template for your pro
           }
 
           console.log(`✅ Vida Laboral lista para publicar`);
+
+          // Guardar documentos en variable global para usar al confirmar
+          documentsToUploadGlobal = documentsToUpload;
 
           // Marcar que estamos en modo de publicación de documentos
           isDocumentPublishMode = true;
@@ -13107,20 +13131,8 @@ License: You must have a valid license to legally use this template for your pro
             return;
           }
 
-          // Obtener todas las zonas de upload
-          const uploadZones = document.querySelectorAll('.document-upload-zone');
-          const documentsToUpload = [];
-
-          uploadZones.forEach(zone => {
-            if (zone.uploadedFile) {
-              const documentType = zone.getAttribute('data-upload-zone');
-              documentsToUpload.push({
-                file: zone.uploadedFile,
-                type: documentType,
-                zone: zone
-              });
-            }
-          });
+          // Usar los documentos guardados en la variable global
+          const documentsToUpload = documentsToUploadGlobal;
 
           if (documentsToUpload.length === 0) {
             const errorToast = document.getElementById('publicarErrorToast');
