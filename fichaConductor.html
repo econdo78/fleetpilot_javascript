@@ -9158,7 +9158,8 @@ License: You must have a valid license to legally use this template for your pro
               fieldData: {
                 idAsignacionActualInversor: idAsignacionNueva,
                 idInversorAsignado: inversorIdSeleccionado,
-                nombreInversor: nombreInversorSeleccionado
+                nombreInversor: nombreInversorSeleccionado,
+                fechaAltaSS: timestampInicio
               }
             };
 
@@ -9185,6 +9186,7 @@ License: You must have a valid license to legally use this template for your pro
             originalConductorData.idAsignacionActualInversor = idAsignacionNueva;
             originalConductorData.idInversorAsignado = inversorIdSeleccionado;
             originalConductorData.nombreInversor = nombreInversorSeleccionado;
+            originalConductorData.fechaAltaSS = timestampInicio;
 
             // Actualizar el botón para que muestre "Desasignar"
             populateAsignacionInversor();
