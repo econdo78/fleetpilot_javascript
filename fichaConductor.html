@@ -289,16 +289,6 @@ License: You must have a valid license to legally use this template for your pro
       flex-direction: column;
       flex: 1 1 auto;
       min-height: 0;
-      border: 1px solid #dee2e6;
-      border-radius: 0.375rem;
-      padding: 1rem;
-    }
-
-    /* Centrar el contenido de los tab-panes vacíos */
-    #clientes-detail-historicos,
-    #clientes-detail-documentacion {
-      align-items: center;
-      justify-content: center;
     }
 
     /* Ocultar el mensaje de "Selecciona un conductor" cuando hay tabs activos */
@@ -2335,8 +2325,11 @@ License: You must have a valid license to legally use this template for your pro
                           <div class="tab-pane fade" id="clientes-detail-historicos" role="tabpanel" aria-labelledby="clientes-detail-historicos-tab">
                             <div class="text-secondary" data-clientes-detail-historicos>Sin datos históricos disponibles.</div>
                           </div>
-                          <div class="tab-pane fade" id="clientes-detail-documentacion" role="tabpanel" aria-labelledby="clientes-detail-documentacion-tab">
-                            <div class="text-secondary" data-clientes-detail-documentacion>Sin documentación disponible.</div>
+                          <div class="tab-pane fade" id="clientes-detail-documentacion" role="tabpanel" aria-labelledby="clientes-detail-documentacion-tab" style="height: 100%; overflow: auto;">
+                            <table id="conductorDocumentacionTable" class="table table-hover align-middle mb-0">
+                              <thead></thead>
+                              <tbody></tbody>
+                            </table>
                           </div>
                         </div>
                       </div>
@@ -2747,6 +2740,56 @@ License: You must have a valid license to legally use this template for your pro
         }
       };
 
+      // ================================================================================
+      // Función para cargar documentación desde FileMaker
+      // ================================================================================
+      const loadDocumentacionFromFileMaker = async (conductorId = null) => {
+        try {
+          console.log('📚 Cargando documentación desde FileMaker');
+          console.log('  - Filtrar por conductorId:', conductorId || 'Sin filtro');
+
+          if (!conductorId) {
+            console.warn('⚠️ No se proporcionó conductorId, no se puede cargar documentación');
+            return [];
+          }
+
+          const url = 'layouts/documentacion/_find';
+
+          // Construir el query de filtrado por idOrigen
+          const query = [{
+            idOrigen: conductorId
+          }];
+
+          const response = await window.ApiClient.post(url, {
+            query: query
+          });
+
+          if (!response.ok) {
+            console.error('Error al cargar documentación desde FileMaker:', response.status, response.statusText);
+            return [];
+          }
+
+          const data = await response.json();
+
+          // FileMaker Data API devuelve los registros en response.data
+          const records = data.response?.data || data.data || [];
+
+          console.log(`  ✅ ${records.length} documentos encontrados`);
+
+          // Transformar los registros de FileMaker al formato necesario
+          const transformedRecords = records.map(record => {
+            // fieldData contiene los campos del layout
+            const fieldData = record.fieldData || {};
+            return fieldData;
+          });
+
+          return transformedRecords;
+        } catch (error) {
+          console.error('Error al cargar documentación desde FileMaker:', error);
+          return [];
+        }
+      };
+
       const showHistoricoDatosModal = (datosJson) => {
         try {
           console.log('📋 Mostrando modal con datos (raw):', datosJson);
@@ -3151,6 +3194,72 @@ License: You must have a valid license to legally use this template for your pro
             }
           }
         });
+      };
+
+      // ================================================================================
+      // Función para inicializar la tabla de documentación del conductor
+      // ================================================================================
+      const initDocumentacionTable = async (conductorId = null) => {
+        if (!window.jQuery?.fn?.DataTable) {
+          console.warn('⚠️ DataTable no disponible');
+          return;
+        }
+
+        const $table = window.jQuery('#conductorDocumentacionTable');
+        if (!$table.length) {
+          console.warn('⚠️ Tabla #conductorDocumentacionTable no encontrada en el DOM');
+          return;
+        }
+
+        // Usar el conductorId pasado o el global
+        const idConductor = conductorId || currentConductorId;
+
+        if (!idConductor) {
+          console.warn('⚠️ No hay conductorId disponible para cargar documentación');
+          return;
+        }
+
+        console.log('📊 Inicializando tabla de documentación para conductor:', idConductor);
+
+        // Cargar datos desde FileMaker
+        const data = await loadDocumentacionFromFileMaker(idConductor);
+
+        // Definir columnas
+        const columns = [
+          { data: 'creadoPor', title: 'Creado por', defaultContent: '' },
+          { data: 'creadoEl', title: 'Creado el', defaultContent: '' },
+          { data: 'nombreArchivo', title: 'Nombre archivo', defaultContent: '' },
+          { data: 'extension', title: 'Extensión', defaultContent: '' }
+        ];
+
+        // Destruir instancia existente si la hay
+        if ($table.hasClass('dataTable')) {
+          const instance = $table.DataTable();
+          instance.destroy();
+          $table.empty();
+        }
+
+        // Crear nueva instancia de DataTable
+        const instance = $table.DataTable({
+          data: data,
+          columns: columns,
+          dom: 'frti', // f=search, r=processing, t=table, i=info
+          paging: false,
+          searching: true,
+          ordering: true,
+          order: [[1, 'desc']], // Ordenar por fecha (creadoEl) descendente
+          autoWidth: false,
+          language: {
+            search: 'Buscar:',
+            emptyTable: 'No hay documentos disponibles',
+            zeroRecords: 'No se encontraron documentos',
+            info: 'Mostrando _TOTAL_ documentos',
+            infoEmpty: 'Mostrando 0 documentos',
+            infoFiltered: '(filtrado de _MAX_ documentos totales)'
+          }
+        });
+
+        console.log('✅ Tabla de documentación inicializada con', data.length, 'registros');
       };
 
       const initPinnableModal = () => {
@@ -7998,6 +8107,23 @@ License: You must have a valid license to legally use this template for your pro
             // Recrear iconos
             window.lucide?.createIcons?.();
           });
+        });
+      }
+
+      // ================================================================================
+      // Inicializar tabla de documentación cuando se hace clic en el tab
+      // ================================================================================
+      const documentacionTab = document.getElementById('clientes-detail-documentacion-tab');
+      if (documentacionTab) {
+        documentacionTab.addEventListener('shown.bs.tab', async function (event) {
+          console.log('📋 Tab de Documentación activado');
+
+          // Inicializar la tabla de documentación si hay un conductor seleccionado
+          if (currentConductorId) {
+            await initDocumentacionTable(currentConductorId);
+          } else {
+            console.warn('⚠️ No hay conductor seleccionado para cargar documentación');
+          }
         });
       }
 
