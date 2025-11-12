@@ -1201,6 +1201,25 @@
       wrapper.className = 'form-check column-picker-item';
       wrapper.dataset.columnOption = 'true';
       wrapper.dataset.columnName = lowerName;
+      wrapper.dataset.columnNameOriginal = name;
+
+      const locked = isLockedColumn(name);
+
+      // Hacer draggable solo si no está bloqueado
+      if (!locked) {
+        wrapper.draggable = true;
+        wrapper.dataset.draggable = 'true';
+      }
+
+      // Añadir handle visual de arrastre (solo para no bloqueados)
+      if (!locked) {
+        const dragHandle = document.createElement('span');
+        dragHandle.className = 'column-picker-drag-handle me-2 text-secondary';
+        dragHandle.innerHTML = '&#8801;'; // ≡
+        dragHandle.style.cursor = 'grab';
+        dragHandle.style.userSelect = 'none';
+        wrapper.appendChild(dragHandle);
+      }
 
       const input = document.createElement('input');
       input.type = 'checkbox';
@@ -1211,7 +1230,6 @@
       const visible = dataTableInstance.column(dataIndex).visible();
       input.checked = visible;
 
-      const locked = isLockedColumn(name);
       if (locked) {
         input.disabled = true;
         input.checked = true;
@@ -1239,6 +1257,118 @@
       wrapper.appendChild(input);
       wrapper.appendChild(label);
       list.appendChild(wrapper);
+    });
+
+    // Implementar drag & drop para reordenar columnas
+    let draggedItem = null;
+    let draggedOverItem = null;
+
+    list.querySelectorAll('[data-draggable="true"]').forEach((item) => {
+      item.addEventListener('dragstart', (e) => {
+        draggedItem = item;
+        item.classList.add('column-picker-item--dragging');
+        item.style.opacity = '0.5';
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', item.innerHTML);
+      });
+
+      item.addEventListener('dragend', (e) => {
+        item.classList.remove('column-picker-item--dragging');
+        item.style.opacity = '1';
+        // Limpiar todos los indicadores visuales
+        list.querySelectorAll('.column-picker-item').forEach(el => {
+          el.classList.remove('column-picker-item--drag-over-top');
+          el.classList.remove('column-picker-item--drag-over-bottom');
+        });
+        draggedItem = null;
+        draggedOverItem = null;
+      });
+
+      item.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+
+        if (!draggedItem || item === draggedItem) {
+          return;
+        }
+
+        const locked = item.dataset.columnNameOriginal && isLockedColumn(item.dataset.columnNameOriginal);
+        if (locked) {
+          return;
+        }
+
+        draggedOverItem = item;
+
+        // Limpiar indicadores previos
+        list.querySelectorAll('.column-picker-item').forEach(el => {
+          el.classList.remove('column-picker-item--drag-over-top');
+          el.classList.remove('column-picker-item--drag-over-bottom');
+        });
+
+        // Determinar si insertar arriba o abajo
+        const rect = item.getBoundingClientRect();
+        const midpoint = rect.top + rect.height / 2;
+        const isTopHalf = e.clientY < midpoint;
+
+        if (isTopHalf) {
+          item.classList.add('column-picker-item--drag-over-top');
+        } else {
+          item.classList.add('column-picker-item--drag-over-bottom');
+        }
+      });
+
+      item.addEventListener('dragleave', (e) => {
+        item.classList.remove('column-picker-item--drag-over-top');
+        item.classList.remove('column-picker-item--drag-over-bottom');
+      });
+
+      item.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!draggedItem || !draggedOverItem || draggedItem === draggedOverItem) {
+          return;
+        }
+
+        const locked = draggedOverItem.dataset.columnNameOriginal && isLockedColumn(draggedOverItem.dataset.columnNameOriginal);
+        if (locked) {
+          return;
+        }
+
+        // Determinar posición de inserción
+        const rect = draggedOverItem.getBoundingClientRect();
+        const midpoint = rect.top + rect.height / 2;
+        const isTopHalf = e.clientY < midpoint;
+
+        // Reordenar en el DOM
+        if (isTopHalf) {
+          list.insertBefore(draggedItem, draggedOverItem);
+        } else {
+          list.insertBefore(draggedItem, draggedOverItem.nextSibling);
+        }
+
+        // Actualizar el orden de fieldOrder basándose en el nuevo orden del DOM
+        const newOrder = [];
+        list.querySelectorAll('[data-column-option]').forEach((item) => {
+          const columnName = item.dataset.columnNameOriginal;
+          if (columnName) {
+            newOrder.push(columnName);
+          }
+        });
+
+        // Actualizar fieldOrder global
+        fieldOrder = newOrder;
+
+        // Guardar el nuevo estado
+        saveTableState(newOrder);
+
+        // Re-renderizar la tabla con el nuevo orden
+        requestRender();
+
+        // Limpiar indicadores visuales
+        draggedOverItem.classList.remove('column-picker-item--drag-over-top');
+        draggedOverItem.classList.remove('column-picker-item--drag-over-bottom');
+      });
     });
 
     const applyAllState = () => {
