@@ -1360,6 +1360,28 @@ License: You must have a valid license to legally use this template for your pro
     input[name="fechaAltaSS"]:focus {
       border-right: 0;
     }
+
+    /* Estilos para validación de formulario de asignación */
+    .form-control.is-invalid,
+    .form-select.is-invalid,
+    .input-group.is-invalid .form-control {
+      border-color: #dc3545 !important;
+    }
+
+    .input-group.is-invalid .input-group-text {
+      border-color: #dc3545 !important;
+    }
+
+    /* Animación de sacudida */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    .shake {
+      animation: shake 0.5s;
+    }
   </style>
 
   <link rel="shortcut icon" href="./assets/images/favicon.png" />
@@ -2834,6 +2856,28 @@ License: You must have a valid license to legally use this template for your pro
 
       <!-- partial -->
 
+    </div>
+  </div>
+
+  <!-- Modal de confirmación para asignación/desasignación de inversor -->
+  <div class="modal fade" id="confirmarAsignacionModal" tabindex="-1" aria-labelledby="confirmarAsignacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0">
+        <div class="modal-header bg-primary text-white border-0">
+          <h5 class="modal-title text-white mb-0" id="confirmarAsignacionModalLabel">
+            <i data-lucide="alert-circle" class="me-2" style="width: 20px; height: 20px;"></i>
+            Confirmar acción
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body py-4">
+          <p class="mb-0" id="confirmarAsignacionTexto">¿Está seguro de que desea realizar esta acción?</p>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="confirmarAsignacionBtn">Confirmar asignación</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -8719,6 +8763,477 @@ License: You must have a valid license to legally use this template for your pro
         }
 
         console.log('✅ Flatpickr inicializado en campo fechaAltaSS');
+      }
+
+      // ============================================
+      // EVENTO CLICK BOTÓN ASIGNAR/DESASIGNAR
+      // ============================================
+
+      const publicarAsignacionBtn = document.getElementById('publicarAsignacionBtn');
+      if (publicarAsignacionBtn) {
+        publicarAsignacionBtn.addEventListener('click', function() {
+          // Obtener el texto actual del botón
+          const accion = this.textContent.trim(); // "Asignar" o "Desasignar"
+
+          console.log('🔘 Click en botón:', accion);
+
+          // Si es "Asignar", validar campos antes de mostrar modal
+          if (accion === 'Asignar') {
+            const inversorSelect = document.querySelector('[data-inversor-select]');
+            const fechaInput = document.querySelector('input[name="fechaAltaSS"]');
+            const fechaInputGroup = fechaInput?.closest('.input-group');
+
+            let isValid = true;
+
+            // Limpiar validaciones previas
+            inversorSelect?.classList.remove('is-invalid');
+            fechaInput?.classList.remove('is-invalid');
+            fechaInputGroup?.classList.remove('is-invalid');
+
+            // Validar inversor seleccionado
+            if (!inversorSelect || !inversorSelect.value || inversorSelect.value === '') {
+              console.warn('⚠️ No hay inversor seleccionado');
+              inversorSelect?.classList.add('is-invalid');
+              isValid = false;
+            }
+
+            // Validar fecha seleccionada
+            if (!fechaInput || !fechaInput.value || fechaInput.value === '') {
+              console.warn('⚠️ No hay fecha seleccionada');
+              fechaInput?.classList.add('is-invalid');
+              fechaInputGroup?.classList.add('is-invalid');
+              isValid = false;
+            }
+
+            // Si no es válido, hacer animación de sacudida y salir
+            if (!isValid) {
+              console.error('❌ Validación fallida: campos incompletos');
+
+              // Agregar clase shake al botón
+              this.classList.add('shake');
+
+              // Remover clase después de la animación
+              setTimeout(() => {
+                this.classList.remove('shake');
+              }, 500);
+
+              return; // No mostrar el modal
+            }
+          }
+
+          // Actualizar el texto del modal según la acción
+          const modalTitulo = document.getElementById('confirmarAsignacionModalLabel');
+          const modalTexto = document.getElementById('confirmarAsignacionTexto');
+          const modalBotonConfirmar = document.getElementById('confirmarAsignacionBtn');
+
+          if (modalTitulo && modalTexto && modalBotonConfirmar) {
+            // Actualizar título
+            if (accion === 'Asignar') {
+              modalTitulo.innerHTML = '<i data-lucide="alert-circle" class="me-2" style="width: 20px; height: 20px;"></i> Confirmar asignación';
+              modalTexto.textContent = '¿Está seguro de que desea asignar este inversor al conductor?';
+              modalBotonConfirmar.textContent = 'Confirmar asignación';
+            } else {
+              modalTitulo.innerHTML = '<i data-lucide="alert-circle" class="me-2" style="width: 20px; height: 20px;"></i> Confirmar desasignación';
+              modalTexto.textContent = '¿Está seguro de que desea desasignar este inversor del conductor?';
+              modalBotonConfirmar.textContent = 'Confirmar desasignación';
+            }
+
+            // Reinicializar iconos de Lucide
+            if (typeof lucide !== 'undefined') {
+              lucide.createIcons();
+            }
+          }
+
+          // Mostrar el modal
+          const modal = new bootstrap.Modal(document.getElementById('confirmarAsignacionModal'));
+          modal.show();
+        });
+
+        console.log('✅ Event listener agregado al botón de asignar/desasignar');
+      }
+
+      // ============================================
+      // EVENTO CLICK BOTÓN CONFIRMAR ASIGNACIÓN
+      // ============================================
+
+      const confirmarAsignacionBtn = document.getElementById('confirmarAsignacionBtn');
+      if (confirmarAsignacionBtn) {
+        confirmarAsignacionBtn.addEventListener('click', async function() {
+          const textoBoton = this.textContent.trim();
+          const isDesasignacion = textoBoton === 'Confirmar desasignación';
+
+          console.log(isDesasignacion ? '🚀 Iniciando proceso de desasignación' : '🚀 Iniciando proceso de asignación');
+
+          // Deshabilitar botón y mostrar spinner
+          const originalButtonHTML = this.innerHTML;
+          this.disabled = true;
+          this.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>${isDesasignacion ? 'Desasignando...' : 'Asignando...'}`;
+
+          try {
+            const apiClient = await waitForApiClient();
+
+            // ============================================
+            // FLUJO DE DESASIGNACIÓN
+            // ============================================
+            if (isDesasignacion) {
+              console.log('📡 Iniciando desasignación');
+
+              // Obtener fecha y hora actual del sistema
+              const now = new Date();
+              const month = String(now.getMonth() + 1).padStart(2, '0');
+              const day = String(now.getDate()).padStart(2, '0');
+              const year = now.getFullYear();
+              const hours = String(now.getHours()).padStart(2, '0');
+              const minutes = String(now.getMinutes()).padStart(2, '0');
+              const seconds = String(now.getSeconds()).padStart(2, '0');
+              const timestampActual = `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
+
+              console.log('📅 Timestamp actual:', timestampActual);
+
+              // Obtener usuario actual
+              const usuarioActual = window.AuthStorage?.getUser?.() || 'Sistema';
+              console.log('👤 Usuario actual:', usuarioActual);
+
+              // Obtener el UUID de la asignación actual
+              const idAsignacionActual = originalConductorData.idAsignacionActualInversor;
+
+              if (!idAsignacionActual) {
+                throw new Error('No hay una asignación activa para desasignar');
+              }
+
+              console.log('🆔 UUID de asignación a desasignar:', idAsignacionActual);
+
+              // PASO 1: Buscar el registro de asignación por su UUID (campo "id")
+              console.log('📡 PASO 1: Buscando registro de asignación');
+
+              const layoutName = 'asignacion';
+              const encodedLayout = apiClient.encodePathSegment
+                ? apiClient.encodePathSegment(layoutName)
+                : encodeURIComponent(layoutName);
+
+              const findPayload = {
+                query: [{
+                  id: idAsignacionActual
+                }]
+              };
+
+              console.log('🔍 Realizando búsqueda con:', findPayload);
+
+              const findResponse = await apiClient.post(`layouts/${encodedLayout}/_find`, findPayload);
+
+              if (!findResponse.ok) {
+                const errorText = await findResponse.text().catch(() => '');
+                console.error('❌ Error al buscar asignación:', findResponse.status, errorText);
+                throw new Error(`Error al buscar asignación: ${findResponse.status}`);
+              }
+
+              const findResult = await findResponse.json();
+              console.log('✅ Resultado de búsqueda:', findResult);
+
+              const asignacionRecords = findResult?.response?.data || [];
+
+              if (asignacionRecords.length === 0) {
+                throw new Error('No se encontró el registro de asignación');
+              }
+
+              const asignacionRecord = asignacionRecords[0];
+              const recordIdAsignacion = asignacionRecord.recordId;
+
+              console.log('🆔 RecordId de asignación encontrado:', recordIdAsignacion);
+
+              // PASO 2: Actualizar el registro de asignación
+              console.log('📡 PASO 2: Actualizando registro de asignación');
+
+              const asignacionUpdateData = {
+                fieldData: {
+                  timestampFin: timestampActual,
+                  desasignacionModificadaPor: usuarioActual,
+                  desasignacionModificadaEl: timestampActual
+                }
+              };
+
+              console.log('📤 Enviando PATCH a asignación:', asignacionUpdateData);
+
+              const updateAsignacionResponse = await apiClient.patch(
+                `layouts/${encodedLayout}/records/${recordIdAsignacion}`,
+                asignacionUpdateData
+              );
+
+              if (!updateAsignacionResponse.ok) {
+                const errorText = await updateAsignacionResponse.text().catch(() => '');
+                console.error('❌ Error al actualizar asignación:', updateAsignacionResponse.status, errorText);
+                throw new Error(`Error al actualizar asignación: ${updateAsignacionResponse.status}`);
+              }
+
+              console.log('✅ Registro de asignación actualizado');
+
+              // PASO 3: Limpiar campos del conductor
+              console.log('📡 PASO 3: Limpiando campos del conductor');
+
+              const conductorLayoutName = 'conductor.Listar';
+              const encodedConductorLayout = apiClient.encodePathSegment
+                ? apiClient.encodePathSegment(conductorLayoutName)
+                : encodeURIComponent(conductorLayoutName);
+
+              const conductorData = {
+                fieldData: {
+                  idAsignacionActualInversor: '',
+                  idInversorAsignado: '',
+                  nombreInversor: ''
+                }
+              };
+
+              console.log('📤 Enviando PATCH a conductor:', conductorData);
+
+              const updateConductorResponse = await apiClient.patch(
+                `layouts/${encodedConductorLayout}/records/${currentConductorRecordId}`,
+                conductorData
+              );
+
+              if (!updateConductorResponse.ok) {
+                const errorText = await updateConductorResponse.text().catch(() => '');
+                console.error('❌ Error al actualizar conductor:', updateConductorResponse.status, errorText);
+                throw new Error(`Error al actualizar conductor: ${updateConductorResponse.status}`);
+              }
+
+              console.log('✅ Conductor actualizado (campos limpiados)');
+
+              // PASO 4: Actualizar datos en memoria
+              originalConductorData.idAsignacionActualInversor = '';
+              originalConductorData.idInversorAsignado = '';
+              originalConductorData.nombreInversor = '';
+              originalConductorData.fechaAltaSS = '';
+
+              // PASO 5: Limpiar interfaz
+              console.log('🎨 PASO 5: Limpiando interfaz');
+
+              // Limpiar selector de inversor
+              const inversorSelect = document.querySelector('[data-inversor-select]');
+              if (inversorSelect) {
+                $(inversorSelect).val('').trigger('change');
+              }
+
+              // Limpiar fecha
+              const fechaInput = document.querySelector('input[name="fechaAltaSS"]');
+              if (fechaInput) {
+                if (fechaInput._flatpickr) {
+                  fechaInput._flatpickr.clear();
+                } else {
+                  fechaInput.value = '';
+                }
+              }
+
+              // Actualizar el botón para que muestre "Asignar"
+              populateAsignacionInversor();
+
+              console.log('✅ Desasignación completada exitosamente');
+
+              // Cerrar modal
+              const modal = bootstrap.Modal.getInstance(document.getElementById('confirmarAsignacionModal'));
+              modal?.hide();
+
+              // Mostrar toast de éxito
+              const successToast = document.getElementById('publicarSuccessToast');
+              const successMessage = document.getElementById('publicarSuccessMessage');
+              if (successMessage) {
+                successMessage.textContent = 'Desasignación realizada correctamente';
+              }
+              if (successToast) {
+                const toast = new bootstrap.Toast(successToast);
+                toast.show();
+                if (typeof lucide !== 'undefined') {
+                  lucide.createIcons();
+                }
+              }
+
+              return; // Salir, no continuar con el flujo de asignación
+            }
+
+            // ============================================
+            // FLUJO DE ASIGNACIÓN
+            // ============================================
+
+            // Obtener valores del formulario
+            const inversorSelect = document.querySelector('[data-inversor-select]');
+            const fechaInput = document.querySelector('input[name="fechaAltaSS"]');
+
+            const inversorIdSeleccionado = inversorSelect?.value;
+            const nombreInversorSeleccionado = $('[data-inversor-select] option:selected').text();
+            const fechaSeleccionada = fechaInput?.value; // Formato: YYYY-MM-DD
+
+            console.log('📝 Datos a enviar:', {
+              inversorId: inversorIdSeleccionado,
+              nombreInversor: nombreInversorSeleccionado,
+              fecha: fechaSeleccionada,
+              conductorId: currentConductorId
+            });
+
+            // Convertir fecha de YYYY-MM-DD a MM/DD/YYYY HH:MM:SS (formato FileMaker)
+            let timestampInicio = '';
+            if (fechaSeleccionada) {
+              const [year, month, day] = fechaSeleccionada.split('-');
+              timestampInicio = `${month}/${day}/${year} 00:00:00`;
+            }
+
+            console.log('📅 Timestamp convertido a formato FileMaker (MM/DD/YYYY HH:MM:SS):', timestampInicio);
+
+            // PASO 1: Crear registro en layout "asignacion"
+            console.log('📡 PASO 1: Creando registro en layout asignacion');
+
+            const layoutName = 'asignacion';
+            const encodedLayout = apiClient.encodePathSegment
+              ? apiClient.encodePathSegment(layoutName)
+              : encodeURIComponent(layoutName);
+
+            const asignacionData = {
+              fieldData: {
+                idEntidadOrigen: currentConductorId,
+                idEntidadDestino: inversorIdSeleccionado,
+                timestampInicio: timestampInicio,
+                tablaOrigen: 'conductor',
+                tablaDestino: 'inversor'
+              }
+            };
+
+            console.log('📤 Enviando POST a:', `layouts/${encodedLayout}/records`);
+            console.log('📦 Datos:', asignacionData);
+
+            const createResponse = await apiClient.post(`layouts/${encodedLayout}/records`, asignacionData);
+
+            console.log('📥 Respuesta status:', createResponse.status);
+
+            if (!createResponse.ok) {
+              const errorText = await createResponse.text().catch(() => '');
+              console.error('❌ Error en la respuesta:', createResponse.status, errorText);
+              throw new Error(`Error al crear asignación: ${createResponse.status} ${errorText}`);
+            }
+
+            const createResult = await createResponse.json();
+            console.log('✅ Registro de asignación creado:', createResult);
+
+            // PASO 2: Obtener el recordId del registro recién creado
+            const recordIdAsignacion = createResult?.response?.recordId;
+
+            if (!recordIdAsignacion) {
+              console.error('❌ No se pudo obtener el recordId de la asignación creada:', createResult);
+              throw new Error('No se pudo obtener el recordId de la asignación creada');
+            }
+
+            console.log('🆔 RecordId de asignación obtenido:', recordIdAsignacion);
+
+            // PASO 2.5: Hacer GET del registro para obtener el UUID del campo "id"
+            console.log('📡 PASO 2.5: Obteniendo UUID del registro de asignación');
+
+            const getAsignacionResponse = await apiClient.get(`layouts/${encodedLayout}/records/${recordIdAsignacion}`);
+
+            if (!getAsignacionResponse.ok) {
+              const errorText = await getAsignacionResponse.text().catch(() => '');
+              console.error('❌ Error al obtener el registro de asignación:', getAsignacionResponse.status, errorText);
+              throw new Error(`Error al obtener el registro de asignación: ${getAsignacionResponse.status}`);
+            }
+
+            const getAsignacionResult = await getAsignacionResponse.json();
+            console.log('✅ Registro de asignación obtenido:', getAsignacionResult);
+
+            // Obtener el UUID del campo "id"
+            const idAsignacionNueva = getAsignacionResult?.response?.data?.[0]?.fieldData?.id;
+
+            if (!idAsignacionNueva) {
+              console.error('❌ No se pudo obtener el campo id (UUID) de la asignación:', getAsignacionResult);
+              throw new Error('No se pudo obtener el campo id (UUID) de la asignación');
+            }
+
+            console.log('🆔 UUID del campo "id" obtenido:', idAsignacionNueva);
+
+            // PASO 3: Actualizar campos del conductor actual
+            console.log('📡 PASO 3: Actualizando campos del conductor');
+
+            const conductorLayoutName = 'conductor.Listar';
+            const encodedConductorLayout = apiClient.encodePathSegment
+              ? apiClient.encodePathSegment(conductorLayoutName)
+              : encodeURIComponent(conductorLayoutName);
+
+            const conductorData = {
+              fieldData: {
+                idAsignacionActualInversor: idAsignacionNueva,
+                idInversorAsignado: inversorIdSeleccionado,
+                nombreInversor: nombreInversorSeleccionado
+              }
+            };
+
+            console.log('📤 Enviando PATCH a:', `layouts/${encodedConductorLayout}/records/${currentConductorRecordId}`);
+            console.log('📦 Datos:', conductorData);
+
+            const updateResponse = await apiClient.patch(
+              `layouts/${encodedConductorLayout}/records/${currentConductorRecordId}`,
+              conductorData
+            );
+
+            console.log('📥 Respuesta status:', updateResponse.status);
+
+            if (!updateResponse.ok) {
+              const errorText = await updateResponse.text().catch(() => '');
+              console.error('❌ Error al actualizar conductor:', updateResponse.status, errorText);
+              throw new Error(`Error al actualizar conductor: ${updateResponse.status} ${errorText}`);
+            }
+
+            const updateResult = await updateResponse.json();
+            console.log('✅ Conductor actualizado:', updateResult);
+
+            // PASO 4: Actualizar datos en memoria
+            originalConductorData.idAsignacionActualInversor = idAsignacionNueva;
+            originalConductorData.idInversorAsignado = inversorIdSeleccionado;
+            originalConductorData.nombreInversor = nombreInversorSeleccionado;
+
+            // Actualizar el botón para que muestre "Desasignar"
+            populateAsignacionInversor();
+
+            console.log('✅ Asignación completada exitosamente');
+
+            // Cerrar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('confirmarAsignacionModal'));
+            modal?.hide();
+
+            // Mostrar toast de éxito
+            const successToast = document.getElementById('publicarSuccessToast');
+            const successMessage = document.getElementById('publicarSuccessMessage');
+            if (successMessage) {
+              successMessage.textContent = 'Asignación realizada correctamente';
+            }
+            if (successToast) {
+              const toast = new bootstrap.Toast(successToast);
+              toast.show();
+              // Reinicializar iconos de Lucide
+              if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+              }
+            }
+
+          } catch (error) {
+            console.error('❌ Error en el proceso de asignación:', error);
+
+            // Mostrar toast de error
+            const errorToast = document.getElementById('publicarErrorToast');
+            const errorMessage = document.getElementById('publicarErrorMessage');
+            if (errorMessage) {
+              errorMessage.textContent = `Error: ${error.message}`;
+            }
+            if (errorToast) {
+              const toast = new bootstrap.Toast(errorToast);
+              toast.show();
+              // Reinicializar iconos de Lucide
+              if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+              }
+            }
+          } finally {
+            // Restaurar botón
+            this.disabled = false;
+            this.innerHTML = originalButtonHTML;
+          }
+        });
+
+        console.log('✅ Event listener agregado al botón confirmar asignación');
       }
 
       // CARGAR CONDUCTOR DIRECTAMENTE DESDE URL (sin tabla)
