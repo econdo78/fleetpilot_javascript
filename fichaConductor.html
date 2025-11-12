@@ -1292,6 +1292,74 @@ License: You must have a valid license to legally use this template for your pro
     #procesoLogTable::-webkit-scrollbar {
       display: none; /* Chrome, Safari y Opera */
     }
+
+    /* Estilos personalizados para Flatpickr */
+    .flatpickr-calendar {
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+      border: 1px solid rgba(0, 0, 0, 0.1) !important;
+      border-radius: 0.375rem !important;
+    }
+
+    .flatpickr-day.selected,
+    .flatpickr-day.selected:hover {
+      background: var(--bs-primary, #6571ff) !important;
+      border-color: var(--bs-primary, #6571ff) !important;
+    }
+
+    .flatpickr-day.today {
+      border-color: var(--bs-primary, #6571ff) !important;
+    }
+
+    .flatpickr-day:hover {
+      background: rgba(var(--bs-primary-rgb, 101, 113, 255), 0.1) !important;
+    }
+
+    .flatpickr-months .flatpickr-month {
+      background: #ffffff !important;
+    }
+
+    .flatpickr-current-month .flatpickr-monthDropdown-months {
+      background: #ffffff !important;
+      color: #000000 !important;
+    }
+
+    .flatpickr-current-month .numInputWrapper span.arrowUp:after,
+    .flatpickr-current-month .numInputWrapper span.arrowDown:after {
+      border-bottom-color: #000000 !important;
+      border-top-color: #000000 !important;
+    }
+
+    .flatpickr-current-month input.cur-year {
+      color: #000000 !important;
+    }
+
+    .flatpickr-months .flatpickr-prev-month,
+    .flatpickr-months .flatpickr-next-month {
+      fill: #000000 !important;
+    }
+
+    .flatpickr-weekdays {
+      background: #f8f9fa !important;
+    }
+
+    span.flatpickr-weekday {
+      color: #6c757d !important;
+    }
+
+    /* Input con icono de calendario */
+    input[name="fechaAltaSS"] + .input-group-text {
+      background-color: #f8f9fa;
+      border-left: 0;
+    }
+
+    input[name="fechaAltaSS"]:focus + .input-group-text {
+      border-color: var(--bs-primary, #6571ff);
+      background-color: rgba(var(--bs-primary-rgb, 101, 113, 255), 0.05);
+    }
+
+    input[name="fechaAltaSS"]:focus {
+      border-right: 0;
+    }
   </style>
 
   <link rel="shortcut icon" href="./assets/images/favicon.png" />
@@ -2322,9 +2390,44 @@ License: You must have a valid license to legally use this template for your pro
                               </div>
 
                               <!-- Sección: Asignaciones -->
-                              <div class="tab-pane fade" id="nav-asignaciones" role="tabpanel" aria-labelledby="nav-asignaciones-tab">
-                                <h5 class="mb-3">Asignaciones</h5>
-                                <p class="text-secondary">Contenido de la sección Asignaciones del conductor.</p>
+                              <div class="tab-pane fade h-100 d-flex flex-column" id="nav-asignaciones" role="tabpanel" aria-labelledby="nav-asignaciones-tab" style="min-height: 0; overflow: hidden;">
+                                <div style="flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 1rem 1rem 1rem 0;">
+                                <div class="detail-card card shadow-sm">
+                                  <div class="card-header">
+                                    <div class="bg-primary bg-opacity-10 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                      <i data-lucide="briefcase" class="text-primary" style="width: 20px; height: 20px;"></i>
+                                    </div>
+                                    <h5 class="card-title mb-0">ASIGNACION DE INVERSOR</h5>
+                                  </div>
+                                  <div class="card-body">
+                                    <form data-form-section="asignacion-inversor">
+                                      <div class="detail-grid" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Inversor <span class="text-danger">*</span></label>
+                                          <select class="form-select" name="inversorId" data-inversor-select data-placeholder="Selecciona un inversor" required>
+                                            <option value="">Selecciona un inversor</option>
+                                          </select>
+                                        </div>
+                                        <div class="detail-grid-item">
+                                          <label class="form-label text-secondary fw-semibold text-uppercase small mb-0">Fecha Alta SS <span class="text-danger">*</span></label>
+                                          <div class="input-group">
+                                            <input type="text" class="form-control" name="fechaAltaSS" placeholder="Selecciona una fecha" required>
+                                            <span class="input-group-text">
+                                              <i data-lucide="calendar" style="width: 16px; height: 16px;"></i>
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="mt-3 d-flex justify-content-end">
+                                        <button type="button" class="btn btn-primary" id="publicarAsignacionBtn">
+                                          <i data-lucide="send" class="me-2" style="width: 16px; height: 16px;"></i>
+                                          Publicar
+                                        </button>
+                                      </div>
+                                    </form>
+                                  </div>
+                                </div>
+                                </div>
                               </div>
 
                               <!-- Sección: Baja -->
@@ -8397,25 +8500,216 @@ License: You must have a valid license to legally use this template for your pro
         });
       }
 
+      // ============================================
+      // FUNCIONES GLOBALES
+      // ============================================
+
+      // Función para esperar a que ApiClient esté disponible
+      const waitForApiClient = () => {
+        return new Promise((resolve) => {
+          const checkApiClient = () => {
+            if (window.ApiClient?.get) {
+              console.log('✅ ApiClient disponible');
+              resolve(window.ApiClient);
+            } else {
+              console.log('⏳ Esperando ApiClient...');
+              setTimeout(checkApiClient, 100);
+            }
+          };
+          checkApiClient();
+        });
+      };
+
+      // Variable para almacenar la lista de inversores
+      let inversoresList = [];
+
+      // Función para poblar los campos de asignación con datos del conductor actual
+      const populateAsignacionInversor = () => {
+        if (!originalConductorData) {
+          console.log('⚠️ No hay datos de conductor para poblar asignación');
+          return;
+        }
+
+        console.log('📝 Poblando campos de asignación de inversor');
+
+        // Poblar campo de inversor (nombreInversor del conductor)
+        const nombreInversor = originalConductorData.nombreInversor;
+        if (nombreInversor) {
+          // Buscar el inversor por nombre en la lista cargada
+          const inversorMatch = inversoresList.find(inv => {
+            const fieldData = inv.fieldData || {};
+            return fieldData.nombreInversorConcatenado === nombreInversor;
+          });
+
+          if (inversorMatch) {
+            const inversorId = inversorMatch.fieldData.id;
+            $('[data-inversor-select]').val(inversorId).trigger('change');
+            console.log('✅ Inversor pre-seleccionado:', nombreInversor);
+          }
+        }
+
+        // Poblar campo de fecha Alta SS
+        let fechaAltaSS = originalConductorData.fechaAltaSS || '';
+
+        // Convertir fecha de FileMaker (MM/DD/YYYY) a formato HTML5 (YYYY-MM-DD)
+        if (fechaAltaSS && fechaAltaSS.includes('/')) {
+          const [month, day, year] = fechaAltaSS.split('/');
+          fechaAltaSS = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        }
+
+        const fechaInput = document.querySelector('input[name="fechaAltaSS"]');
+        if (fechaInput) {
+          // Si flatpickr está inicializado, usar su API
+          if (fechaInput._flatpickr) {
+            fechaInput._flatpickr.setDate(fechaAltaSS, false);
+          } else {
+            // Si no, establecer el valor directamente
+            fechaInput.value = fechaAltaSS;
+          }
+          console.log('✅ Fecha Alta SS poblada:', fechaAltaSS);
+        }
+      };
+
+      // Cargar lista de inversores desde FileMaker
+      const loadInversores = async () => {
+        try {
+          console.log('📡 Cargando lista de inversores...');
+          const apiClient = await waitForApiClient();
+
+          const layoutName = 'inversor';
+          const encodedLayout = apiClient.encodePathSegment
+            ? apiClient.encodePathSegment(layoutName)
+            : encodeURIComponent(layoutName);
+
+          console.log('📡 Haciendo petición a: layouts/' + encodedLayout + '/records');
+          const response = await apiClient.get(`layouts/${encodedLayout}/records`);
+
+          console.log('📥 Respuesta recibida, status:', response.status);
+
+          if (!response.ok) {
+            const errorText = await response.text().catch(() => '');
+            console.error('❌ Error en la respuesta:', response.status, errorText);
+            return;
+          }
+
+          const result = await response.json();
+          console.log('📦 Respuesta JSON inversores:', result);
+
+          if (result && result.response && result.response.data) {
+            inversoresList = result.response.data || [];
+            console.log(`✅ ${inversoresList.length} inversores cargados`);
+
+            // Poblar el select con los inversores
+            const $inversorSelect = $('[data-inversor-select]');
+            console.log('🔍 Selector encontrado:', $inversorSelect.length);
+
+            if ($inversorSelect.length && inversoresList.length > 0) {
+              // Limpiar opciones anteriores (excepto la vacía)
+              $inversorSelect.find('option:not(:first)').remove();
+
+              // Agregar inversores al select
+              inversoresList.forEach(inversor => {
+                const fieldData = inversor.fieldData || {};
+                const id = fieldData.id;
+                const nombreConcatenado = fieldData.nombreInversorConcatenado;
+
+                if (id && nombreConcatenado) {
+                  $inversorSelect.append(new Option(nombreConcatenado, id));
+                  console.log(`  ➕ Inversor agregado: ${nombreConcatenado} (${id})`);
+                }
+              });
+
+              // Inicializar Select2 en el selector de inversor
+              $inversorSelect.select2({
+                width: '100%',
+                allowClear: true,
+                language: {
+                  noResults: () => 'Sin resultados',
+                  searching: () => 'Buscando...',
+                  removeAllItems: () => 'Eliminar selección'
+                },
+                placeholder: 'Selecciona un inversor'
+              });
+
+              console.log('✅ Select de inversores inicializado con Select2');
+            } else if ($inversorSelect.length === 0) {
+              console.error('❌ No se encontró el elemento [data-inversor-select]');
+            } else if (inversoresList.length === 0) {
+              console.warn('⚠️ No hay inversores disponibles');
+            }
+          } else {
+            console.error('❌ Estructura de respuesta inesperada:', result);
+          }
+        } catch (error) {
+          console.error('❌ Error al cargar inversores:', error);
+        }
+      };
+
+      // Cargar inversores al iniciar
+      loadInversores();
+
+      // ============================================
+      // INICIALIZAR FLATPICKR PARA FECHA ALTA SS
+      // ============================================
+
+      // Configuración de locale español para flatpickr
+      const Spanish = {
+        weekdays: {
+          shorthand: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          longhand: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+        },
+        months: {
+          shorthand: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          longhand: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+        },
+        firstDayOfWeek: 1,
+        rangeSeparator: ' a ',
+        weekAbbreviation: 'Sem',
+        scrollTitle: 'Desplazar para aumentar',
+        toggleTitle: 'Click para cambiar',
+        time_24hr: true
+      };
+
+      // Inicializar Flatpickr en el campo de fecha
+      const fechaAltaSSInput = document.querySelector('input[name="fechaAltaSS"]');
+      if (fechaAltaSSInput && typeof flatpickr !== 'undefined') {
+        const fp = flatpickr(fechaAltaSSInput, {
+          locale: Spanish,
+          dateFormat: 'Y-m-d',
+          altInput: true,
+          altFormat: 'd/m/Y',
+          allowInput: true,
+          clickOpens: true,
+          disableMobile: false
+        });
+
+        console.log('📅 Flatpickr inicializado:', fp);
+
+        // Hacer que el icono del calendario abra el picker
+        const calendarIcon = fechaAltaSSInput.closest('.input-group')?.querySelector('[data-lucide="calendar"]');
+        if (calendarIcon) {
+          const iconButton = calendarIcon.closest('.input-group-text');
+          iconButton.style.cursor = 'pointer';
+          iconButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            // Usar la instancia almacenada en el input
+            if (fechaAltaSSInput._flatpickr) {
+              fechaAltaSSInput._flatpickr.open();
+              console.log('📅 Calendario abierto');
+            } else {
+              console.error('❌ No se encontró la instancia de flatpickr');
+            }
+          });
+          console.log('✅ Event listener agregado al icono del calendario');
+        }
+
+        console.log('✅ Flatpickr inicializado en campo fechaAltaSS');
+      }
+
       // CARGAR CONDUCTOR DIRECTAMENTE DESDE URL (sin tabla)
       if (initialRecordIdParam) {
         console.log('🔍 Cargando conductor con recordId desde URL:', initialRecordIdParam);
-
-        // Función para esperar a que ApiClient esté disponible
-        const waitForApiClient = () => {
-          return new Promise((resolve) => {
-            const checkApiClient = () => {
-              if (window.ApiClient?.get) {
-                console.log('✅ ApiClient disponible');
-                resolve(window.ApiClient);
-              } else {
-                console.log('⏳ Esperando ApiClient...');
-                setTimeout(checkApiClient, 100);
-              }
-            };
-            checkApiClient();
-          });
-        };
 
         // Cargar conductor directamente desde FileMaker
         (async () => {
@@ -8494,6 +8788,11 @@ License: You must have a valid license to legally use this template for your pro
 
               // Poblar los formularios editables con los datos del conductor
               populateEditableForms(fieldData);
+
+              // Poblar campos de asignación de inversor
+              setTimeout(() => {
+                populateAsignacionInversor();
+              }, 300);
 
               // Verificar y cargar documentación del DNI si existe
               checkAndLoadDNIDocumentation();
@@ -12759,6 +13058,11 @@ License: You must have a valid license to legally use this template for your pro
 
                             // Repoblar formularios con los datos actualizados
                             populateEditableForms(updatedConductorData);
+
+                            // Poblar campos de asignación de inversor
+                            setTimeout(() => {
+                              populateAsignacionInversor();
+                            }, 300);
 
                             // Actualizar variable global para futuras comparaciones
                             originalConductorData = updatedConductorData;
