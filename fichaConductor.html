@@ -2420,8 +2420,7 @@ License: You must have a valid license to legally use this template for your pro
                                       </div>
                                       <div class="mt-3 d-flex justify-content-end">
                                         <button type="button" class="btn btn-primary" id="publicarAsignacionBtn">
-                                          <i data-lucide="send" class="me-2" style="width: 16px; height: 16px;"></i>
-                                          Publicar
+                                          Asignar
                                         </button>
                                       </div>
                                     </form>
@@ -8567,6 +8566,21 @@ License: You must have a valid license to legally use this template for your pro
             fechaInput.value = fechaAltaSS;
           }
           console.log('✅ Fecha Alta SS poblada:', fechaAltaSS);
+        }
+
+        // Actualizar texto del botón según idAsignacionActualInversor
+        const idAsignacionActualInversor = originalConductorData.idAsignacionActualInversor;
+        const publicarBtn = document.getElementById('publicarAsignacionBtn');
+
+        if (publicarBtn) {
+          // Si idAsignacionActualInversor está vacío o es null/undefined → "Asignar"
+          // Si tiene valor → "Desasignar"
+          const isAsignado = idAsignacionActualInversor && idAsignacionActualInversor.trim() !== '';
+          const textoBoton = isAsignado ? 'Desasignar' : 'Asignar';
+
+          publicarBtn.textContent = textoBoton;
+
+          console.log(`✅ Botón actualizado: "${textoBoton}" (idAsignacionActualInversor: ${idAsignacionActualInversor || 'vacío'})`);
         }
       };
 
