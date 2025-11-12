@@ -9069,14 +9069,17 @@ License: You must have a valid license to legally use this template for your pro
               conductorId: currentConductorId
             });
 
-            // Convertir fecha de YYYY-MM-DD a MM/DD/YYYY HH:MM:SS (formato FileMaker)
+            // Convertir fecha de YYYY-MM-DD a MM/DD/YYYY HH:MM:SS (formato FileMaker timestamp)
             let timestampInicio = '';
+            let fechaAltaSSFormato = ''; // Solo fecha sin hora para el campo fechaAltaSS
             if (fechaSeleccionada) {
               const [year, month, day] = fechaSeleccionada.split('-');
               timestampInicio = `${month}/${day}/${year} 00:00:00`;
+              fechaAltaSSFormato = `${month}/${day}/${year}`;
             }
 
             console.log('📅 Timestamp convertido a formato FileMaker (MM/DD/YYYY HH:MM:SS):', timestampInicio);
+            console.log('📅 Fecha Alta SS formato FileMaker (MM/DD/YYYY):', fechaAltaSSFormato);
 
             // PASO 1: Crear registro en layout "asignacion"
             console.log('📡 PASO 1: Creando registro en layout asignacion');
@@ -9159,7 +9162,7 @@ License: You must have a valid license to legally use this template for your pro
                 idAsignacionActualInversor: idAsignacionNueva,
                 idInversorAsignado: inversorIdSeleccionado,
                 nombreInversor: nombreInversorSeleccionado,
-                fechaAltaSS: timestampInicio
+                fechaAltaSS: fechaAltaSSFormato
               }
             };
 
@@ -9186,7 +9189,7 @@ License: You must have a valid license to legally use this template for your pro
             originalConductorData.idAsignacionActualInversor = idAsignacionNueva;
             originalConductorData.idInversorAsignado = inversorIdSeleccionado;
             originalConductorData.nombreInversor = nombreInversorSeleccionado;
-            originalConductorData.fechaAltaSS = timestampInicio;
+            originalConductorData.fechaAltaSS = fechaAltaSSFormato;
 
             // Actualizar el botón para que muestre "Desasignar"
             populateAsignacionInversor();
