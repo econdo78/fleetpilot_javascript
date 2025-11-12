@@ -40,6 +40,52 @@
   const EXPORT_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
   const PROCESS_SELECTION_STORAGE_KEY = 'clientes.process-selection';
 
+  // Whitelist de campos permitidos en la tabla (solo estos 68 campos pueden mostrarse)
+  // Los campos ya están normalizados (sin acentos, minúsculas, sin espacios)
+  const ALLOWED_FIELDS_WHITELIST = new Set([
+    // Datos básicos (13 campos)
+    'nombre', 'apellido1', 'apellido2', 'nombrecompleto',
+    'fechanacimiento', 'edad', 'ndocumentoidentidad', 'tipodocumentoidentidad',
+    'nacionalidad', 'nivelformativotrabajador', 'anioscarnetconducir',
+    'numeropuntosdgt', 'estado',
+    // Dirección (10 campos)
+    'direccionconcatenada', 'tipovia', 'nombrevia', 'numero',
+    'pisoyletra', 'cp', 'codigolocalidad', 'localidad',
+    'provincia', 'paisnacimiento',
+    // Datos de contacto (5 campos)
+    'telefono1', 'telefono2', 'telefonoboltcompleto',
+    'correopersonal', 'correoplataforma',
+    // Datos laborales y contractuales (7 campos)
+    'codigocontrato', 'tipocontrato', 'fechacontrato', 'fechafirma',
+    'fechaaltass', 'nafiliacionss', 'altaengestion',
+    // Datos del vehículo (2 campos)
+    'matriculavehiculoasignado', 'fechaasignacionvehiculo',
+    // Datos de tarjeta de combustible (4 campos)
+    'numerotarjetacombustible', 'estadotarjetacombustible',
+    'contraseniatarjetacombustible', 'fechaasignaciontarjetacombustible',
+    // Datos de tarjeta de efectivo (3 campos)
+    'numerotarjetaefectivo', 'estadotarjetaefectivo',
+    'fechaasignaciontarjetaefectivo',
+    // Datos de inversor (1 campo)
+    'nombreinversor',
+    // Datos bancarios (5 campos)
+    'iban', 'ibanentidad', 'ibanoficina', 'ibandc', 'ibannumerocuenta',
+    // Documentación (8 campos)
+    'fechaexpedicioncarnetconducir', 'fechacaducidadcarnetconducir',
+    'fechaexpedicioncartillavtc', 'fecharenovacioncartillavtc',
+    'fechaexpediciondelitossexuales', 'fecharenovaciondelitossexuales',
+    'fechaexpedicionvidalaboral', 'fechacaducidaddocumento',
+    // Control interno y sistema (4 campos)
+    'creadoel', 'creadopor', 'modificadoel', 'modificadopor',
+    // Aliases comunes
+    'primerapellido', 'segundoapellido',
+    'documentoidentidad', 'dni', 'ndcumentoidentidad',
+    'matricula', 'matriculaasignada',
+    'tarjetacombustible', 'ntarjetacombustible',
+    'tarjetaefectivo', 'ntarjetaefectivo',
+    'inversornombre'
+  ]);
+
   const getSessionStorage = (() => {
     let cached = undefined;
     return () => {
@@ -192,6 +238,7 @@
 
   const isLockedColumn = (name) => LOCKED_COLUMNS.has(normalizeColumnName(name));
   const isHiddenColumn = (name) => normalizeColumnName(name) === 'id';
+  const isAllowedColumn = (name) => ALLOWED_FIELDS_WHITELIST.has(normalizeColumnName(name));
 
   const escapeHtml = (value) => {
     return String(value ?? '')
@@ -558,11 +605,13 @@
       return;
     }
     if (Array.isArray(stored.fieldOrder) && stored.fieldOrder.length) {
-      fieldOrder = stored.fieldOrder.slice();
+      // Filtrar solo los campos permitidos de la whitelist
+      fieldOrder = stored.fieldOrder.filter(name => isAllowedColumn(name));
     }
     if (stored.visibility && typeof stored.visibility === 'object') {
       Object.entries(stored.visibility).forEach(([name, visible]) => {
-        if (typeof name === 'string' && name.trim()) {
+        // Solo cargar visibilidad de campos permitidos
+        if (typeof name === 'string' && name.trim() && isAllowedColumn(name)) {
           columnVisibility.set(name, Boolean(visible));
         }
       });
@@ -1309,7 +1358,7 @@
     const names = [];
     flattenedRecords.forEach((fields) => {
       Object.keys(fields || {}).forEach((name) => {
-        if (!seen.has(name) && !isHiddenColumn(name)) {
+        if (!seen.has(name) && !isHiddenColumn(name) && isAllowedColumn(name)) {
           seen.add(name);
           names.push(name);
         }
